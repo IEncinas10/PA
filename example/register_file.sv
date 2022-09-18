@@ -1,14 +1,4 @@
-//--------------------------------------------------------------------------
-//-- register.v
-//-- Registro genérico de N bits, con reset asíncrono activo a nival bajo
-//--------------------------------------------------------------------------
-//-- (C) BQ. August 2015. Written by Juan Gonzalez (Obijuan)
-//--------------------------------------------------------------------------
-//-- Parámetros:  N: Numero de bits
-//--             INI: Valor inicial del registro al hacer el reset
-//--------------------------------------------------------------------------
 `include "register.sv"
-//`include "register.sv"
 `timescale 1 ns / 1 ns
 
 
