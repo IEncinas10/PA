@@ -8,6 +8,8 @@ Testing will be done with [svut](https://github.com/dpretet/svut) framework.
 You can dump create the .vcd file for visualization if you want. It's commented out by default. It also creates
 a clock and so on.
 
+Open them with gtkwave filewave.vcd
+
 ### Problems
   - If you have more than 1 module per Verilog/SystemVerilog file the output is very weird. You can manually fix it
   but its best to avoid this if possible.
