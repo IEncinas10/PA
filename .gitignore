@@ -1,3 +1,4 @@
 # svut out files 
 *.out
+.*
 *.vcd

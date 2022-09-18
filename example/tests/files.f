@@ -1,1 +1,1 @@
-+incdir+/home/ier/miri/pa/prac
++incdir+/home/ier/miri/pa/practica/example/
