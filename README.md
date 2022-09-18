@@ -12,4 +12,6 @@ a clock and so on.
   - If you have more than 1 module per Verilog/SystemVerilog file the output is very weird. You can manually fix it
   but its best to avoid this if possible.
   - Follow the [svut Tutorial](https://github.com/dpretet/svut#tutorial) if you have problems with includes and so on (files.f is your friend) 
+  - You have to follow the expected code style: every parameter is one new line and so on. **Check** your generated tests, if a parameter 
+    is missing you know you have not followed the expected input style.
   
