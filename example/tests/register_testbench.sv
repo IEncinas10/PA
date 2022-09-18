@@ -2,7 +2,7 @@
 `include "svut_h.sv"
 // Specify the module to load or on files.f
 `include "register.sv"
-`timescale 1 ns / 100 ps
+`timescale 1 ns / 1 ns
 
 module register_testbench();
 
@@ -33,14 +33,14 @@ module register_testbench();
 
 
     // To create a clock:
-    // initial aclk = 0;
-    // always #2 aclk = ~aclk;
+     initial clk = 0;
+     always #1 clk = ~clk;
 
     // To dump data for visualization:
-    // initial begin
-    //     $dumpfile("register_testbench.vcd");
-    //     $dumpvars(0, register_testbench);
-    // end
+     initial begin
+	 $dumpfile("register_testbench.vcd");
+	 $dumpvars(0, register_testbench);
+     end
 
     // Setup time format when printing with $realtime()
     initial $timeformat(-9, 1, "ns", 8);
@@ -48,12 +48,16 @@ module register_testbench();
     task setup(msg="");
     begin
         // setup() runs when a test begins
+	rst = 1;
+	#2; rst= 0;
     end
     endtask
 
     task teardown(msg="");
     begin
         // teardown() runs when a test ends
+	//rst = 1;
+	//#2; rst= 0;
     end
     endtask
 
@@ -86,6 +90,25 @@ module register_testbench();
         // Because SVUT uses long nested macros, it's possible
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
+	#1
+	din = 127;	
+	wenable = 1;
+	#2;
+	`FAIL_IF(din != dout);
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("wenable")
+
+        // Describe here the testcase scenario
+        //
+        // Because SVUT uses long nested macros, it's possible
+        // some local variable declaration leads to compilation issue.
+        // You should declare your variables after the IOs declaration to avoid that.
+	wenable = 0;
+	din = 63;	
+	#2;
+	`FAIL_IF(dout != 0);
 
     `UNIT_TEST_END
 

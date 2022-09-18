@@ -1,7 +1,6 @@
 `include "register.sv"
 `timescale 1 ns / 1 ns
 
-
 module register_file #(
     parameter N = 5,        //-- Número de registros
     parameter WIDTH = 32     //-- Número de bits del registro
