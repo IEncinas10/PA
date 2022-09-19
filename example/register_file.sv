@@ -2,8 +2,8 @@
 `timescale 1 ns / 1 ns
 
 module register_file #(
-    parameter N = 5,        //-- Número de registros
-    parameter WIDTH = 32     //-- Número de bits del registro
+    parameter N = 5,      //-- Bits needed for the register. 2^N registers
+    parameter WIDTH = 32  //-- Number of bits held by the register
 ) (
     input wire rst,
     input wire clk,
@@ -20,21 +20,20 @@ module register_file #(
     output reg [WIDTH-1:0] data_b
 );
 
+    // Array of wires that will be connected to each register
     wire [(2**N)-1:0] [WIDTH-1:0] registers_out;
+    // Array of wenables that will be conected to each register
     reg [(2**N)-1:0] wenables;
+
+    // The registers are automatically connected to the respective elements
+    // of array 'wenables' and 'registers_out'. [0, 0, 0], [1, 1, 1], ..., [N-1, N-1, N-1]
     register #(.WIDTH(WIDTH)) registers [(2**N)-1:0] (
 	.rst(rst),
 	.clk(clk),
-	.wenable(wenables),
+	.wenable(wenables),  // magic
 	.din(din),
-	.dout(registers_out) // magia
+	.dout(registers_out) // magic
     );
-    
-    //always @(posedge clk) begin
-	//if(rst) begin
-	    //// do nothing, auto reset?
-	//end 
-    //end
 
     // output
     integer i;
@@ -48,29 +47,3 @@ module register_file #(
     end
 
 endmodule
-
-
-// Eliminar el módulo registro, ¿no? se puede propagar el write enable hacia
-// abajo
-//module register #( parameter WIDTH = 32,     //-- Nmero de bits del registro
-    //parameter INI = 0   //-- Valor inicial
-//) (
-    //input wire rst, 
-    //input wire clk, 
-    //input wire wenable,
-    //input wire [WIDTH-1:0] din, 
-    //output reg [WIDTH-1:0] dout
-//);
-//always @(posedge(clk)) begin
-    //if (rst == 1) begin
-	//dout <= INI; //-- Inicializacion
-    //end
-    //else if(wenable) begin
-	//dout <= din; //-- Funcionamiento normal
-    //end
-	////dout <= din; //-- Funcionamiento normal
-//end
-//endmodule
-
-
-
