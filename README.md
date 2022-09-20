@@ -18,13 +18,15 @@ Open them with gtkwave filewave.vcd
     is missing you know you have not followed the expected input style.
     
 ## ISA
-[RISC-V](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) Chapter 2 - RV32I Base Integer Instruction Set
+[RISC-V](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) Chapter 2 - RV32I Base Integer Instruction Set. **Multiplication is in M extension**
 
 - [ ] Can we get a RISC-V compiler to test our processor?
 
-- [ ] ADD, SUB, MUL, LDB, LDW, STB, STW, BEQ, JUMP  (whatever ISA you decide to use)
+Instruction (Instr. format)
+
+- [ ] ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)  (whatever ISA you decide to use)
 ### Instructions
-- [ ] ADD: 
+- [ ] ADD **(R)**: 
   add rd, rs1, rs2
   
   rd     = instr[11:7] 
@@ -38,6 +40,7 @@ Open them with gtkwave filewave.vcd
   funct3 = instr[14:12]
   
   opcode = instr[6:0]
+  
   
   
 
