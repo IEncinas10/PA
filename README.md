@@ -20,4 +20,6 @@ Open them with gtkwave filewave.vcd
 ## ISA
 [RISC-V](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) Chapter 2 - RV32I Base Integer Instruction Set
 
-Can we get a RISC-V compiler to test our processor?
+- [ ] Can we get a RISC-V compiler to test our processor?
+
+- [ ] ADD, SUB, MUL, LDB, LDW, STB, STW, BEQ, JUMP  (whatever ISA you decide to use)
