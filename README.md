@@ -16,4 +16,8 @@ Open them with gtkwave filewave.vcd
   - Follow the [svut Tutorial](https://github.com/dpretet/svut#tutorial) if you have problems with includes and so on (files.f is your friend) 
   - You have to follow the expected code style: every parameter is one new line and so on. **Check** your generated tests, if a parameter 
     is missing you know you have not followed the expected input style.
-  
+    
+## ISA
+[RISC-V](https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf) Chapter 2 - RV32I Base Integer Instruction Set
+
+Can we get a RISC-V compiler to test our processor?
