@@ -23,3 +23,14 @@ Open them with gtkwave filewave.vcd
 - [ ] Can we get a RISC-V compiler to test our processor?
 
 - [ ] ADD, SUB, MUL, LDB, LDW, STB, STW, BEQ, JUMP  (whatever ISA you decide to use)
+### Instructions
+- [ ] ADD: 
+  add rd, rs1, rs2
+  
+  rd     = instr[11:7] 
+  rs1    = instr[19:15]
+  rs2    = instr[24:20]
+  opcode = 7'b0
+  funct3 = instr[14:12]
+
+
