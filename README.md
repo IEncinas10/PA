@@ -28,9 +28,13 @@ Open them with gtkwave filewave.vcd
   add rd, rs1, rs2
   
   rd     = instr[11:7] 
+
   rs1    = instr[19:15]
+  
   rs2    = instr[24:20]
+  
   opcode = 7'b0
+  
   funct3 = instr[14:12]
 
 
