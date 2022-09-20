@@ -33,8 +33,12 @@ Open them with gtkwave filewave.vcd
   
   rs2    = instr[24:20]
   
-  opcode = 7'b0
+  funct7 = 7'b0
   
   funct3 = instr[14:12]
+  
+  opcode = instr[6:0]
+  
+  
 
 
