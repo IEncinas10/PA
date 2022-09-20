@@ -26,6 +26,8 @@ Instruction (Instr. format)
 
 - [ ] ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)  (whatever ISA you decide to use)
 ### Instructions
+[Opcodes](https://github.com/ucb-bar/riscv-sodor/blob/master/src/main/scala/common/instructions.scala) Useful for decoding
+
 - [ ] ADD **(R)**: 
   add rd, rs1, rs2
   
