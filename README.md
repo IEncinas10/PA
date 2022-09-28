@@ -1,5 +1,12 @@
 # MIRI - Processor Architecture
 
+## Resources
+
+[BrunoLevy tutorial](https://github.com/BrunoLevy/learn-fpga/blob/master/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV/PIPELINE.md#step-9-return-address-stack)
+
+
+[RISCV assembler](https://github.com/carlosedp/riscvassembler), alternative to compiling with gcc for rv32i. Might be interesting...
+
 ## Testing framework
 Testing will be done with [svut](https://github.com/dpretet/svut) framework.
 - Create tests: *svutCreate* filename
