@@ -31,6 +31,12 @@ Open them with gtkwave filewave.vcd
 
 Instruction (Instr. format)
 
+![image](https://user-images.githubusercontent.com/42119338/193021954-1bd02364-72a5-4f31-b157-6cc7f04adbf6.png)
+
+
+![image](https://user-images.githubusercontent.com/42119338/193022040-62eebefe-c568-4da3-9974-b6f305db8b63.png)
+
+
 - [ ] ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)  (whatever ISA you decide to use)
 ### Instructions
 [Opcodes](https://github.com/ucb-bar/riscv-sodor/blob/master/src/main/scala/common/instructions.scala) Useful for decoding
