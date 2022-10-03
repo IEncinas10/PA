@@ -10,6 +10,8 @@
 ### Compile
 ```
 riscv64-unknown-elf-gcc assembly.s -O0 -c -march=rv32i -mabi=ilp32 && riscv64-unknown-elf-objcopy --only-section=.text --output-target binary assembly.o assembly.bin
+
+xxd -b assembly.bin
 ```
 
 ```
