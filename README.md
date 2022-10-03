@@ -6,6 +6,10 @@
 
 
 [RISCV assembler](https://github.com/carlosedp/riscvassembler), alternative to compiling with gcc for rv32i. Might be interesting...
+```
+riscv64-unknown-elf-gcc assembly.s -c && objcopy --only-section=.text --output-target binary assembly.o assembly.bin
+```
+
 
 ## Testing framework
 Testing will be done with [svut](https://github.com/dpretet/svut) framework.
