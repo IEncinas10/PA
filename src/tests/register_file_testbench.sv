@@ -112,11 +112,33 @@ module register_file_testbench();
 
     `UNIT_TEST_END
 
-    `UNIT_TEST("Set")
+    `UNIT_TEST("wenable")
 	wenable = 0;
 	reg_in = 15;
 	a = 15;
 	b = 15;
+	din = 2047;
+	#2 
+	#1;
+	`FAIL_IF(din == data_a);
+	`FAIL_IF(din == data_b);
+	`FAIL_IF(data_a != 0);
+	`FAIL_IF(data_b != 0);
+	#2;
+
+        // Describe here the testcase scenario
+        //
+        // Because SVUT uses long nested macros, it's possible
+        // some local variable declaration leads to compilation issue.
+        // You should declare your variables after the IOs declaration to avoid that.
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("Write r0")
+	wenable = 1;
+	reg_in = 0;
+	a = 0;
+	b = 0;
 	din = 2047;
 	#2 
 	#1;
