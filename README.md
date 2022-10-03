@@ -7,7 +7,7 @@
 
 [RISCV assembler](https://github.com/carlosedp/riscvassembler), alternative to compiling with gcc for rv32i. Might be interesting...
 ```
-riscv64-unknown-elf-gcc assembly.s -c && objcopy --only-section=.text --output-target binary assembly.o assembly.bin
+riscv64-unknown-elf-gcc assembly.s -c && riscv64-unknown-elf-objcopy --only-section=.text --output-target binary assembly.o assembly.bin
 ```
 
 
