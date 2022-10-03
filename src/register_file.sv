@@ -38,8 +38,9 @@ module register_file #(
     // output
     integer i;
     always @(*) begin
+	// Can't write to r0, its always 0
 	for (i=0; i < 32; i = i+1) begin
-	    wenables[i] = (i == reg_in) && wenable;
+	    wenables[i] = (i == reg_in) && wenable && (i != 0);
 	end
 
 	data_a <= registers_out[a];
