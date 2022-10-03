@@ -15,6 +15,8 @@ xxd -b assembly.bin
 
 riscv64-unknown-elf-objdump -S assembly.o
 ```
+La salida de objdump está mal (las instrucciones de la derecha). Si compilamos con -g y hacemos objdump obtendremos las instrucciones correctas
+
 
 ```
 riscv64-unknown-elf-g++ test.cpp  -O0 -c -march=rv32i -mabi=ilp32
