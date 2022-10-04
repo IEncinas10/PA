@@ -61,7 +61,7 @@ module register_testbench();
     end
     endtask
 
-    `TEST_SUITE("TESTSUITE_NAME")
+    `TEST_SUITE("Register")
 
     //  Available macros:"
     //
