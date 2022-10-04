@@ -61,6 +61,8 @@ module decoder_testbench();
       //28:	ff5ff06f          	j	1c <b>
     //jal x1, b
       //2c:	ff1ff0ef          	jal	ra,1c <b>
+    //beq x1, x1, b
+      //34:	fe1084e3          	beq	ra,ra,1c <b>
 
 
     // To create a clock:
@@ -251,6 +253,19 @@ module decoder_testbench();
 	`FAIL_IF(rd != 1);
 	`FAIL_IF_NOT(dut.instr_J_type);
 	`FAIL_IF(dut.imm + 'h2c != 'h1c);
+    `UNIT_TEST_END
+    `UNIT_TEST("BEQ")
+	
+	//beq x1, x1, b
+	  //34:	fe1084e3          	beq	ra,ra,1c <b>
+	instr = 'hfe1084e3;
+
+	#2;
+	`FAIL_IF(dut.opcode != `OPCODE_BRANCH);
+	`FAIL_IF(rs1 != 1);
+	`FAIL_IF(rs2 != 1);
+	`FAIL_IF_NOT(dut.instr_B_type);
+	`FAIL_IF(dut.imm + 'h34 != 'h1c);
     `UNIT_TEST_END
 
     `TEST_SUITE_END
