@@ -99,7 +99,6 @@ module register_file_testbench();
 	din = 2047;
 	#2 
 	wenable=0;
-	#1;
 	`FAIL_IF(din != data_a);
 	`FAIL_IF(din != data_b);
 	#2;
@@ -119,7 +118,6 @@ module register_file_testbench();
 	b = 15;
 	din = 2047;
 	#2 
-	#1;
 	`FAIL_IF(din == data_a);
 	`FAIL_IF(din == data_b);
 	`FAIL_IF(data_a != 0);

@@ -1,7 +1,7 @@
-`timescale 1 ns / 1 ns
+`include "defines.sv"
 
 module register #(
-    parameter WIDTH = 32,  //-- Width of the register (nº bits)
+    parameter WIDTH = `WORD_SIZE,  //-- Width of the register (nº bits)
     parameter INIT = 0     //-- Initial value after reset
 ) (
     input wire rst, 
