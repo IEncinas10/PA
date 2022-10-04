@@ -54,6 +54,9 @@ Instruction (Instr. format)
 
 
 ![image](https://user-images.githubusercontent.com/42119338/193022040-62eebefe-c568-4da3-9974-b6f305db8b63.png)
+![image](https://user-images.githubusercontent.com/42119338/193801047-f4ee34f6-3e6f-4ad3-bb1c-ba2ca99e4a28.png)
+
+
 
 
 - [ ] ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)  (whatever ISA you decide to use)
