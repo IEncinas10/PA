@@ -9,19 +9,19 @@
 
 ### Compile
 ```
-riscv64-unknown-elf-gcc assembly.s -O0 -c -march=rv32i -mabi=ilp32 && riscv64-unknown-elf-objcopy --only-section=.text --output-target binary assembly.o assembly.bin
+riscv64-unknown-elf-gcc assembly.s -O0 -c -march=rv32im -mabi=ilp32 && riscv64-unknown-elf-objcopy --only-section=.text --output-target binary assembly.o assembly.bin
 
 xxd -b assembly.bin
 
 riscv64-unknown-elf-objdump -S assembly.o
 
-riscv64-unknown-elf-gcc assembly.s -O0 -c -g -march=rv32i -mabi=ilp32 && riscv64-unknown-elf-objcopy --only-section=.text --output-target binary assembly.o assembly.bin && riscv64-unknown-elf-objdump -d --disassembler-color=color assembly.o
+riscv64-unknown-elf-gcc assembly.s -O0 -c -g -march=rv32im -mabi=ilp32 && riscv64-unknown-elf-objcopy --only-section=.text --output-target binary assembly.o assembly.bin && riscv64-unknown-elf-objdump -d --disassembler-color=color assembly.o
 ```
 La salida de objdump está mal (las instrucciones de la derecha). Si compilamos con -g y hacemos objdump obtendremos las instrucciones correctas
 
 
 ```
-riscv64-unknown-elf-g++ test.cpp  -O0 -c -march=rv32i -mabi=ilp32
+riscv64-unknown-elf-g++ test.cpp  -O0 -c -march=rv32im -mabi=ilp32
 riscv64-unknown-elf-objdump -D -b binary -m riscv test.o
 ```
 
