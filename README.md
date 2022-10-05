@@ -50,33 +50,10 @@ Open them with gtkwave filewave.vcd
 
 Instruction (Instr. format)
 
-![image](https://user-images.githubusercontent.com/42119338/193021954-1bd02364-72a5-4f31-b157-6cc7f04adbf6.png)
+- [X] ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)  (whatever ISA you decide to use)
 
-
-![image](https://user-images.githubusercontent.com/42119338/193022040-62eebefe-c568-4da3-9974-b6f305db8b63.png)
-
-
-
-
-- [ ] ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)  (whatever ISA you decide to use)
-### Instructions
-[Opcodes](https://github.com/ucb-bar/riscv-sodor/blob/master/src/main/scala/common/instructions.scala) Useful for decoding
-
-- [ ] ADD **(R)**: 
-  add rd, rs1, rs2
-  
-  rd     = instr[11:7] 
-
-  rs1    = instr[19:15]
-  
-  rs2    = instr[24:20]
-  
-  funct7 = 7'b0
-  
-  funct3 = instr[14:12]
-  
-  opcode = instr[6:0]
-  
+## Posibles ampliaciones
+- [Caché muy lista¿?](https://personals.ac.upc.edu/jmanel/papers/ics97.pdf) Revisar si nos vale
   
   
 
