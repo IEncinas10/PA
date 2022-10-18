@@ -8,7 +8,7 @@ module alu #(
 ) (
     input wire [6:0] opcode,
     input wire [6:0] funct7,
-    input wire [2:0] funt3,
+    input wire [2:0] funct3,
     input wire [INSTR_SIZE-1:0] aluIn1, // rs1
     input wire [INSTR_SIZE-1:0] aluIn2, // rs2 : Iimm ESTO SE CONTROLA FUERA, DENTRO SE TRATA RS2 COMO IMM EN CASO DE SER NECESARIO IMM
     output reg [INSTR_SIZE-1:0] aluOut,
@@ -27,21 +27,35 @@ module alu #(
 
   always@(*) begin
     case (opcode) //anidar cases en alu
-      `ADD_FUNCT7: begin
-        assign aluOut = aluAdd;//control exception overflow
-        assign exceptionCode = noException;
-      end
-      `SUB_FUNCT7: begin
-        assign aluOut = aluSub;//control exception overflow
-        assign exceptionCode = noException;
-      end
-      `AND_FUNCT3: begin
-        assign aluOut = aluIn1 & aluIn2;
-        assign exceptionCode = noException;
-      end
-      `OR_FUNCT3: begin
-        assign aluOut = aluIn1 | aluIn2;
-        assign exceptionCode = noException;
+
+     `OPCODE_ALU: begin
+
+        case(funct7)
+        `SUB_FUNCT7: begin
+          assign aluOut = aluSub;//control exception overflow
+          assign exceptionCode = noException;
+        end
+        `MUL_FUNCT7: begin
+          assign aluOut = aluMul;
+          assign exceptionCode = noException;
+        end
+        `ADD_OR_AND_FUNCT7: begin
+          case(funct3)
+            `ADD_FUNCT3: begin
+              assign aluOut = aluAdd;
+              assign exceptionCode = noException;
+            end
+            `OR_FUNCT3: begin
+              assign aluOut = aluIn1 | aluIn2;
+              assign exceptionCode = noException;
+            end
+            `AND_FUNCT3: begin
+              assign aluOut = aluIn1 & aluIn2;
+              assign exceptionCode = noException;
+            end
+          endcase
+          end
+        endcase
       end
       `OPCODE_BRANCH: begin
         assign aluOut = aluAdd;
@@ -51,10 +65,6 @@ module alu #(
         assign aluOut = aluIn1;
         assign exceptionCode = noException;
       end
-      `OPCODE_MUL: begin
-        assign aluOut = aluMul;
-        assign exceptionCode = noException;
-      end
       `OPCODE_LOAD: begin
         assign aluOut = aluAdd;
         assign exceptionCode = noException;
@@ -62,6 +72,14 @@ module alu #(
       `OPCODE_STORE: begin
         assign aluOut = aluAdd;
         assign exceptionCode = noException;
+      end
+      `OPCODE_ALU_IMM: begin
+        case (funct3)
+          `ADDI_FUNCT3: begin
+            assign aluOut = aluAdd;
+            assign exceptionCode = noException;
+          end
+        endcase
       end
       default:begin
         assign aluOut = 32'b0;
