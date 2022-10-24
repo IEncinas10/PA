@@ -5,7 +5,7 @@ Protect the wenable for DCache and TLB when exceptions are raised
 
 Also, perhaps stop issuing misses to the cache if an exception was produced, no point in fetching data?
 
-Interrupts wired into WB stage
+Interrupts wired into WB stage. **DIFERENCE** if interrupt, instr at WB finishes but if we have an exception we don't finish, so return PC is PC or PC+4, also we have or dont have to write into RF
 
 ## Resources
 
