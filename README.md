@@ -3,6 +3,8 @@
 ## Exceptions
 Protect the wenable for DCache and TLB when exceptions are raised
 
+Interrupts wired into WB stage
+
 ## Resources
 
 [BrunoLevy tutorial](https://github.com/BrunoLevy/learn-fpga/blob/master/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV/PIPELINE.md#step-9-return-address-stack)
