@@ -1,6 +1,6 @@
 # MIRI - Processor Architecture
 
-## Excepctions
+## Exceptions
 Protect the wenable for DCache and TLB when exceptions are raised
 
 ## Resources
