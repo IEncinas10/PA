@@ -18,7 +18,6 @@
 `define OPCODE_BRANCH   7'b1100011
 `define OPCODE_STORE    7'b0100011
 `define OPCODE_LOAD     7'b0000011
-//`define OPCODE_MUL      7'b0110011 //mismo opcode que alu, mirar funct 7
 `define OPCODE_JUMP     7'b1101111
 
 
@@ -33,6 +32,31 @@
 `define SUB_FUNCT7      7'b0100000
 `define MUL_FUNCT7      7'b0000001
 `define ADD_OR_AND_FUNCT7   7'b0000000
+
+
+
+`define CACHE_LINE_SIZE 128
+`define CACHE_N_LINES   4
+
+`define I_CACHE_LINE_SIZE `CACHE_LINE_SIZE
+`define I_CACHE_N_LINES   `CACHE_N_LINES
+
+`define D_CACHE_LINE_SIZE `CACHE_LINE_SIZE
+`define D_CACHE_N_LINES   `CACHE_N_LINES
+
+`define CACHE_DELAY_CYCLES 5
+
+`define REPLACEMENT_POLICY_LRU 3'000
+
+/*
+ * MEMORY DEFINES
+ *
+ * [0x0000, 0xFFFF]
+ *
+ */
+`define MEM_DELAY_CYCLES 5
+`define MEM_SIZE (1 << 16)
+
 
 
 
