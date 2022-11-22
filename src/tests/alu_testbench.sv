@@ -8,7 +8,6 @@ module alu_testbench();
 
     `SVUT_SETUP
 
-    parameter INSTR_SIZE = 32;
 
     logic [6:0] opcode;
     logic [6:0] funct7;
@@ -20,9 +19,6 @@ module alu_testbench();
     logic[31:0] exceptionCode;
 
     alu 
-    #(
-    .INSTR_SIZE (INSTR_SIZE)
-    )
     dut 
     (
     .opcode         (opcode),
