@@ -205,6 +205,19 @@ module alu_testbench();
        #2;
     `UNIT_TEST_END
 
+    `UNIT_TEST("MULTIPLICATION2")
+       opcode = `OPCODE_ALU;
+       funct7 = `MUL_FUNCT7;
+
+       aluIn1 = 42;
+       aluIn2 = -3;
+       #2;
+       `ASSERT((aluOut == -126));
+       `ASSERT((zero == 0));
+       `ASSERT((exceptionCode == 0));
+       #2;
+    `UNIT_TEST_END
+
    `UNIT_TEST("ADDI")
        opcode = `OPCODE_ALU_IMM;
        funct3 = `ADDI_FUNCT3;
