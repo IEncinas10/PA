@@ -122,7 +122,7 @@ module decoder_testbench();
 	`FAIL_IF(rs1 != 2);
 	`FAIL_IF(rs2 != 3);
 	`FAIL_IF(rd  != 1);
-	`FAIL_IF(dut.funct7 != `ADD_FUNCT7);
+	`FAIL_IF(dut.funct7 != `ADD_OR_AND_FUNCT7);
 	`FAIL_IF_NOT(dut.instr_R_type);
     `UNIT_TEST_END
 
@@ -136,7 +136,7 @@ module decoder_testbench();
 	`FAIL_IF(rd  != 1);
 	`FAIL_IF(rs1 != 1);
 	`FAIL_IF(imm != 1);
-	`FAIL_IF(dut.funct3 != `ADD_FUNCT7);
+	`FAIL_IF(dut.funct3 != `ADD_OR_AND_FUNCT7);
 	`FAIL_IF_NOT(dut.instr_I_type);
     `UNIT_TEST_END
 
