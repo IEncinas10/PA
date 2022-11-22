@@ -27,10 +27,9 @@ module decoder #(
     wire instr_BRANCH  = (opcode == `OPCODE_BRANCH);
     wire instr_STORE   = (opcode == `OPCODE_STORE);
     wire instr_LOAD    = (opcode == `OPCODE_LOAD);
-    wire instr_MUL     = (opcode == `OPCODE_MUL);
     wire instr_JUMP    = (opcode == `OPCODE_JUMP);
 
-    wire instr_R_type  = instr_ALU || instr_MUL;
+    wire instr_R_type  = instr_ALU;
     wire instr_I_type  = instr_LOAD || instr_ALU_IMM;
     wire instr_S_type  = instr_STORE;
     wire instr_B_type  = instr_BRANCH;
