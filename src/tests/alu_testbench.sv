@@ -8,27 +8,35 @@ module alu_testbench();
 
     `SVUT_SETUP
 
+    parameter WORD_SIZE = `WORD_SIZE ;
 
+    logic [31:0] pc;
     logic [6:0] opcode;
     logic [6:0] funct7;
     logic [2:0] funct3;
     logic [31:0] aluIn1;
     logic [31:0] aluIn2;
+    logic [31:0] immediate;
     logic[31:0] aluOut;
-    logic zero;
-    logic[31:0] exceptionCode;
+    logic[31:0] newpc;
+    logic branchTaken;
+    
 
     alu 
+    
+
     dut 
     (
-    .opcode         (opcode),
-    .funct7         (funct7),
-    .funct3         (funct3),
-    .aluIn1         (aluIn1),
-    .aluIn2         (aluIn2),
-    .aluOut         (aluOut),
-    .zero           (zero),
-    .exceptionCode  (exceptionCode)
+   .pc               (pc),
+   .opcode           (opcode),
+   .funct7           (funct7),
+   .funct3           (funct3),
+   .aluIn1           (aluIn1),
+   .aluIn2           (aluIn2),
+   .immediate        (immediate),
+   .aluOut           (aluOut),
+   .newpc            (newpc),
+   .branchTaken      (branchTaken)
     );
 
 
@@ -87,7 +95,6 @@ module alu_testbench();
         aluIn2 = 7;
         #2;
         `FAIL_IF(aluOut != 30);
-       `ASSERT(zero == 0);
         #2;
         
     `UNIT_TEST_END
@@ -100,19 +107,8 @@ module alu_testbench();
         aluIn2 = 2;
         #2;
         `FAIL_IF(aluOut != 2);
-       `ASSERT((zero == 0));
         #2;
         
-    `UNIT_TEST_END
-
-    `UNIT_TEST("OPCODE_OUT_OF_ORDER_TEST")
-       opcode = 7'b1100001;
-       aluIn1 = 10;
-       aluIn2 = 9;
-       #2;
-       `ASSERT((exceptionCode == 32'b1));
-       `ASSERT((zero == 0));
-       #2;
     `UNIT_TEST_END
 
     `UNIT_TEST("OPCODE_OR1")
@@ -123,8 +119,6 @@ module alu_testbench();
        aluIn2 = 6'b010010;
        #2;
        `ASSERT((aluOut == 6'b011011));
-       `ASSERT((zero == 0));
-       `ASSERT((exceptionCode == 0));
        #2;
     `UNIT_TEST_END
 
@@ -136,9 +130,6 @@ module alu_testbench();
        aluIn2 = 1'b0;
        #2;
        `ASSERT((aluOut == 1));
-       `ASSERT((exceptionCode == 0));
-       `ASSERT((zero == 0));
-       `FAIL_IF(exceptionCode == 1);
        #2;
     `UNIT_TEST_END
 
@@ -150,44 +141,42 @@ module alu_testbench();
        aluIn2 = 6'b001110;
        #2;
        `ASSERT((aluOut == 6'b000010));
-       `ASSERT((exceptionCode == 0));
-       `ASSERT((zero == 0));
-       `FAIL_IF(exceptionCode == 1);
        #2;
     `UNIT_TEST_END
 
     `UNIT_TEST("OPCODE_BRANCH")
        opcode = `OPCODE_BRANCH;
-       aluIn1 = 6'b000010;
-       aluIn2 = 6'b001010;
+       aluIn1 = 4;
+       aluIn2 = 3;
        #2;
-       `ASSERT((aluOut == 6'b001100));
-       `ASSERT((exceptionCode == 0));
-       `ASSERT((zero == 0));
-       `FAIL_IF(exceptionCode == 1);
+       `ASSERT((aluOut != 0));
+       `ASSERT((branchTaken == 0));
        #2;
     `UNIT_TEST_END
 
     `UNIT_TEST("OPCODE_BRANCH2")
+       pc = 400;
        opcode = `OPCODE_BRANCH;
-       aluIn1 = 6'b010010;
-       aluIn2 = 6'b010010;
+       aluIn1 = 4;
+       aluIn2 = 4;
+       immediate = 60;
        #2;
-       `FAIL_IF(aluOut != 6'b100100);
-       `FAIL_IF(zero != 1);
-       `FAIL_IF(exceptionCode == 1);
+       `ASSERT((aluOut == 0));
+       `ASSERT((branchTaken == 1));
+       `ASSERT((newpc == 460));
        #2;
     `UNIT_TEST_END
 
     `UNIT_TEST("OPCODE_JUMP")
+       pc = 400;
        opcode = `OPCODE_JUMP;
        aluIn1 = 6'b010010;
        aluIn2 = 6'b000000;
+       immediate = 60;
        #2;
        `ASSERT((aluOut == 6'b010010));
-       `ASSERT((zero == 0));
-       `ASSERT((exceptionCode == 0));
-       `FAIL_IF(exceptionCode == 1);
+       `ASSERT((branchTaken == 1));
+       `ASSERT((newpc == 460));
        #2;
     `UNIT_TEST_END
 
@@ -200,8 +189,6 @@ module alu_testbench();
        aluIn2 = 3;
        #2;
        `ASSERT((aluOut == 126));
-       `ASSERT((zero == 0));
-       `ASSERT((exceptionCode == 0));
        #2;
     `UNIT_TEST_END
 
@@ -213,8 +200,6 @@ module alu_testbench();
        aluIn2 = -3;
        #2;
        `ASSERT((aluOut == -126));
-       `ASSERT((zero == 0));
-       `ASSERT((exceptionCode == 0));
        #2;
     `UNIT_TEST_END
 
@@ -222,12 +207,10 @@ module alu_testbench();
        opcode = `OPCODE_ALU_IMM;
        funct3 = `ADDI_FUNCT3;
        aluIn1 = 7;
-       aluIn2 = 3;
+       immediate = 3;
        #2;
        `ASSERT((aluOut == 10));
-       `ASSERT((zero == 0));
-       `ASSERT((exceptionCode == 0));
-       `FAIL_IF(exceptionCode == 1);
+
        #2;
     `UNIT_TEST_END 
 
