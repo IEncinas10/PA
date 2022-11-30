@@ -12,6 +12,7 @@ module D_E_Stage #(
     input wire [WORD_SIZE-1:0] s1, // rs1
     input wire [WORD_SIZE-1:0] s2, // rs2 : Iimm
     input wire [WORD_SIZE-1:0] immediate,
+    input wire [6:0] rob_id,
     input wire stall,
     input wire valid,
     output reg [1:0] instruction_type_out,
@@ -21,7 +22,8 @@ module D_E_Stage #(
     output reg [2:0] funct3_out,
     output reg [WORD_SIZE-1:0] s1_out, // rs1
     output reg [WORD_SIZE-1:0] s2_out, // rs2 : Iimm
-    output reg [WORD_SIZE-1:0] immediate_out
+    output reg [WORD_SIZE-1:0] immediate_out,
+    output reg [6:0] rob_id_out
 );
 
     wire wenable = stall == 0 || valid == 0;
@@ -36,6 +38,7 @@ module D_E_Stage #(
             s1_out = s1;
             s2_out = s2;
             immediate_out = immediate;
+            rob_id_out = rob_id;
         end
     end
 endmodule
