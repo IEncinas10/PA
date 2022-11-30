@@ -29,6 +29,7 @@ module D_E_Stage_testbench();
     logic[WORD_SIZE-1:0] s1_out;
     logic[WORD_SIZE-1:0] s2_out;
     logic[WORD_SIZE-1:0] immediate_out;
+    logic wenable;
 
     D_E_Stage 
     #(
@@ -123,6 +124,7 @@ module D_E_Stage_testbench();
         `ASSERT((s2_out == s2));
         `ASSERT((instruction_type_out == instruction_type));
         `ASSERT((immediate_out == immediate));
+        `ASSERT(dut.wenable);
         #2;
 
     `UNIT_TEST_END
@@ -146,11 +148,12 @@ module D_E_Stage_testbench();
         `ASSERT((s2_out != s2));
         `ASSERT((instruction_type_out != instruction_type));
         `ASSERT((immediate_out != immediate));
+        `ASSERT((dut.wenable == 0));
         #2;
 
     `UNIT_TEST_END
 
-    `UNIT_TEST("TESTCASE_WENABLE_FALSE_2")
+    `UNIT_TEST("TESTCASE_WENABLE_2")
         stall = 0;
         valid = 0;
         opcode = `OPCODE_ALU_IMM;
@@ -162,18 +165,19 @@ module D_E_Stage_testbench();
         immediate = 879;
 
         #2;
-        `ASSERT((opcode_out != opcode));
-        `ASSERT((funct7_out != funct7));
-        `ASSERT((funct3_out != funct3));
-        `ASSERT((s1_out != s1));
-        `ASSERT((s2_out != s2));
-        `ASSERT((instruction_type_out != instruction_type));
-        `ASSERT((immediate_out != immediate));
+        `ASSERT((opcode_out == opcode));
+        `ASSERT((funct7_out == funct7));
+        `ASSERT((funct3_out == funct3));
+        `ASSERT((s1_out == s1));
+        `ASSERT((s2_out == s2));
+        `ASSERT((instruction_type_out == instruction_type));
+        `ASSERT((immediate_out == immediate));
+        `ASSERT(dut.wenable);
         #2;
 
     `UNIT_TEST_END
 
-    `UNIT_TEST("TESTCASE_WENABLE_FALSE_3")
+    `UNIT_TEST("TESTCASE_WENABLE_3")
         stall = 1;
         valid = 0;
         opcode = `OPCODE_ALU_IMM;
@@ -185,13 +189,14 @@ module D_E_Stage_testbench();
         immediate = 879;
 
         #2;
-        `ASSERT((opcode_out != opcode));
-        `ASSERT((funct7_out != funct7));
-        `ASSERT((funct3_out != funct3));
-        `ASSERT((s1_out != s1));
-        `ASSERT((s2_out != s2));
-        `ASSERT((instruction_type_out != instruction_type));
-        `ASSERT((immediate_out != immediate));
+        `ASSERT((opcode_out == opcode));
+        `ASSERT((funct7_out == funct7));
+        `ASSERT((funct3_out == funct3));
+        `ASSERT((s1_out == s1));
+        `ASSERT((s2_out == s2));
+        `ASSERT((instruction_type_out == instruction_type));
+        `ASSERT((immediate_out == immediate));
+        `ASSERT(dut.wenable);
         #2;
 
     `UNIT_TEST_END

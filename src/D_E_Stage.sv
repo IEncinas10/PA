@@ -24,7 +24,7 @@ module D_E_Stage #(
     output reg [WORD_SIZE-1:0] immediate_out
 );
 
-    wire wenable = stall == 0 && valid == 1;
+    wire wenable = stall == 0 || valid == 0;
 
     always @(posedge(clk)) begin
         if (wenable) begin
