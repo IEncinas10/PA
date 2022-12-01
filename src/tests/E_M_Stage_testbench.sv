@@ -19,6 +19,7 @@ module E_M_Stage_testbench();
     logic stall;
     logic valid;
     logic [6:0] rob_id;
+    logic reset;
     logic[1:0] instruction_type_out;
     logic[WORD_SIZE-1:0] pc_out;
     logic[2:0] funct3_out;
@@ -26,6 +27,7 @@ module E_M_Stage_testbench();
     logic[WORD_SIZE-1:0] s2_out;
     logic[6:0] rob_id_out;
     logic wenable;
+    logic valid_out;
 
     E_M_Stage 
     #(
@@ -42,12 +44,14 @@ module E_M_Stage_testbench();
     .stall                (stall),
     .valid                (valid),
     .rob_id               (rob_id),
+    .reset                (reset),
     .instruction_type_out (instruction_type_out),
     .pc_out               (pc_out),
     .funct3_out           (funct3_out),
     .aluResult_out        (aluResult_out),
     .s2_out               (s2_out),
-    .rob_id_out           (rob_id_out)
+    .rob_id_out           (rob_id_out),
+    .valid_out            (valid_out)
     );
 
 
@@ -108,6 +112,7 @@ module E_M_Stage_testbench();
         rob_id = 2;
         stall = 0;
         valid = 1;
+        reset = 0;
         #2;
         `ASSERT(dut.wenable);
         `ASSERT((instruction_type_out == instruction_type));
@@ -115,7 +120,7 @@ module E_M_Stage_testbench();
         `ASSERT((funct3_out == funct3));
         `ASSERT((aluResult_out == aluResult));
         `ASSERT((s2_out == s2));
-
+        `ASSERT(valid_out);
     `UNIT_TEST_END
 
     `UNIT_TEST("TESTCASE_WENABLE_2")
@@ -128,6 +133,7 @@ module E_M_Stage_testbench();
         rob_id = 27;
         stall = 0;
         valid = 0;
+        reset = 0;
         #2;
         `ASSERT(dut.wenable);
         `ASSERT((instruction_type_out == instruction_type));
@@ -135,6 +141,7 @@ module E_M_Stage_testbench();
         `ASSERT((funct3_out == funct3));
         `ASSERT((aluResult_out == aluResult));
         `ASSERT((s2_out == s2));
+        `ASSERT((valid_out == 0));
 
     `UNIT_TEST_END
 
@@ -148,6 +155,7 @@ module E_M_Stage_testbench();
         rob_id = 52;
         stall = 1;
         valid = 0;
+        reset = 0;
         #2;
         `ASSERT(dut.wenable);
         `ASSERT((instruction_type_out == instruction_type));
@@ -168,6 +176,7 @@ module E_M_Stage_testbench();
         rob_id = 24;
         stall = 1;
         valid = 1;
+        reset = 0;
         #2;
         `ASSERT((dut.wenable == 0));
         `ASSERT((instruction_type_out != instruction_type));
@@ -176,6 +185,27 @@ module E_M_Stage_testbench();
         `ASSERT((aluResult_out != aluResult));
         `ASSERT((s2_out != s2));
 
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_RESET")
+
+        instruction_type = 1;
+        pc = 1222;
+        funct3 = 3;
+        aluResult = 7;
+        s2 = 3;
+        rob_id = 2;
+        stall = 0;
+        valid = 1;
+        reset = 1;
+        #2;
+        `ASSERT(dut.wenable);
+        `ASSERT((instruction_type_out == instruction_type));
+        `ASSERT((pc_out == pc));
+        `ASSERT((funct3_out == funct3));
+        `ASSERT((aluResult_out == aluResult));
+        `ASSERT((s2_out == s2));
+        `ASSERT((valid_out == 0));
     `UNIT_TEST_END
 
     `TEST_SUITE_END

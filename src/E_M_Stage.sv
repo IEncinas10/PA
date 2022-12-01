@@ -1,7 +1,7 @@
 `include "../defines.sv"
 
 module E_M_Stage #(
-  parameter WORD_SIZE = `WORD_SIZE 
+  parameter WORD_SIZE = `WORD_SIZE
 ) (
     input wire clk,
     input wire [1:0] instruction_type,
@@ -11,18 +11,31 @@ module E_M_Stage #(
     input wire [WORD_SIZE-1:0] s2,
     input wire stall,
     input wire valid,
+    input wire reset,
     input wire [6:0] rob_id,
     output reg [1:0] instruction_type_out,
     output reg [WORD_SIZE-1:0] pc_out,
     output reg [2:0] funct3_out,
     output reg [WORD_SIZE-1:0] aluResult_out, 
     output reg [WORD_SIZE-1:0] s2_out,
-    output reg [6:0] rob_id_out
+    output reg [6:0] rob_id_out,
+    output reg valid_out
 );
 
-    wire wenable = stall == 0 || valid == 0;
+    reg wenable;
 
     always @(posedge(clk)) begin
+
+
+        if (reset == 1) begin
+            valid_out = 0;
+        end
+        else begin
+            valid_out = valid;
+        end
+
+        wenable = stall == 0 || valid_out == 0;
+
         if (wenable) begin
             instruction_type_out = instruction_type;
             pc_out = pc;

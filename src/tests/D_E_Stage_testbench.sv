@@ -21,6 +21,7 @@ module D_E_Stage_testbench();
     logic [WORD_SIZE-1:0] immediate;
     logic stall;
     logic valid;
+    logic reset;
     logic[1:0] instruction_type_out;
     logic[WORD_SIZE-1:0] pc_out;
     logic[6:0] opcode_out;
@@ -30,6 +31,7 @@ module D_E_Stage_testbench();
     logic[WORD_SIZE-1:0] s2_out;
     logic[WORD_SIZE-1:0] immediate_out;
     logic wenable;
+    logic valid_out;
 
     D_E_Stage 
     #(
@@ -48,6 +50,7 @@ module D_E_Stage_testbench();
     .immediate            (immediate),
     .stall                (stall),
     .valid                (valid),
+    .reset                (reset),
     .instruction_type_out (instruction_type_out),
     .pc_out               (pc_out),
     .opcode_out           (opcode_out),
@@ -55,7 +58,8 @@ module D_E_Stage_testbench();
     .funct3_out           (funct3_out),
     .s1_out               (s1_out),
     .s2_out               (s2_out),
-    .immediate_out        (immediate_out)
+    .immediate_out        (immediate_out),
+    .valid_out            (valid_out)
     );
 
 
@@ -116,6 +120,7 @@ module D_E_Stage_testbench();
         immediate = 89;
         stall = 0;
         valid = 1;
+        reset = 0;
         #2;
         `ASSERT((opcode_out == opcode));
         `ASSERT((funct7_out == funct7));
@@ -125,6 +130,7 @@ module D_E_Stage_testbench();
         `ASSERT((instruction_type_out == instruction_type));
         `ASSERT((immediate_out == immediate));
         `ASSERT(dut.wenable);
+        `ASSERT(valid_out);
         #2;
 
     `UNIT_TEST_END
@@ -139,7 +145,7 @@ module D_E_Stage_testbench();
         s2 = 73;
         instruction_type = 1;
         immediate = 879;
-
+        reset = 0;
         #2;
         `ASSERT((opcode_out != opcode));
         `ASSERT((funct7_out != funct7));
@@ -163,7 +169,7 @@ module D_E_Stage_testbench();
         s2 = 73;
         instruction_type = 1;
         immediate = 879;
-
+        reset = 0;
         #2;
         `ASSERT((opcode_out == opcode));
         `ASSERT((funct7_out == funct7));
@@ -187,7 +193,7 @@ module D_E_Stage_testbench();
         s2 = 73;
         instruction_type = 1;
         immediate = 879;
-
+        reset = 0;
         #2;
         `ASSERT((opcode_out == opcode));
         `ASSERT((funct7_out == funct7));
@@ -197,6 +203,31 @@ module D_E_Stage_testbench();
         `ASSERT((instruction_type_out == instruction_type));
         `ASSERT((immediate_out == immediate));
         `ASSERT(dut.wenable);
+        #2;
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_RESET")
+        opcode = `OPCODE_ALU;
+        funct7 = `ADD_OR_AND_FUNCT7;
+        funct3 = `ADD_FUNCT3;
+        s1 = 23;
+        s2 = 7;
+        instruction_type = 0;
+        immediate = 89;
+        stall = 0;
+        valid = 1;
+        reset = 1;
+        #2;
+        `ASSERT((opcode_out == opcode));
+        `ASSERT((funct7_out == funct7));
+        `ASSERT((funct3_out == funct3));
+        `ASSERT((s1_out == s1));
+        `ASSERT((s2_out == s2));
+        `ASSERT((instruction_type_out == instruction_type));
+        `ASSERT((immediate_out == immediate));
+        `ASSERT(dut.wenable);
+        `ASSERT((valid_out == 0));
         #2;
 
     `UNIT_TEST_END
