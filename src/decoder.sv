@@ -3,11 +3,15 @@
 module decoder #(
     parameter INSTR_SIZE = `WORD_SIZE
 ) (
-    input  wire [INSTR_SIZE-1:0] instr,
-    output wire [`ARCH_REG_INDEX_SIZE-1:0]  rs1,
-    output wire [`ARCH_REG_INDEX_SIZE-1:0]  rs2,
-    output wire [`ARCH_REG_INDEX_SIZE-1:0]   rd,
-    output wire [`WORD_SIZE-1:0]   imm
+    input  wire [INSTR_SIZE-1:0]           instr,
+    output wire [`ARCH_REG_INDEX_SIZE-1:0] rs1,
+    output wire [`ARCH_REG_INDEX_SIZE-1:0] rs2,
+    output wire [`ARCH_REG_INDEX_SIZE-1:0] rd,
+    output wire [`WORD_SIZE-1:0]           imm,
+    output wire [`INSTR_TYPE_SZ-1:0]       instr_type,
+    output wire [6:0]                      opcode,
+    output wire [6:0]                      funct7,
+    output wire [2:0]                      funct3
 );
 
 
@@ -15,7 +19,12 @@ module decoder #(
     //
     //ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)
     //
-    wire [6:0] opcode = instr[6:0];
+    assign opcode = instr[6:0];
+    assign funct7 = instr[31:25];
+    assign funct3 = instr[14:12];
+    assign rd     = instr[11:7];
+    assign rs1    = instr[19:15];
+    assign rs2    = instr[24:20];
 
     //https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf
     //Página 104, listing de todas las instrucciones de RV32I, 
@@ -33,12 +42,13 @@ module decoder #(
     wire instr_I_type  = instr_LOAD || instr_ALU_IMM;
     wire instr_S_type  = instr_STORE;
     wire instr_B_type  = instr_BRANCH;
-
-    // Do we have any U type instr??
-    // Creo que JAL es U_type. REVISAR!!
-    // el manual se contradice..
     wire instr_J_type  = instr_JUMP;
     wire instr_U_type  = 0;
+
+    assign instr_type = (instr_R_type && funct7 == `MUL_FUNCT7) ? `INSTR_TYPE_MUL :
+			(instr_R_type && funct7 != `MUL_FUNCT7) ? `INSTR_TYPE_ALU :
+			(instr_STORE || instr_LOAD)             ? `INSTR_TYPE_MEM : `INSTR_TYPE_NO_WB;
+
 
     // https://github.com/BrunoLevy/learn-fpga/blob/dd7b10b4163a149c2a6aac33f923a4f4fe806d4c/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV/pipeline1.v#L79
     // Page 12 https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf
@@ -54,15 +64,8 @@ module decoder #(
 		 (instr_U_type) ? U_imm : J_imm;
 		 //(instr_J_type) ? J_imm ;
 
-    // Assign this conditionally and if the instruction does not contain
-    // this information just set up as a default value or floating or
-    // whatever??
-    assign rd  = instr[11:7];
-    assign rs1 = instr[19:15];
-    assign rs2 = instr[24:20];
 
-    wire[6:0] funct7 = instr[31:25];
-    wire[3:0] funct3 = instr[14:12];
+
 
     //always@(*) begin
     //end
