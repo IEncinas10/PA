@@ -58,6 +58,24 @@
 `define MEM_SIZE (1 << 16)
 
 
+/*
+ * Internal defines
+ *
+ * They're used to know when to write into the ROB. 
+ *   - ALU writes after Ex stage            (F D E WB) 
+ *   - MEM writes after MEM stage           (F D E M WB)
+ *   - MUL write at the end of the pipeline (F D E M2 M3 M4 M5 WB)
+ *   - The rest don't write into ROB (invalid or jumps)
+ */
+`define INSTR_TYPE_SZ 2
+
+`define INSTR_TYPE_ALU     2'b00
+`define INSTR_TYPE_MEM     2'b01
+`define INSTR_TYPE_MUL     2'b10
+`define INSTR_TYPE_NO_WB   2'b11
+
+
+
 
 
 
