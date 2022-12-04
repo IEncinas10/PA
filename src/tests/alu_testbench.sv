@@ -174,7 +174,6 @@ module alu_testbench();
        aluIn2 = 6'b000000;
        immediate = 60;
        #2;
-       `ASSERT((aluOut == 6'b010010));
        `ASSERT((branchTaken == 1));
        `ASSERT((newpc == 460));
        #2;
