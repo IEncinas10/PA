@@ -1,7 +1,7 @@
 .data
-vectorA: .word 1, 2, 3, 4
-vectorB: .word 0, 0, 0, 0
-length: .word 4
+vectorA: .word 1:128
+vectorB: .word 0:128
+length: .word 128
 .text
 .global vectorcopy
 vectorcopy:

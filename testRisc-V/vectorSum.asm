@@ -2,8 +2,8 @@
 
 .data
 vector:
-	.word 1, 2, 3, 4
-length: .word 4
+	.word 1:128
+length: .word 128
 .section arraysum
 .text
 
