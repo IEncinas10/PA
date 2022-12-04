@@ -25,3 +25,6 @@ endfor:
     	addi  a0, t0, 0    # Move t0 (ret) into a0
     	la a1, length
 	sw a0, 4(a1) ## store in memory the result next to length
+
+end: 
+	j end

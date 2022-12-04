@@ -21,5 +21,6 @@ for: 	# For loop
     	lw    t2, 0(t2)    # Dereference address to get integer
 	sw t2, 0(t4)	   # Copy value in mem
     	addi  t1, t1, 1    # Increment the iterator
-    	jal   zero, for     # Jump back to start of loop (1 backwards)
+    	j for     # Jump back to start of loop (1 backwards)
 endfor:
+	j endfor
