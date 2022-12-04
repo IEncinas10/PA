@@ -10,7 +10,7 @@ module D_E_Stage #(
     input wire [6:0] funct7,
     input wire [2:0] funct3,
     input wire [WORD_SIZE-1:0] s1, // rs1
-    input wire [WORD_SIZE-1:0] s2, // rs2 : Iimm
+    input wire [WORD_SIZE-1:0] s2, // rs2 
     input wire [WORD_SIZE-1:0] immediate,
     input wire [6:0] rob_id,
     input wire stall,
@@ -22,7 +22,7 @@ module D_E_Stage #(
     output reg [6:0] funct7_out,
     output reg [2:0] funct3_out,
     output reg [WORD_SIZE-1:0] s1_out, // rs1
-    output reg [WORD_SIZE-1:0] s2_out, // rs2 : Iimm
+    output reg [WORD_SIZE-1:0] s2_out, // rs2 
     output reg [WORD_SIZE-1:0] immediate_out,
     output reg [6:0] rob_id_out,
     output reg valid_out
