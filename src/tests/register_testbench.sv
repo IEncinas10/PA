@@ -1,7 +1,7 @@
 // Mandatory file to be able to launch SVUT flow
 `include "svut_h.sv"
 // Specify the module to load or on files.f
-`include "register.sv"
+`include "../register.sv"
 `timescale 1 ns / 1 ns
 
 module register_testbench();
