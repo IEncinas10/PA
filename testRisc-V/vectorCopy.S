@@ -25,4 +25,5 @@ for: 	# For loop
 	sw t2, 0(t4)	   # Copy value in mem
     	addi  t1, t1, 1    # Increment the iterator
     	jal   zero, for     # Jump back to start of loop (1 backwards)
+	nop
 endfor:
