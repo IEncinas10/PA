@@ -21,7 +21,7 @@ module alu #(
   wire [WORD_SIZE-1:0] aluSub = aluIn1 - aluIn2; 
   wire [WORD_SIZE-1:0] aluMul = aluIn1 * aluIn2; 
 
-  assign newpc = pc + immediate; //only make sense if branch or jump
+  newpc = pc + immediate; //only make sense if branch or jump
 
   always@(*) begin
     branchTaken = 0; 
