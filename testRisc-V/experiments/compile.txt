@@ -1,0 +1,9 @@
+riscv64-unknown-elf-gcc -O0 mul.c -march=rv32im -mabi=ilp32 -static -nostdlib -ffreestanding -fno-stack-protector -fno-pic -fno-stack-check -nolibc -T linker.ld -S
+
+binario
+
+riscv64-unknown-elf-gcc -O0 mul.c -march=rv32im -mabi=ilp32 -static -nostdlib -ffreestanding -fno-stack-protector -fno-pic -fno-stack-check -nolibc -T linker.ld
+
+
+riscv64-unknown-elf-objcopy -S -O verilog a.out assembly.hex --reverse-bytes=4 --remove-section=.riscv.attributes --remove-section=.comment --verilog-data-width=4
+
