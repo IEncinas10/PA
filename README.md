@@ -1,4 +1,7 @@
 # MIRI - Processor Architecture
+## Verilog
+- [Wire vs regs](https://inst.eecs.berkeley.edu//~cs150/Documents/Nets.pdf)
+- [https://stackoverflow.com/questions/33459048/what-is-the-difference-between-reg-and-wire-in-a-verilog-module#:~:text=wire%20elements%20must%20be%20continuously,it%20can%20store%20some%20value.](https://stackoverflow.com/questions/33459048/what-is-the-difference-between-reg-and-wire-in-a-verilog-module#:~:text=wire%20elements%20must%20be%20continuously,it%20can%20store%20some%20value.)
 
 ## Exceptions
 Protect the wenable for DCache and TLB when exceptions are raised
