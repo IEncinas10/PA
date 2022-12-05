@@ -29,6 +29,7 @@ module decoder_testbench();
     .imm   (imm)
     );
 
+    reg [31:0] MEM [0:1535]; // 1536 4-bytes words = 6 Kb of RAM in total
 
     //00000000 <a>:
     //.text
@@ -71,8 +72,14 @@ module decoder_testbench();
 
     // To dump data for visualization:
      initial begin
+
+   reg[5:0] i;
+
 	 $dumpfile("decoder_testbench.vcd");
 	 $dumpvars(0, decoder_testbench);
+   $readmemh("../../testRisc-V/assembly.hex", MEM);
+   for(i = 0; i < 20; i = i+1)
+      $display("%h",MEM[i]);
      end
 
     // Setup time format when printing with $realtime()
@@ -111,6 +118,12 @@ module decoder_testbench();
     //  Available flag:
     //
     //    - `LAST_STATUS: tied to 1 is last macro did experience a failure, else tied to 0
+
+    `UNIT_TEST("INSTRUCTIONS_FROM_MEM")
+
+    
+
+    `UNIT_TEST_END
 
     `UNIT_TEST("ADD")
 	
