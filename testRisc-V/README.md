@@ -1,7 +1,7 @@
 [https://ecomaikgolf.com/programming/xwgqclvo.html](https://ecomaikgolf.com/programming/xwgqclvo.html)
 
 ```
-riscv64-unknown-elf-gcc -O0 vectorCopy.S -static -nostdlib -ffreestanding -fno-stack-protector -fno-stack-check -nolibc -T linker.ld
+riscv64-unknown-elf-gcc -O0 vectorCopy.S -march=rv32im -mabi=ilp32, -static -nostdlib -ffreestanding -fno-stack-protector -fno-stack-check -nolibc -T linker.ld
 ```
 
 ```
