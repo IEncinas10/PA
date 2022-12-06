@@ -7,7 +7,7 @@ module M_WB_Stage #(
     input wire [1:0] instruction_type,
     input wire [WORD_SIZE-1:0] pc,
     input wire exception,
-    input wire [WORD_SIZE-1:0]virtual_addr_exception,
+    input wire [WORD_SIZE-1:0] virtual_addr_exception,
     input wire [WORD_SIZE-1:0] aluResult, 
     input wire valid,
     input wire reset,
@@ -15,7 +15,7 @@ module M_WB_Stage #(
     output reg [1:0] instruction_type_out,
     output reg [WORD_SIZE-1:0] pc_out,
     output reg exception_out,
-    output reg [WORD_SIZE-1:0]virtual_addr_exception_out,
+    output reg [WORD_SIZE-1:0] virtual_addr_exception_out,
     output reg [WORD_SIZE-1:0] aluResult_out, 
     output reg [6:0] rob_id_out,
     output reg valid_out
