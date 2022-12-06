@@ -75,6 +75,8 @@
 `define INSTR_TYPE_NO_WB   2'b11
 
 
+`define PAGE_WIDTH 20
+`define TLB_ENTRIES 512
 
 
 
