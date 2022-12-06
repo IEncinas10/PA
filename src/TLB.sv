@@ -29,7 +29,6 @@ module TLB #(
     
 
     reg inserted;
-    reg present;
 
     always @(*) begin
         hit = 0;
