@@ -27,7 +27,7 @@ module E_M_Registers #(
     initial begin
         instruction_type_out = 0;
         pc_out = 0;
-        funct3_out = =;
+        funct3_out = 0;
         aluResult_out = 0;
         s2_out = 0;
         rob_id_out = 0; 
