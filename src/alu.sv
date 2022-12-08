@@ -21,10 +21,11 @@ module alu #(
   wire [WORD_SIZE-1:0] aluSub = aluIn1 - aluIn2; 
   wire [WORD_SIZE-1:0] aluMul = aluIn1 * aluIn2; 
 
-  newpc = pc + immediate; //only make sense if branch or jump. Also used for AUIPC
 
   always@(*) begin
     branchTaken = 0; 
+    newpc = pc + immediate; //only make sense if branch or jump. Also used for AUIPC
+
     case (opcode) 
 
      `OPCODE_ALU: begin
