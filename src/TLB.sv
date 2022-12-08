@@ -13,6 +13,7 @@ module TLB #(
     reg [N] [WIDTH-1:0] virtual_addresses;
     reg [N] [WIDTH-1:0] physical_addresses;
     reg [N] valid;
+    reg inserted;
     
     integer i;
 
@@ -28,7 +29,7 @@ module TLB #(
 
     
 
-    reg inserted;
+    
 
     always @(*) begin
         hit = 0;
