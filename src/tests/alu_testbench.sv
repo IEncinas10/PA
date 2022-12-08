@@ -213,6 +213,16 @@ module alu_testbench();
        #2;
     `UNIT_TEST_END 
 
+    `UNIT_TEST("AUIPC")
+       opcode = `OPCODE_AUIPC;
+       pc = 42;
+
+       immediate = 8;
+       #2;
+       `ASSERT((aluOut == 50));
+       #2;
+    `UNIT_TEST_END 
+
 
     `TEST_SUITE_END
 
