@@ -1,10 +1,11 @@
 `include "../defines.sv"
 
 module D_E_Registers #(
-  parameter WORD_SIZE = `WORD_SIZE 
+  parameter WORD_SIZE = `WORD_SIZE,
+  parameter INSTR_TYPE_SZ = `INSTR_TYPE_SZ
 ) (
     input wire clk,
-    input wire [1:0] instruction_type,
+    input wire [INSTR_TYPE_SZ-1:0] instruction_type,
     input wire [WORD_SIZE-1:0] pc,
     input wire [6:0] opcode,
     input wire [6:0] funct7,
@@ -16,7 +17,7 @@ module D_E_Registers #(
     input wire stall,
     input wire valid,
     input wire reset,
-    output reg [1:0] instruction_type_out,
+    output reg [INSTR_TYPE_SZ-1:0] instruction_type_out,
     output reg [WORD_SIZE-1:0] pc_out,
     output reg [6:0] opcode_out,
     output reg [6:0] funct7_out,
