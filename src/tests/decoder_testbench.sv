@@ -329,6 +329,17 @@ module decoder_testbench();
 	`FAIL_IF(dut.imm + 'h34 != 'h1c);
     `UNIT_TEST_END
 
+	`UNIT_TEST("AUIPC")
+	
+	instr = 'h00008517;
+
+	#2;
+	`FAIL_IF(dut.opcode != `OPCODE_AUIPC);
+	`FAIL_IF(rd != 10);
+	`FAIL_IF_NOT(dut.instr_U_type);
+	//`FAIL_IF(dut.imm + 'h28 != 'h1c);
+    `UNIT_TEST_END
+
     `TEST_SUITE_END
 
 endmodule
