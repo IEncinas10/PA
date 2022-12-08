@@ -68,12 +68,13 @@
  *   - MUL write at the end of the pipeline (F D E M2 M3 M4 M5 WB)
  *   - The rest don't write into ROB (invalid or jumps)
  */
-`define INSTR_TYPE_SZ 2
+`define INSTR_TYPE_SZ 3
 
-`define INSTR_TYPE_ALU     2'b00
-`define INSTR_TYPE_MEM     2'b01
-`define INSTR_TYPE_MUL     2'b10
-`define INSTR_TYPE_NO_WB   2'b11
+`define INSTR_TYPE_ALU     3'b000
+`define INSTR_TYPE_MUL     3'b001
+`define INSTR_TYPE_NO_WB   3'b010
+`define INSTR_TYPE_STORE   3'b011
+`define INSTR_TYPE_LOAD    3'b100
 
 
 `define PAGE_WIDTH 20

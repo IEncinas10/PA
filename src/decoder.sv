@@ -48,7 +48,8 @@ module decoder #(
 
     assign instr_type = (instr_R_type && funct7 == `MUL_FUNCT7) ? `INSTR_TYPE_MUL :
 			((instr_R_type && funct7 != `MUL_FUNCT7) || instr_AUIPC) ? `INSTR_TYPE_ALU :
-			(instr_STORE || instr_LOAD)             ? `INSTR_TYPE_MEM : `INSTR_TYPE_NO_WB;
+			instr_LOAD ? `INSTR_TYPE_LOAD : 
+            instr_STORE ? `INSTR_TYPE_STORE : `INSTR_TYPE_NO_WB;
 
 
     // https://github.com/BrunoLevy/learn-fpga/blob/dd7b10b4163a149c2a6aac33f923a4f4fe806d4c/FemtoRV/TUTORIALS/FROM_BLINKER_TO_RISCV/pipeline1.v#L79
