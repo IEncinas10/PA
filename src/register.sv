@@ -10,6 +10,12 @@ module register #(
     input wire [WIDTH-1:0] din, 
     output reg [WIDTH-1:0] dout
 );
+
+initial begin
+    dout <= INIT;
+end
+
+
 always @(posedge(clk)) begin
     if (rst == 1) begin
 	dout <= INIT;

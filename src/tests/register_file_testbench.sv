@@ -58,8 +58,8 @@ module register_file_testbench();
     task setup(msg="");
     begin
         // setup() runs when a test begins
-	rst = 1;
-	#2; rst = 0;
+	//rst = 1;
+	//#2; rst = 0;
     end
     endtask
 
@@ -116,12 +116,10 @@ module register_file_testbench();
 	reg_in = 15;
 	a = 15;
 	b = 15;
-	din = 2047;
+	din = 2048;
 	#2 
-	`FAIL_IF(din == data_a);
-	`FAIL_IF(din == data_b);
-	`FAIL_IF(data_a != 0);
-	`FAIL_IF(data_b != 0);
+	`FAIL_IF(data_a != 2047);
+	`FAIL_IF(data_b != 2047);
 	#2;
 
         // Describe here the testcase scenario
