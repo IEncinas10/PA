@@ -80,7 +80,7 @@
 `define PAGE_WIDTH 20
 `define TLB_ENTRIES 512
 
-`define ROB_ENTRY_WIDTH 7 //TODOlo he puesto a 7 de momento por tener un numero
+`define ROB_ENTRY_WIDTH 4 
 
 
 
