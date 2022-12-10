@@ -56,7 +56,7 @@
  *
  */
 `define MEM_DELAY_CYCLES 5
-`define MEM_SIZE (1 << 16)
+`define MEM_SIZE (1 << 18)
 
 
 /*
