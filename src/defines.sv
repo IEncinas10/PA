@@ -80,8 +80,17 @@
 `define PAGE_WIDTH 20
 `define TLB_ENTRIES 512
 
-`define ROB_ENTRY_WIDTH 4 
+// Think about maximum latency: 
+// load (cache miss)
+// addi x(N)
+// how many entries do we need to not stall?
+`define ROB_NUM_ENTRIES 14
+`define ROB_ENTRY_WIDTH $clog2(`ROB_NUM_ENTRIES)
 
+// Invalid rob id (for bubbles or jumps) we have to
+// assign them some value that nobody is going to 
+// consume so that our bypass logic works
+`define ROB_INVALID_ENTRY 15
 
 
 
