@@ -53,6 +53,6 @@ always @(posedge(clk)) begin
     end
 end
 
-    assign full = head == (tail + 1) % ROB_ENTRIES;
+    assign full = head == tail % ROB_ENTRIES;
 
 endmodule
