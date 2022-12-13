@@ -11,6 +11,7 @@ module M4_M5_Registers #(
     input wire [WORD_SIZE-1:0] result,
     input wire [ROB_ENTRY_WITDH-1:0] rob_id,
     input wire valid,
+    input wire satll,
     input wire reset,
     output reg [INSTR_TYPE_SZ-1:0] instruction_type_out,
     output reg [WORD_SIZE-1:0] pc_out,
@@ -19,12 +20,15 @@ module M4_M5_Registers #(
     output reg valid_out
 );
 
+    reg wenable;
+
     initial begin
         instruction_type_out = 0;
         pc_out = 0;
         result_out = 0;
         rob_id_out = 0;
         valid_out = 0;
+        wenable = 0;
     end
 
     always @(posedge(clk)) begin
@@ -36,10 +40,14 @@ module M4_M5_Registers #(
             valid_out = valid;
         end
 
-        instruction_type_out = instruction_type;
-        pc_out = pc;
-        result_out = result;
-        rob_id_out = rob_id;
+        wenable = stall == 0 || valid_out == 0;
+        
+        if(wenable) begin
+            instruction_type_out = instruction_type;
+            pc_out = pc;
+            result_out = result;
+            rob_id_out = rob_id;
+        end
         
     end
 endmodule

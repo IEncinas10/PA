@@ -10,6 +10,7 @@ module M_M3_Registers #(
     input wire [WORD_SIZE-1:0] pc,
     input wire [WORD_SIZE-1:0] aluResult,
     input wire valid,
+    input wire stall,
     input wire reset,
     input wire [ROB_ENTRY_WIDTH-1:0] rob_id,
     output reg [INSTR_TYPE_SZ-1:0] instruction_type_out,
@@ -19,12 +20,15 @@ module M_M3_Registers #(
     output reg valid_out
 );
 
+    reg wenable;
+
     initial begin
         instruction_type_out = 0;
         pc_out = 0;
         aluResult_out = 0;
         rob_id_out = 0;
         valid_out = 0;
+        wenable = 0;
     end
 
     always @(posedge(clk)) begin
@@ -36,10 +40,13 @@ module M_M3_Registers #(
             valid_out = valid;
         end
 
-        instruction_type_out = instruction_type;
-        pc_out = pc;
-        aluResult_out = aluResult;
-        rob_id_out = rob_id;
+        wenable = stall == 0 || valid_out == 0;
 
+        if(wenable) begin
+            instruction_type_out = instruction_type;
+            pc_out = pc;
+            aluResult_out = aluResult;
+            rob_id_out = rob_id;
+        end
     end
 endmodule
