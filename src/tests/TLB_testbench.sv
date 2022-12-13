@@ -90,13 +90,15 @@ module TLB_testbench();
         virtual_page = 6;
 	#0.00000001
         `ASSERT((dut.hit == 0));
-        #2
+	#2;
     `UNIT_TEST_END
 
     `UNIT_TEST("TESTCASE_TLB_HIT")
 
+	#1;
         virtual_page = 2;
-        #1
+        #(2 * `TLB_DELAY)
+	#0.01;
         `ASSERT((dut.hit==1));
         `ASSERT((physical_page_out == virtual_page + 1));
         #2
@@ -105,8 +107,10 @@ module TLB_testbench();
     `UNIT_TEST("Exception")
 
     // Page 0 raises an exception, like dereferencing NULL
+	#2;
         virtual_page = 0;
-        #2
+        #(2 * `TLB_DELAY)
+	#0.01;
         `ASSERT((exception == 1));
     `UNIT_TEST_END
     

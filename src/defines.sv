@@ -79,6 +79,8 @@
 
 `define PAGE_WIDTH 20
 `define TLB_ENTRIES 512
+`define TLB_DELAY 5 
+`define TLB_DELAY_WIDTH $clog2(`TLB_DELAY)
 
 // Think about maximum latency: 
 // load (cache miss)

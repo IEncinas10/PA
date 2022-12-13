@@ -2,7 +2,9 @@
 
 module TLB #(
   parameter N = `TLB_ENTRIES,  //Number of entries of TLB
-  parameter WIDTH = `PAGE_WIDTH
+  parameter WIDTH = `PAGE_WIDTH,
+  parameter TLB_DELAY = `TLB_DELAY,
+  parameter TLB_DELAY_WIDTH = `TLB_DELAY_WIDTH
 ) (
     input wire clk,
     input wire [WIDTH-1:0] virtual_page,
@@ -15,6 +17,9 @@ module TLB #(
     reg [N] [WIDTH-1:0] physical_addresses;
     reg [N] valid;
     reg inserted;
+
+    // Artificial delay for doing translations
+    reg [TLB_DELAY_WIDTH-1:0] delay;
     
     integer i;
 
@@ -41,20 +46,23 @@ module TLB #(
             end
         end
 
+	delay = TLB_DELAY;
 	exception = virtual_page == 0 && hit;
     end
+
 
     always @(posedge(clk)) begin
         inserted = 0; 
         if(hit == 0) begin 
             for (i = 0; i < N; i = i + 1) begin
-                if(valid[i] == 0 && inserted == 0) begin
+                if(valid[i] == 0 && inserted == 0 && delay == 0) begin
                     virtual_addresses[i] = virtual_page;
                     physical_addresses[i] = virtual_page + 1;
                     valid[i] = 1;
                     inserted = 1;
                 end
             end
+	    delay = delay - 1;
         end
     end
 
