@@ -7,6 +7,7 @@ module TLB #(
     input wire clk,
     input wire [WIDTH-1:0] virtual_page,
     output reg [WIDTH-1:0] physical_page_out,
+    output reg exception,
     output reg hit
 );
 
@@ -39,6 +40,8 @@ module TLB #(
                 physical_page_out = physical_addresses[i];
             end
         end
+
+	exception = virtual_page == 0 && hit;
     end
 
     always @(posedge(clk)) begin

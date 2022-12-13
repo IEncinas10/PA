@@ -15,6 +15,7 @@ module TLB_testbench();
     logic [WIDTH-1:0] virtual_page;
     logic[WIDTH-1:0] physical_page_out;
     logic hit;
+    logic exception;
 
     TLB 
     #(
@@ -26,7 +27,8 @@ module TLB_testbench();
     .clk               (clk),
     .virtual_page      (virtual_page),
     .physical_page_out (physical_page_out),
-    .hit           (hit)
+    .hit           (hit),
+    .exception (exception)
     );
 
 
@@ -86,7 +88,7 @@ module TLB_testbench();
     `UNIT_TEST("TESTCASE_TLB_MISS_2")
 
         virtual_page = 6;
-        #1
+	#0.00000001
         `ASSERT((dut.hit == 0));
         #2
     `UNIT_TEST_END
@@ -100,6 +102,13 @@ module TLB_testbench();
         #2
     `UNIT_TEST_END
 
+    `UNIT_TEST("Exception")
+
+    // Page 0 raises an exception, like dereferencing NULL
+        virtual_page = 0;
+        #2
+        `ASSERT((exception == 1));
+    `UNIT_TEST_END
     
 
     `TEST_SUITE_END
