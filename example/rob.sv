@@ -13,6 +13,7 @@ module rob #(
 
     reg [$clog2(ROB_ENTRIES)-1:0] head;
     reg [$clog2(ROB_ENTRIES)-1:0] tail;
+    reg [$clog2(ROB_ENTRIES)-1:0] next_tail;
     reg [ROB_ENTRIES-1:0] entry_ready;
 
     reg [$clog2(ROB_ENTRIES)-1:0] first_ready;
@@ -25,6 +26,7 @@ always @(posedge(clk)) begin
     if (rst == 1) begin
 	head <= INIT;
 	tail <= INIT;
+	next_tail <= INIT + 1;
 	for(i = 0; i < ROB_ENTRIES; i++) begin
 	    entry_ready[i] <= INIT;
 	end
@@ -39,8 +41,9 @@ always @(posedge(clk)) begin
 	    head = (head + 1) % ROB_ENTRIES;
 	end
 
-	if(wenable && (head != (tail + 1) % ROB_ENTRIES)) begin
+	if(wenable && !full) begin
 	    tail <= (tail + 1) % ROB_ENTRIES;
+	    next_tail <= (next_tail + 1) % ROB_ENTRIES;
 	end
     end
 
@@ -53,6 +56,6 @@ always @(posedge(clk)) begin
     end
 end
 
-    assign full = head == tail % ROB_ENTRIES;
+    assign full = (head == next_tail);
 
 endmodule
