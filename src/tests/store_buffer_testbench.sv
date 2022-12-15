@@ -153,7 +153,50 @@ module store_buffer_testbench();
     
     `UNIT_TEST_END
 
-    `UNIT_TEST("TESTCASE_NEW_ENTRY2")
+    `UNIT_TEST("TESTCASE_PERMISSION")
+    
+    rst = 0;
+    store = 0;
+    store_permission = 1;
+    store_permission_rob_id = 0;
+    TLBexception = 0;
+    store_success = 0;
+
+
+    #2
+    `ASSERT((dut.tail != dut.head));
+    `ASSERT((dut.value[0] == 26));
+    `ASSERT((dut.physical_addresses[0] == 4));
+    `ASSERT((dut.size[0] == `FULL_WORD_SIZE));
+    `ASSERT((dut.can_store[0] == 1));
+
+    `ASSERT((cache_store_value == 26));
+    `ASSERT((cache_physical_address == 4));
+    `ASSERT((cache_wenable == 1));
+    `ASSERT((cache_store_size == `FULL_WORD_SIZE));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_STORE_SUCCESS")
+    
+    rst = 0;
+    store_success = 1;
+
+
+    #2
+    `ASSERT((dut.tail != dut.head));
+    `ASSERT((dut.value[0] != 26));
+    `ASSERT((dut.physical_addresses[0] != 4));
+    `ASSERT((dut.size[0] != `FULL_WORD_SIZE));
+    `ASSERT((dut.can_store[0] != 1));
+
+    `ASSERT((dut.head + 1 == dut.tail));
+
+    
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_RST")
     
     rst = 1;
     store_value = 2;
@@ -175,6 +218,8 @@ module store_buffer_testbench();
     `ASSERT((dut.can_store[0] == 0));
     
     `UNIT_TEST_END
+
+    
 
     `TEST_SUITE_END
 
