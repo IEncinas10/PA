@@ -131,6 +131,48 @@ module store_buffer_testbench();
     `ASSERT((dut.physical_addresses[0] == 4));
     `ASSERT((dut.size[0] == `FULL_WORD_SIZE));
     `ASSERT((dut.can_store[0] == 0));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_NEW_ENTRY2")
+    
+    rst = 0;
+    store_value = 2;
+    physical_address = 8;
+    input_rob_id = 2;
+    op_size = `BYTE_SIZE;
+    store = 1;
+    TLBexception = 0;
+
+    #2
+    `ASSERT((dut.tail != dut.head));
+    `ASSERT((dut.value[1] == 2));
+    `ASSERT((dut.physical_addresses[1] == 8));
+    `ASSERT((dut.size[1] == `BYTE_SIZE));
+    `ASSERT((dut.can_store[1] == 0));
+    
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_NEW_ENTRY2")
+    
+    rst = 1;
+    store_value = 2;
+    physical_address = 8;
+    input_rob_id = 2;
+    op_size = `BYTE_SIZE;
+    store = 1;
+    TLBexception = 0;
+
+    #2
+    `ASSERT((dut.tail == dut.head));
+    `ASSERT((dut.value[1] == 0));
+    `ASSERT((dut.physical_addresses[1] == 0));
+    `ASSERT((dut.size[1] == 0));
+    `ASSERT((dut.can_store[1] == 0));
+    `ASSERT((dut.value[0] == 0));
+    `ASSERT((dut.physical_addresses[0] == 0));
+    `ASSERT((dut.size[0] == 0));
+    `ASSERT((dut.can_store[0] == 0));
     
     `UNIT_TEST_END
 
