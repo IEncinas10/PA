@@ -42,7 +42,6 @@ reg [N] [SIZE_WRITE_WIDTH-1:0] 	size;
 reg [$clog2(N)-1:0] 			head;
 reg [$clog2(N)-1:0]				tail;
 
-reg full_sb;
 reg found;
 reg load_size;
 
@@ -57,7 +56,6 @@ initial begin
 	bypass_possible 	<= INIT;
 	head 				<= INIT;
 	tail 				<= INIT;
-	full_sb				<= INIT;
 	load_size 			<= INIT;
 
 	for(i = 0; i < N; i = i + 1) begin
@@ -115,8 +113,7 @@ always @(*) begin
 		end
 	end
 
-	full_sb = head == tail % N;
-	full = full_sb;
+	full = head == tail % N;
 end
 
 always @(posedge(clk)) begin
@@ -152,7 +149,7 @@ always @(posedge(clk)) begin
 			head = (head + 1) % N; //update de head
 		end
 
-		if(store && !full_sb && !TLBexception) begin //si metemos al sb y no esta lleno
+		if(store && !full && !TLBexception) begin //si metemos al sb y no esta lleno
 			physical_addresses[tail] = physical_address;
 			rob_id[tail] = input_rob_id;
 			value[tail] = store_value;
