@@ -9,7 +9,7 @@ module store_buffer #(
     parameter INIT             = 0
 ) (
     input wire                        clk,
-    input wire                        reset,
+    input wire                        rst,
     /* Sources for new entries */
     input wire [WORD_SIZE-1:0] 	      store_value,
     input wire [WIDTH-1:0] 	      physical_address,
@@ -46,6 +46,8 @@ module store_buffer #(
     reg found;
     reg [SIZE_WRITE_WIDTH-1:0] load_size;
 
+	reg [WORD_SIZE-1:0] aux_value;
+
     integer i;
 
     initial begin
@@ -66,7 +68,8 @@ module store_buffer #(
 	    bypass_possible = 0;
 	    bypass_needed = 0;
 	    /* This for takes the last match */
-	    for (int i = head; i != tail; i = (i + 1) % N) begin
+	    for (i = head; i != tail; i = (i + 1) % N) begin
+		aux_value = value[i];
 		if(load_size == `FULL_WORD_SIZE) begin
 		    if(physical_addresses[i] == physical_address && size[i] == `FULL_WORD_SIZE) begin
 			bypass_value = value[i];
@@ -78,19 +81,19 @@ module store_buffer #(
 		    end
 		end else if (load_size == `BYTE_SIZE) begin
 		    if(physical_addresses[i] == physical_address) begin
-			bypass_value = {{24{1'b0}}, value[i][7:0]};
+			bypass_value = {{24{1'b0}}, aux_value[7:0]};
 			bypass_possible = 1;
 			bypass_needed = 1;
 		    end else if((physical_address - 1) == physical_addresses[i] && size[i] == `BYTE_SIZE) begin
-			bypass_value = {{24{1'b0}}, value[i][15:8]};
+			bypass_value = {{24{1'b0}}, aux_value[15:8]};
 			bypass_possible = 1;
 			bypass_needed = 1;
 		    end else if((physical_address - 2) == physical_addresses[i] && size[i] == `BYTE_SIZE) begin
-			bypass_value = {{24{1'b0}}, value[i][23:16]};
+			bypass_value = {{24{1'b0}}, aux_value[23:16]};
 			bypass_possible = 1;
 			bypass_needed = 1;
 		    end else if((physical_address - 3) == physical_addresses[i] && size[i] == `BYTE_SIZE) begin
-			bypass_value = {{24{1'b0}}, value[i][31:24]};
+			bypass_value = {{24{1'b0}}, aux_value[31:24]};
 			bypass_possible = 1;
 			bypass_needed = 1;
 		    end
@@ -98,7 +101,7 @@ module store_buffer #(
 	    end
 	end
 
-	full = head == tail % N;
+	full = head == (tail + 1) % N;
     end
 
     always @(posedge(clk)) begin
@@ -138,8 +141,10 @@ module store_buffer #(
     end
 
     task reset;
-	value <= INIT;
-	physical_address <= INIT;
+	cache_store_value <= INIT;
+	cache_physical_address <= INIT;
+	cache_wenable <= INIT;
+	cache_store_size <= INIT;
 	full 		 <= INIT;
 	bypass_value   	 <= INIT;
 	bypass_needed 	 <= INIT;

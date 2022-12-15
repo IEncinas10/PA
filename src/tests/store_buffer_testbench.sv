@@ -2,7 +2,7 @@
 `include "svut_h.sv"
 // Specify the module to load or on files.f
 `include "store_buffer.sv"
-`timescale 1 ns / 100 ps
+`timescale 1 ns / 1 ns
 
 module store_buffer_testbench();
 
@@ -47,7 +47,7 @@ module store_buffer_testbench();
     dut 
     (
     .clk                     (clk),
-    .rst                   (rst),
+    .rst                     (rst),
     .store_value             (store_value),
     .physical_address        (physical_address),
     .input_rob_id            (input_rob_id),
@@ -116,17 +116,22 @@ module store_buffer_testbench();
     //    - `LAST_STATUS: tied to 1 is last macro did experience a failure, else tied to 0
 
     `UNIT_TEST("TESTCASE_NEW_ENTRY")
-
+    
     rst = 0;
     store_value = 26;
-    physical_address = 0;
+    physical_address = 4;
     input_rob_id = 0;
     op_size = `FULL_WORD_SIZE;
     store = 1;
+    TLBexception = 0;
 
     #2
-    ASSERT((dut.tail != dut.head));
-
+    `ASSERT((dut.tail != dut.head));
+    `ASSERT((dut.value[0] == 26));
+    `ASSERT((dut.physical_addresses[0] == 4));
+    `ASSERT((dut.size[0] == `FULL_WORD_SIZE));
+    `ASSERT((dut.can_store[0] == 0));
+    
     `UNIT_TEST_END
 
     `TEST_SUITE_END
