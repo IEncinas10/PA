@@ -11,17 +11,23 @@ module register #(
     output reg [WIDTH-1:0] dout
 );
 
-initial begin
-    dout <= INIT;
-end
+    initial begin
+	reset();
+    end
 
 
-always @(posedge(clk)) begin
-    if (rst == 1) begin
-	dout <= INIT;
+    always @(posedge(clk)) begin
+	if (rst == 1) begin
+	    reset();
+	end
+	else if(wenable) begin
+	    dout <= din;
+	end
     end
-    else if(wenable) begin
-	dout <= din;
-    end
-end
+
+    task reset;
+	begin
+	    dout <= INIT;
+	end
+    endtask
 endmodule
