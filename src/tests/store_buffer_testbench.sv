@@ -153,6 +153,161 @@ module store_buffer_testbench();
     
     `UNIT_TEST_END
 
+    `UNIT_TEST("TESTCASE_NEW_ENTRY_3")
+    
+    rst = 0;
+    store_value = 4294967295;
+    physical_address = 12;
+    input_rob_id = 0;
+    op_size = `FULL_WORD_SIZE;
+    store = 1;
+    TLBexception = 0;
+
+    #2
+    `ASSERT((dut.tail != dut.head));
+    `ASSERT((dut.value[2] == 4294967295));
+    `ASSERT((dut.physical_addresses[2] == 12));
+    `ASSERT((dut.size[2] == `FULL_WORD_SIZE));
+    `ASSERT((dut.can_store[2] == 0));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LW_SW")
+    
+    rst = 0;
+    physical_address = 4;
+    store = 0;
+    op_size = `FULL_WORD_SIZE;
+    store_success = 0;
+
+
+    #2
+    
+    `ASSERT((bypass_value == 26));
+    `ASSERT((bypass_needed == 1));
+    `ASSERT((bypass_possible == 1));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LW_SB")
+    
+    rst = 0;
+    physical_address = 8;
+    store = 0;
+    op_size = `FULL_WORD_SIZE;
+    store_success = 0;
+
+
+    #2
+    //bypass_value not checked, it wont have any usefull data for us...
+    `ASSERT((bypass_needed == 1));
+    `ASSERT((bypass_possible == 0));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_NO_HIT")
+    
+    rst = 0;
+    physical_address = 48;
+    store = 0;
+    op_size = `FULL_WORD_SIZE;
+    store_success = 0;
+
+    #2
+    `ASSERT((bypass_needed == 0));
+    `ASSERT((bypass_possible == 0));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LB_SB")
+    
+    rst = 0;
+    physical_address = 8;
+    store = 0;
+    op_size = `BYTE_SIZE;
+    store_success = 0;
+
+    #2
+    `ASSERT((bypass_value == 2));
+    `ASSERT((bypass_needed == 1));
+    `ASSERT((bypass_possible == 1));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LB_SB_NO_HIT")
+    
+    rst = 0;
+    physical_address = 9;
+    store = 0;
+    op_size = `BYTE_SIZE;
+    store_success = 0;
+
+    #2
+    `ASSERT((bypass_needed == 0));
+    `ASSERT((bypass_possible == 0));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LB_SW_POS0")
+    
+    rst = 0;
+    physical_address = 12;
+    store = 0;
+    op_size = `BYTE_SIZE;
+    store_success = 0;
+
+    #2
+    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_needed == 1));
+    `ASSERT((bypass_possible == 1));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LB_SW_POS1")
+    
+    rst = 0;
+    physical_address = 13;
+    store = 0;
+    op_size = `BYTE_SIZE;
+    store_success = 0;
+
+    #2
+    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_needed == 1));
+    `ASSERT((bypass_possible == 1));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LB_SW_POS2")
+    
+    rst = 0;
+    physical_address = 14;
+    store = 0;
+    op_size = `BYTE_SIZE;
+    store_success = 0;
+
+    #2
+    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_needed == 1));
+    `ASSERT((bypass_possible == 1));
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_BYPASS_LB_SW_POS3")
+    
+    rst = 0;
+    physical_address = 15;
+    store = 0;
+    op_size = `BYTE_SIZE;
+    store_success = 0;
+
+    #2
+    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_needed == 1));
+    `ASSERT((bypass_possible == 1));
+
+    `UNIT_TEST_END
+
     `UNIT_TEST("TESTCASE_PERMISSION")
     
     rst = 0;
@@ -190,12 +345,11 @@ module store_buffer_testbench();
     `ASSERT((dut.size[0] != `FULL_WORD_SIZE));
     `ASSERT((dut.can_store[0] != 1));
 
-    `ASSERT((dut.head + 1 == dut.tail));
-
-    
+    `ASSERT((dut.head + 2 == dut.tail));
 
     `UNIT_TEST_END
 
+    
     `UNIT_TEST("TESTCASE_RST")
     
     rst = 1;

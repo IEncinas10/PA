@@ -84,15 +84,15 @@ module store_buffer #(
 			bypass_value = {{24{1'b0}}, aux_value[7:0]};
 			bypass_possible = 1;
 			bypass_needed = 1;
-		    end else if((physical_address - 1) == physical_addresses[i] && size[i] == `BYTE_SIZE) begin
+		    end else if((physical_address - 1) == physical_addresses[i] && size[i] == `FULL_WORD_SIZE) begin
 			bypass_value = {{24{1'b0}}, aux_value[15:8]};
 			bypass_possible = 1;
 			bypass_needed = 1;
-		    end else if((physical_address - 2) == physical_addresses[i] && size[i] == `BYTE_SIZE) begin
+		    end else if((physical_address - 2) == physical_addresses[i] && size[i] == `FULL_WORD_SIZE) begin
 			bypass_value = {{24{1'b0}}, aux_value[23:16]};
 			bypass_possible = 1;
 			bypass_needed = 1;
-		    end else if((physical_address - 3) == physical_addresses[i] && size[i] == `BYTE_SIZE) begin
+		    end else if((physical_address - 3) == physical_addresses[i] && size[i] == `FULL_WORD_SIZE) begin
 			bypass_value = {{24{1'b0}}, aux_value[31:24]};
 			bypass_possible = 1;
 			bypass_needed = 1;
