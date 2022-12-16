@@ -156,7 +156,7 @@ module store_buffer_testbench();
     `UNIT_TEST("TESTCASE_NEW_ENTRY_3")
     
     rst = 0;
-    store_value = 4294967295;
+    store_value = 32'h03020100;
     physical_address = 12;
     input_rob_id = 0;
     op_size = `FULL_WORD_SIZE;
@@ -165,7 +165,7 @@ module store_buffer_testbench();
 
     #2
     `ASSERT((dut.tail != dut.head));
-    `ASSERT((dut.value[2] == 4294967295));
+    `ASSERT((dut.value[2] == 32'h03020100));
     `ASSERT((dut.physical_addresses[2] == 12));
     `ASSERT((dut.size[2] == `FULL_WORD_SIZE));
     `ASSERT((dut.can_store[2] == 0));
@@ -257,7 +257,7 @@ module store_buffer_testbench();
     store_success = 0;
 
     #2
-    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_value == 0));
     `ASSERT((bypass_needed == 1));
     `ASSERT((bypass_possible == 1));
 
@@ -272,7 +272,7 @@ module store_buffer_testbench();
     store_success = 0;
 
     #2
-    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_value == 1));
     `ASSERT((bypass_needed == 1));
     `ASSERT((bypass_possible == 1));
 
@@ -287,7 +287,7 @@ module store_buffer_testbench();
     store_success = 0;
 
     #2
-    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_value == 2));
     `ASSERT((bypass_needed == 1));
     `ASSERT((bypass_possible == 1));
 
@@ -302,7 +302,7 @@ module store_buffer_testbench();
     store_success = 0;
 
     #2
-    `ASSERT((bypass_value == 255));
+    `ASSERT((bypass_value == 3));
     `ASSERT((bypass_needed == 1));
     `ASSERT((bypass_possible == 1));
 
