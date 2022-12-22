@@ -12,6 +12,7 @@ module forward_unit #(
 	input wire rob_s2_valid,
 	input wire [ROB_ENTRY_WIDTH-1:0] rs1_rob_entry,
 	input wire [ROB_ENTRY_WIDTH-1:0] rs2_rob_entry,
+	input wire rs1_rob_entry_valid
 	input wire [WORD_SIZE-1:0] alu_data,
 	input wire [ROB_ENTRY_WIDTH-1:0] alu_rob_id,
 	input wire alu_bypass_enable,
@@ -26,7 +27,70 @@ module forward_unit #(
 	output reg stall
 );
 
+initial begin
+	s1_data = 0;
+	s2_data = 0;
+	stall = 0;
+end
+
 always @(*) begin
+	stall = 0;
+
+	if(rs1_rob_entry_valid) begin
+		if(rs1_rob_entry == alu_rob_id) begin
+			if(alu_bypass_enable) begin
+				s1_data = alu_data;
+			end else begin
+				stall = 1;
+			end
+		end else if(rs1_rob_entry == mem_rob_id) begin
+			if(mem_bypass_enable) begin
+				s1_data = alu_data;
+			end else begin
+				stall = 1;
+			end
+		end else if(rs1_rob_entry == mul_rob_id) begin
+			if(mul_bypass_enable) begin
+				s1_data = alu_data;
+			end else begin
+				stall = 1;
+			end
+		end else if(rob_s1_valid)
+			s1_data = rob_s1_data;
+		end else 
+			stall = 1;
+		end
+	end else 
+		s1_data = rf_s1_data;
+	end
+
+	if(rs2_rob_entry_valid) begin
+		if(rs2_rob_entry == alu_rob_id) begin
+			if(alu_bypass_enable) begin
+				s2_data = alu_data;
+			end else begin
+				stall = 1;
+			end
+		end else if(rs2_rob_entry == mem_rob_id) begin
+			if(mem_bypass_enable) begin
+				s2_data = alu_data;
+			end else begin
+				stall = 1;
+			end
+		end else if(rs2_rob_entry == mul_rob_id) begin
+			if(mul_bypass_enable) begin
+				s2_data = alu_data;
+			end else begin
+				stall = 1;
+			end
+		end else if(rob_s2_valid)
+			s2_data = rob_s2_data;
+		end else 
+			stall = 1;
+		end
+	end else 
+		s2_data = rf_s2_data;
+	end
 
 end
 
