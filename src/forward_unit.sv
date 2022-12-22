@@ -48,12 +48,6 @@ module forward_unit #(
     output reg stall
 );
 
-initial begin
-    s1_data = 0;
-    s2_data = 0;
-    stall = 0;
-end
-
 reg s1_available;
 reg s2_available;
 
