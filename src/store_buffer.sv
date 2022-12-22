@@ -39,10 +39,9 @@ module store_buffer #(
     reg [N] [ROB_ENTRY_WIDTH-1:0]  rob_id;
     reg [N] [SIZE_WRITE_WIDTH-1:0] size;
 
-    //TODO fix this
     reg [$clog2(N)-1:0] head;
     reg [$clog2(N)-1:0] tail;
-    reg [$clog2(N):0] entries;
+    reg [$clog2(N):0]   entries;
 
     reg found;
     reg [SIZE_WRITE_WIDTH-1:0] load_size;
