@@ -337,15 +337,10 @@ module store_buffer_testbench();
     rst = 0;
     store_success = 1;
 
-
+    `ASSERT(dut.entries == 3);
     #2
-    `ASSERT((dut.tail != dut.head));
-    `ASSERT((dut.value[0] != 26));
-    `ASSERT((dut.physical_addresses[0] != 4));
-    `ASSERT((dut.size[0] != `FULL_WORD_SIZE));
     `ASSERT((dut.can_store[0] != 1));
-
-    `ASSERT((dut.head + 2 == dut.tail));
+    `ASSERT(dut.entries == 2);
 
     `UNIT_TEST_END
 
@@ -370,6 +365,27 @@ module store_buffer_testbench();
     `ASSERT((dut.physical_addresses[0] == 0));
     `ASSERT((dut.size[0] == 0));
     `ASSERT((dut.can_store[0] == 0));
+    
+    `UNIT_TEST_END
+    
+    `UNIT_TEST("TESTCASE_FULL")
+    
+	rst = 1;
+	#2;
+
+	rst = 0;
+	store = 0;
+	#4;
+	store_success = 0;
+	store_value = 32'h03020100;
+	physical_address = 12;
+	input_rob_id = 0;
+	op_size = `FULL_WORD_SIZE;
+	store = 1;
+	TLBexception = 0;
+
+	#(2 * `STORE_BUFFER_ENTRIES);
+	`ASSERT(dut.full);
     
     `UNIT_TEST_END
 
