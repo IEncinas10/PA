@@ -42,13 +42,15 @@ module store_buffer #(
     //TODO fix this
     reg [$clog2(N)-1:0] head;
     reg [$clog2(N)-1:0] tail;
+    reg [$clog2(N):0] entries;
 
     reg found;
     reg [SIZE_WRITE_WIDTH-1:0] load_size;
 
-	reg [WORD_SIZE-1:0] aux_value;
+    reg [WORD_SIZE-1:0] aux_value;
 
     integer i;
+    integer j;
 
     initial begin
 	reset();
@@ -68,7 +70,10 @@ module store_buffer #(
 	    bypass_possible = 0;
 	    bypass_needed = 0;
 	    /* This for takes the last match */
-	    for (i = head; i != tail; i = (i + 1) % N) begin
+	    for (j = 0; j < entries; j = j + 1) begin
+		// We do 'entries' iterations, from head to tail.
+		i = head + j;
+
 		aux_value = value[i];
 		if(load_size == `FULL_WORD_SIZE) begin
 		    if(physical_addresses[i] == physical_address && size[i] == `FULL_WORD_SIZE) begin
@@ -101,16 +106,18 @@ module store_buffer #(
 	    end
 	end
 
-	full = head == (tail + 1) % N;
+	full = (entries == N);
     end
 
     always @(posedge(clk)) begin
 	if(rst) begin
 	    reset();
 	end else begin
-	    // update can_store
+	    // We've gotten store permission from the ROB. That means that we have 
+	    // to mark the corresponding 'store' as able to write into the cache.
+	    // found variable is unnecessary but we keep it for extra safety
 	    if(store_permission) begin 
-		found = 0;
+		found = 0; 
 		for(i = 0; i < N; i = i + 1) begin
 		    if(!found && rob_id[i] == store_permission_rob_id) begin
 			can_store[i] = 1;
@@ -119,23 +126,33 @@ module store_buffer #(
 		end
 	    end
 
-	    //TODO revisar si hace falta hacer reset de los valores tras introducirlos
-	    if(store_success) begin 
+	    // We've succesfully written into the cache, so we have to
+	    // erase the entry corresponding to the current head,
+	    // and update the head value.
+	    if(store_success && entries > 0) begin 
+		// Freed entry's state. 
 		can_store[head] = 0;
-		physical_addresses[head] = INIT;
-		value[head] = INIT;
-		rob_id[head] = INIT;
-		size[head] = INIT;
+
+		// SB state
 		head = (head + 1) % N; //update de head
+		entries = entries - 1;
 	    end
 
-	    //si metemos al sb y no esta lleno
+	    // New store comes in. We add it into the Store Buffer if:
+	    //   - it IS a store 
+	    //   - SB is not full
+	    //   - That store didn't cause a TLB exception
 	    if(store && !full && !TLBexception) begin 
+		// New entry's state
 		physical_addresses[tail] = physical_address;
+		can_store[tail] = 0;
 		rob_id[tail] = input_rob_id;
 		value[tail] = store_value;
 		size[tail] = op_size;
-		tail <= (tail + 1) % N; //update the tail
+
+		// SB state
+		tail = (tail + 1) % N; //update the tail
+		entries = entries + 1;
 	    end
 	end
     end
@@ -152,12 +169,13 @@ module store_buffer #(
 	head 		 <= INIT;
 	tail 		 <= INIT;
 	load_size 	 <= INIT;
+	entries          <= 0;
 
 	for(i = 0; i < N; i = i + 1) begin
 	    physical_addresses[i] <= INIT;
 	    can_store[i]          <= INIT;
 	    value[i] 	          <= INIT;
-	    rob_id[i] 	          <= INIT;
+	    rob_id[i] 	          <= `ROB_INVALID_ENTRY;
 	    size[i] 	          <= INIT;
 	end
     endtask
