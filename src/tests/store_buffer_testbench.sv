@@ -386,6 +386,7 @@ module store_buffer_testbench();
 
 	#(2 * `STORE_BUFFER_ENTRIES);
 	`ASSERT(dut.full);
+	`ASSERT(dut.head == dut.tail);
     
     `UNIT_TEST_END
 
