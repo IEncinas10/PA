@@ -12,7 +12,8 @@ module forward_unit #(
 	input wire rob_s2_valid,
 	input wire [ROB_ENTRY_WIDTH-1:0] rs1_rob_entry,
 	input wire [ROB_ENTRY_WIDTH-1:0] rs2_rob_entry,
-	input wire rs1_rob_entry_valid
+	input wire rs1_rob_entry_valid,//missing in the diagram
+	input wire rs2_rob_entry_valid,
 	input wire [WORD_SIZE-1:0] alu_data,
 	input wire [ROB_ENTRY_WIDTH-1:0] alu_rob_id,
 	input wire alu_bypass_enable,
