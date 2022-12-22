@@ -87,20 +87,22 @@
 // addi x(N)
 // how many entries do we need to not stall?
 `define ROB_NUM_ENTRIES 14
-`define ROB_ENTRY_WIDTH $clog2(`ROB_NUM_ENTRIES)
 
 // Invalid rob id (for bubbles or jumps) we have to
 // assign them some value that nobody is going to 
 // consume so that our bypass logic works
-`define ROB_INVALID_ENTRY 15
+`define ROB_INVALID_ENTRY (`ROB_NUM_ENTRIES + 1) 
+
+`define ROB_ENTRY_WIDTH $clog2(`ROB_INVALID_ENTRY)
+
 
 `define STORE_BUFFER_ENTRIES	8
 
-`define SIZE_WRITE_WIDTH		2
+`define SIZE_WRITE_WIDTH 2
 
-`define BYTE_SIZE				2'b00
-`define HALF_SIZE				2'b01
-`define FULL_WORD_SIZE			2'b10
+`define BYTE_SIZE	2'b00
+`define HALF_SIZE	2'b01
+`define FULL_WORD_SIZE	2'b10
 
 `define ADDRESS_WIDTH 32
 
