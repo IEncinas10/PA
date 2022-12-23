@@ -219,17 +219,17 @@ module rob #(
     end
 
     task reset;
-	head = 0;
-	tail = 0;
-	entries = 0;
+	head    <= 0;
+	tail    <= 0;
+	entries <= 0;
 
-	mem_ex_present  = 0;
-	itlb_ex_present = 0;
+	mem_ex_present  <= 0;
+	itlb_ex_present <= 0;
 
 	for(i = 0; i < N; i = i + 1) begin
-	    rds[i]      <= 0;
-	    values[i]   <= 0;
-	    readys[i] 	<= 0;
+	    rds[i]       <= 0;
+	    values[i]    <= 0;
+	    readys[i] 	 <= 0;
 	    are_store[i] <= 0;
 	end
     endtask
