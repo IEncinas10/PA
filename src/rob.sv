@@ -141,6 +141,8 @@ module rob #(
 	end else if (mem_ex_present && head == mem_ex_rob_id && readys[head]) begin
 	    exception = 1;
 	    ex_pc     = mem_ex_rob_id;
+	end else begin
+	    exception = 0;
 	end
 
 	/* Store buffer */
