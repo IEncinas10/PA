@@ -126,7 +126,12 @@ module rob #(
 	full = (entries == N);
 
 	/* Decode */
-	assigned_rob_id = tail;
+
+	// If instruction doesn't require a ROB entry or we're full we output
+	// the invalid ROB entry, so that our bypass logic works correctly, as
+	// nobody will try to consume this invalid entry (doesnt 'rename' any
+	// register in our register file)
+	assigned_rob_id = (require_rob_entry && !full) ? tail : `ROB_INVALID_ENTRY;
 
 	if(itlb_ex_present && head == itlb_ex_rob_id && readys[head]) begin
 	    exception = 1;
@@ -138,7 +143,7 @@ module rob #(
 
 	/* Store buffer */
 	sb_store_permission = !exception && readys[head] && are_store[head];
-	sb_rob_id = head;
+	sb_rob_id	    = head;
 
 	/* RF - ROB */
 	commit		 = !exception && readys[head];
