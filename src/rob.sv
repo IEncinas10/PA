@@ -4,7 +4,7 @@ module rob #(
     parameter N                = `ROB_NUM_ENTRIES,
     parameter WORD_SIZE        = `WORD_SIZE,
     parameter ROB_ENTRY_WIDTH  = `ROB_ENTRY_WIDTH,
-    parameter REG_INDEX_SIZE   = `ARCH_REG_INDEXSIZE,
+    parameter REG_INDEX_SIZE   = `ARCH_REG_INDEX_SIZE,
     parameter INIT             = 0
 ) (
     input wire                        clk,
@@ -41,8 +41,8 @@ module rob #(
     input wire 		       mul_rob_id,
 
     /* Bypasses */
-    input reg [ROB_ENTRY_WIDTH-1:0] rs1_rob_entry,
-    input reg [ROB_ENTRY_WIDTH-1:0] rs2_rob_entry,
+    input wire [ROB_ENTRY_WIDTH-1:0] rs1_rob_entry,
+    input wire [ROB_ENTRY_WIDTH-1:0] rs2_rob_entry,
     output reg [WORD_SIZE-1:0]      bypass_s1,
     output reg [WORD_SIZE-1:0]      bypass_s2,
     output reg                      bypass_s1_valid,
@@ -60,7 +60,7 @@ module rob #(
 
     /* Exception output */
     output reg exception,
-    output reg ex_pc,
+    output reg ex_pc
 );
 
     reg [N] [REG_INDEX_SIZE-1:0] rds;
