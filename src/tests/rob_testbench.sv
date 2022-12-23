@@ -2,7 +2,7 @@
 `include "svut_h.sv"
 // Specify the module to load or on files.f
 `include "rob.sv"
-`timescale 1 ns / 100 ps
+`timescale 1 ns / 1 ns
 
 module rob_testbench();
 
@@ -98,15 +98,17 @@ module rob_testbench();
     );
 
 
+    integer i;
+
     // To create a clock:
-    // initial aclk = 0;
-    // always #2 aclk = ~aclk;
+    initial clk = 0;
+    always #1 clk = ~clk;
 
     // To dump data for visualization:
-    // initial begin
-    //     $dumpfile("rob_testbench.vcd");
-    //     $dumpvars(0, rob_testbench);
-    // end
+    initial begin
+        $dumpfile("rob_testbench.vcd");
+        $dumpvars(0, rob_testbench);
+    end
 
     // Setup time format when printing with $realtime()
     initial $timeformat(-9, 1, "ns", 8);
@@ -145,14 +147,36 @@ module rob_testbench();
     //
     //    - `LAST_STATUS: tied to 1 is last macro did experience a failure, else tied to 0
 
-    `UNIT_TEST("TESTCASE_NAME")
+    `UNIT_TEST("FULL / drain")
 
-        // Describe here the testcase scenario
-        //
-        // Because SVUT uses long nested macros, it's possible
-        // some local variable declaration leads to compilation issue.
-        // You should declare your variables after the IOs declaration to avoid that.
+	rst = 1;
+	#2;
+	rst = 0;
+	require_rob_entry = 1;
+	is_store = 0;
+	rd = 1;
 
+	d_exception = 0;
+	d_pc = 0;
+	
+	alu_rob_wenable = 0;
+	mem_rob_wenable = 0;
+	mul_rob_wenable = 0;
+	mem_exception = 0;
+
+	rs1_rob_entry = 0;
+	rs2_rob_entry = 0;
+	#(2*`ROB_NUM_ENTRIES);
+
+	`FAIL_IF_NOT(dut.full);
+
+	for(i = 0; i < `ROB_NUM_ENTRIES; i = i + 1) begin
+	    dut.readys[i] = 1;
+	end
+	require_rob_entry = 0;
+
+	#(2*`ROB_NUM_ENTRIES);
+	`FAIL_IF(dut.entries != 0);
     `UNIT_TEST_END
 
     `TEST_SUITE_END
