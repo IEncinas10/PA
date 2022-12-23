@@ -2,7 +2,7 @@
 
 module forward_unit #(
     parameter WORD_SIZE = `WORD_SIZE,
-    parameter ROB_ENTRY_WITDH = `ROB_ENTRY_WITDH
+    parameter ROB_ENTRY_WIDTH = `ROB_ENTRY_WIDTH
 ) (
     /* Register file values */
     input wire [WORD_SIZE-1:0] rf_s1_data,
@@ -77,12 +77,8 @@ always @(*) begin
 	    s1_available = 1;
 	end else if(rs1_rob_entry == mul_rob_id && mul_bypass_enable) begin
 	    s1_data = mul_data;
-	    s1_available;
-	end else if(rob_s1_valid)
-	    s1_data = rob_s1_data;
 	    s1_available = 1;
-	end 
-
+	end
 	/* WB bypasses */
 	else if(rs1_rob_entry == alu_wb_rob_id && alu_wb_bypass_enable) begin
 	    s1_data = alu_data;
@@ -93,7 +89,10 @@ always @(*) begin
 	end else if(rs1_rob_entry == mul_wb_rob_id && mul_wb_bypass_enable) begin
 	    s1_data = mul_wb_data;
 	    s1_available = 1;
-	end
+	end else if(rob_s1_valid) begin
+	    s1_data = rob_s1_data;
+	    s1_available = 1;
+	end 
     end
 
     if(rs2_rob_entry_valid) begin
@@ -106,11 +105,7 @@ always @(*) begin
 	end else if(rs2_rob_entry == mul_rob_id && mul_bypass_enable) begin
 	    s2_data = mul_data;
 	    s2_available = 1;
-	end else if(rob_s2_valid)
-	    s2_data = rob_s2_data;
-	    s2_available = 1;
 	end
-
 	/* WB bypasses */
 	else if(rs2_rob_entry == alu_wb_rob_id && alu_wb_bypass_enable) begin
 	    s2_data = alu_data;
@@ -120,6 +115,11 @@ always @(*) begin
 	    s2_available = 1;
 	end else if(rs2_rob_entry == mul_wb_rob_id && mul_wb_bypass_enable) begin
 	    s2_data = mul_wb_data;
+	    s2_available = 1;
+	end 
+	/* Rob entry */
+	else if(rob_s2_valid) begin 
+	    s2_data = rob_s2_data;
 	    s2_available = 1;
 	end
     end
