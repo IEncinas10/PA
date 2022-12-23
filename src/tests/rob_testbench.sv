@@ -221,7 +221,7 @@ module rob_testbench();
 	#2;
 	rst = 0;
 	require_rob_entry = 1;
-	is_store = 0;
+	is_store = 1;
 	rd = 1;
 
 	d_exception = 0;
@@ -252,6 +252,9 @@ module rob_testbench();
 	`FAIL_IF_NOT((dut.commit));
 	`FAIL_IF_NOT((dut.commit_rob_entry == 0));
 	`FAIL_IF_NOT((dut.commit_value == 15));
+
+	`FAIL_IF_NOT((dut.sb_store_permission));
+	`FAIL_IF_NOT((dut.sb_rob_id == 0));
 
 	`FAIL_IF((dut.entries != 1));
 	`FAIL_IF_NOT((dut.values[0] == 15));
