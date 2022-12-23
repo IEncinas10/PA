@@ -213,6 +213,36 @@ module forward_unit_testbench();
 
     `UNIT_TEST_END
 
+    `UNIT_TEST("TESTCASE_STALL")
+		rf_s1_data = 1;
+		rf_s2_data = 2;
+
+		rob_s1_data = 3;
+		rob_s1_valid = 1;
+		
+		rob_s2_data = 4;
+		rob_s2_valid = 1;
+
+		alu_data = 5;
+		alu_rob_id = 1;
+		alu_bypass_enable = 0;
+
+		mul_wb_data = 6;
+		mul_wb_rob_id = 2;
+		mul_wb_bypass_enable = 1;
+
+		rs1_rob_entry = 1;
+		rs2_rob_entry = 2;
+		rs1_rob_entry_valid = 1;
+		rs2_rob_entry_valid = 1;
+
+		#2
+
+		`ASSERT((!stall));
+		`ASSERT((s1_data == rob_s1_data));
+		`ASSERT((s2_data == mul_wb_data));
+
+    `UNIT_TEST_END
     `TEST_SUITE_END
 
 endmodule
