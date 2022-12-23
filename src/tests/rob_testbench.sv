@@ -179,6 +179,75 @@ module rob_testbench();
 	`FAIL_IF(dut.entries != 0);
     `UNIT_TEST_END
 
+    `UNIT_TEST("FULL / stall / drain")
+
+	rst = 1;
+	#2;
+	rst = 0;
+	require_rob_entry = 1;
+	is_store = 0;
+	rd = 1;
+
+	d_exception = 0;
+	d_pc = 0;
+	
+	alu_rob_wenable = 0;
+	mem_rob_wenable = 0;
+	mul_rob_wenable = 0;
+	mem_exception = 0;
+
+	rs1_rob_entry = 0;
+	rs2_rob_entry = 0;
+	#(2*`ROB_NUM_ENTRIES);
+
+	`FAIL_IF_NOT(dut.full);
+
+	for(i = 1; i < `ROB_NUM_ENTRIES; i = i + 1) begin
+	    dut.readys[i] = 1;
+	end
+	require_rob_entry = 0;
+
+	#2;
+	`FAIL_IF_NOT(dut.full);
+
+	dut.readys[0] = 1;
+	#(2*`ROB_NUM_ENTRIES);
+
+	`FAIL_IF(dut.entries != 0);
+    `UNIT_TEST_END
+    `UNIT_TEST("ALU writeback")
+
+	rst = 1;
+	#2;
+	rst = 0;
+	require_rob_entry = 1;
+	is_store = 0;
+	rd = 1;
+
+	d_exception = 0;
+	d_pc = 0;
+	
+	alu_rob_wenable = 0;
+	mem_rob_wenable = 0;
+	mul_rob_wenable = 0;
+	mem_exception = 0;
+
+	rs1_rob_entry = 0;
+	rs2_rob_entry = 0;
+	#2;
+	`FAIL_IF_NOT(dut.entries == 1);
+	require_rob_entry = 0;
+	alu_rob_wenable = 1;
+	alu_result = 15;
+	alu_rob_id = 0;
+	#2;
+	`FAIL_IF(dut.entries != 1);
+	`FAIL_IF_NOT(dut.values[0] == 15);
+	#2;
+	`FAIL_IF_NOT(dut.entries == 0);
+
+    `UNIT_TEST_END
+
     `TEST_SUITE_END
 
 endmodule

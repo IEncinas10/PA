@@ -206,10 +206,10 @@ module rob #(
 		values[mem_rob_id] = mem_result;
 
 		// MEM exceptions
-		mem_ex_pc     = mem_pc;
-		mem_ex_v_addr   = mem_v_addr;
-		mem_ex_present  = mem_exception;
-		mem_ex_rob_id = mem_rob_id;
+		mem_ex_pc      = mem_pc;
+		mem_ex_v_addr  = mem_v_addr;
+		mem_ex_present = mem_exception;
+		mem_ex_rob_id  = mem_rob_id;
 	    end
 	    
 	    // Write port MUL
