@@ -213,7 +213,7 @@ module forward_unit_testbench();
 
     `UNIT_TEST_END
 
-    `UNIT_TEST("TESTCASE_STALL")
+    `UNIT_TEST("TESTCASE_NO_STALL")
 		rf_s1_data = 1;
 		rf_s2_data = 2;
 
@@ -243,6 +243,26 @@ module forward_unit_testbench();
 		`ASSERT((s2_data == mul_wb_data));
 
     `UNIT_TEST_END
+
+    `UNIT_TEST("TESTCASE_STALL")
+		rf_s1_data = 1;
+		rf_s2_data = 2;
+
+		rob_s1_data = 3;
+		rob_s1_valid = 0;
+		
+		rob_s2_data = 4;
+		rob_s2_valid = 0;
+
+
+		rs1_rob_entry = 1;
+		rs2_rob_entry = 2;
+		rs1_rob_entry_valid = 1;
+		rs2_rob_entry_valid = 1;
+		#2
+		`ASSERT(stall);
+    `UNIT_TEST_END
+
     `TEST_SUITE_END
 
 endmodule
