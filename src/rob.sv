@@ -227,6 +227,7 @@ module rob #(
 
 	mem_ex_present  <= 0;
 	itlb_ex_present <= 0;
+	exception <= 0;
 
 	for(i = 0; i < N; i = i + 1) begin
 	    rds[i]       <= 0;
