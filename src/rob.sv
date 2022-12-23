@@ -118,6 +118,8 @@ module rob #(
 
     // reg ¿?¿? exception_code
 
+    integer i;
+
     initial begin
 	reset();
     end
@@ -184,7 +186,7 @@ module rob #(
 		/* Exceptions from decode: ITLB */
 		if(d_exception) begin
 		    itlb_ex_present = 1;
-		    itlb_ex_v_addr  = d_pc;
+		    itlb_ex_pc  = d_pc;
 		    itlb_ex_rob_id  = tail;
 		end
 
@@ -204,10 +206,10 @@ module rob #(
 		values[mem_rob_id] = mem_result;
 
 		// MEM exceptions
-		mem_ex_v_pc     = mem_pc;
+		mem_ex_pc     = mem_pc;
 		mem_ex_v_addr   = mem_v_addr;
 		mem_ex_present  = mem_exception;
-		mem_ex_v_rob_id = mem_rob_id;
+		mem_ex_rob_id = mem_rob_id;
 	    end
 	    
 	    // Write port MUL
