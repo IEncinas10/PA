@@ -236,13 +236,24 @@ module rob_testbench();
 	rs2_rob_entry = 0;
 	#2;
 	`FAIL_IF_NOT(dut.entries == 1);
+	`FAIL_IF_NOT(dut.bypass_s1_valid == 0);
+	`FAIL_IF_NOT(dut.bypass_s2_valid == 0);
 	require_rob_entry = 0;
 	alu_rob_wenable = 1;
 	alu_result = 15;
 	alu_rob_id = 0;
 	#2;
+	`FAIL_IF_NOT(dut.bypass_s1_valid);
+	`FAIL_IF_NOT(dut.bypass_s2_valid);
+	`FAIL_IF(dut.bypass_s2 != 15);
+	`FAIL_IF(dut.bypass_s1 != 15);
+
 	`FAIL_IF(dut.entries != 1);
 	`FAIL_IF_NOT(dut.values[0] == 15);
+
+
+	
+
 	#2;
 	`FAIL_IF_NOT(dut.entries == 0);
 
