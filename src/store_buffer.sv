@@ -15,7 +15,7 @@ module store_buffer #(
     input wire [WIDTH-1:0] 	      physical_address,
     input wire [ROB_ENTRY_WIDTH-1:0]  input_rob_id, // this only matters for imports
     input wire [SIZE_WRITE_WIDTH-1:0] op_size, 
-    input wire        		      store, 
+    input wire        		      store,  // Store means instr. is  SW,SB AND we're not stalling!
     /* Sources for update state of the entries */
     input wire 			      store_success,
     input wire 			      TLBexception,
