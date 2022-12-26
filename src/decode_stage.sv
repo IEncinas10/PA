@@ -58,6 +58,10 @@ module decode_stage #(
 	output reg require_rob_entry,
 	output reg is_store,
 	output reg [`REG_INDEX_SIZE-1:0] rd,
+	
+	/* Connections from other stages */
+	input wire jump_taken,
+	input wire stall_in,//This stall is used for RF_ROB renaming, 
 
 	/* STALL output */
 	output reg stall_out
@@ -72,6 +76,9 @@ module decode_stage #(
 	wire [`ARCH_REG_INDEX_SIZE-1:0] rs2_wire;
 	wire [`ARCH_REG_INDEX_SIZE-1:0] rd_wire;
 	
+	/* Wire for renaming wire logic */
+	wire renaming_reg_wire;
+
 	/* Wires for RF connection with Forward Unit */
 	wire [WORD_SIZE-1:0] rf_s1_data_wire;
 	wire [WORD_SIZE-1:0] rf_s2_data_wire;
@@ -87,6 +94,9 @@ module decode_stage #(
 	wire [WORD_SIZE-1:0] s2_data_wire;
 	
 	wire stall_wire;
+	
+	/* Renaming wire logic */
+	assign renaming_reg_wire = !full && require_rob_entry && !jump_taken && !stall_in;
 	
 	// decoder
 
@@ -131,7 +141,7 @@ module decode_stage #(
 		.rs1_rob_entry_valid(rs1_rob_entry_valid_wire),
 		.rs2_rob_entry(rs2_rob_entry_wire),
 		.rs2_rob_entry_valid(rs2_rob_entry_valid_wire),
-		.renaming_reg(),//TODO falta ver este wire
+		.renaming_reg(renaming_reg_wire),
 		.rd(rd_wire),
 		.rob_id(assigned_rob_id),
 		.commit(commit_rd),
@@ -146,7 +156,7 @@ module decode_stage #(
 		.rob_s2_data(rob_s2_data),
 		.rob_s1_valid(rob_s1_valid),
 		.rob_s2_valid(rob_s2_valid),
-		.rs1_rob_entry(rs1_rob_entry_wire), //cables output de RF-ROB
+		.rs1_rob_entry(rs1_rob_entry_wire),
 		.rs2_rob_entry(rs2_rob_entry_wire),
 		.rs1_rob_entry_valid(rs1_rob_entry_valid_wire),
 		.rs2_rob_entry_valid(rs2_rob_entry_valid_wire),
@@ -172,7 +182,13 @@ module decode_stage #(
 		.s2_data(s1_data_wire),
 		.stall(stall_wire)
 	);
+	
+	/* Output for require_rob_entry ROB: TODO missing... en diagrama pone que es salida 
+	* del decoder sale de decoder, comprobar de donde viene realmente. */
 
+	require_rob_entry = 0;
+	is_store = instr_type_wire == `INSTR_TYPE_STORE ? 1 : 0;
+	rd <= rd_wire;
 	
 	//output assignation from Forward Unit wires to stage output wires
 	s1_data_out <= s1_data_wire;
