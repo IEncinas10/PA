@@ -9,14 +9,17 @@ module F_D_Registers #(
     input wire valid,
     input wire stall,
     input wire reset,
+	input wire exception,
     output reg [WORD_SIZE-1:0] pc_out,
     output reg [WORD_SIZE-1:0] instruction_out,
+	output reg exception_out;
     output reg valid_out
 );
     reg wenable;
 
     initial begin
         pc_out = 0;
+		exception = 0;
         instruction_out = 0;
         valid_out = 0;
         wenable = 0;
@@ -36,6 +39,7 @@ module F_D_Registers #(
         if (wenable) begin
             pc_out = pc;
             instruction_out = instruction;
+			exception_out = exception;
         end
         
     end
