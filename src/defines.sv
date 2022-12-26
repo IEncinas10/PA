@@ -36,18 +36,24 @@
 
 
 
+
 `define CACHE_LINE_SIZE 128
 `define CACHE_N_LINES   4
+`define CACHE_ASSOCIATIVITY 0
+`define CACHE_DELAY_CYCLES 5
+
+/* WORD_SIZE - line index bits - byte offset bits. Associativity increases tag size */
+`define TAG_SIZE (`WORD_SIZE - $clog2(`CACHE_N_LINES) - $clog(`CACHE_LINE_SIZE / 8) + CACHE_ASSOCIATIVITY)
+
+`define REPLACEMENT_POLICY_LRU 3'000
 
 `define I_CACHE_LINE_SIZE `CACHE_LINE_SIZE
 `define I_CACHE_N_LINES   `CACHE_N_LINES
+`define I_CACHE_ASSOCIATIVITY `CACHE_ASSOCIATIVITY
 
 `define D_CACHE_LINE_SIZE `CACHE_LINE_SIZE
 `define D_CACHE_N_LINES   `CACHE_N_LINES
-
-`define CACHE_DELAY_CYCLES 5
-
-`define REPLACEMENT_POLICY_LRU 3'000
+`define D_CACHE_ASSOCIATIVITY `CACHE_ASSOCIATIVITY
 
 /*
  * MEMORY DEFINES
@@ -106,4 +112,14 @@
 
 `define ADDRESS_WIDTH 32
 
+
+
+`define assert(signal, value) \
+        if (signal !== value) begin \
+            $display("ASSERTION FAILED in %m: signal != value"); \
+            $finish; \
+        end
+
 `endif
+
+
