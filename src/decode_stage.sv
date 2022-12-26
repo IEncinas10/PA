@@ -41,6 +41,11 @@ module decode_stage #(
 	output reg [6:0] opcode_out,
 	output reg [WORD_SIZE-1:0] imm_out,
 	output reg [`INSTR_TYPE_SZ-1:0] instr_type_out,
+	
+	/* Connections RF_ROB with ROB */
+	input wire commit,
+	input wire commit_rd,
+	input wire commit_rob_id,
 
 	/* Connections to ROB */
 	input wire [ROB_ENTRY_WIDTH-1:0] assigned_rob_id,
@@ -124,9 +129,9 @@ module decode_stage #(
 		.renaming_reg(),
 		.rd(rd_wire),
 		.rob_id(),
-		.commit(),
-		.commit_rd(),
-		.commit_rob_id()
+		.commit(commit_rd),
+		.commit_rd(commit_rd),
+		.commit_rob_id(commit_rob_id)
 	);
 
 	forward_unit forward_unit(
