@@ -47,6 +47,11 @@ module decode_stage #(
 	input wire commit_rd,
 	input wire commit_rob_id,
 
+	/* Connections RF with ROB*/
+	input wire wenable_rf,
+	input wire [N-1:0] reg_in,
+	input wire [WORD_SIZE-1:0] din,
+
 	/* Connections to ROB */
 	input wire [ROB_ENTRY_WIDTH-1:0] assigned_rob_id,
     input wire full,
@@ -108,9 +113,9 @@ module decode_stage #(
 	register_file register_file(
 		.rst(rst),
 		.clk(clk),
-		.wenable(),//TODO wires for write
-		.reg_in(),//TODO
-		.din(),//TODO
+		.wenable(wenable_rf),
+		.reg_in(reg_in),//TODO ver en los test si funciona teniendo los mismos nombres
+		.din(din),
 		.a(rs1_wire),
 		.b(rs1_wire),
 		data_a(rf_s1_data_wire),
@@ -126,9 +131,9 @@ module decode_stage #(
 		.rs1_rob_entry_valid(rs1_rob_entry_valid_wire),
 		.rs2_rob_entry(rs2_rob_entry_wire),
 		.rs2_rob_entry_valid(rs2_rob_entry_valid_wire),
-		.renaming_reg(),
+		.renaming_reg(),//TODO falta ver este wire
 		.rd(rd_wire),
-		.rob_id(),
+		.rob_id(assigned_rob_id),
 		.commit(commit_rd),
 		.commit_rd(commit_rd),
 		.commit_rob_id(commit_rob_id)
