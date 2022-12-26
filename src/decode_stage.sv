@@ -92,6 +92,14 @@ module decode_stage #(
 		.funct3(funct3_wire),
 	);
 
+	/* Decode outputs to D_E_Registers */
+	funct3_out <= funct3_wire;
+	funct7_out <= funct7_wire;
+	opcode_out <= opcode_wire;
+	imm_out <= imm_wire;
+	instr_type_out = instr_type_wire
+
+
 	register_file register_file(
 		.rst(rst),
 		.clk(clk),
