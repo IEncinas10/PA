@@ -9,22 +9,24 @@ module M_WB_Registers_testbench();
     `SVUT_SETUP
 
     parameter WORD_SIZE = `WORD_SIZE;
+    parameter INSTR_TYPE_SZ = `INSTR_TYPE_SZ;
 
     logic clk;
-    logic [1:0] instruction_type;
+    logic [INSTR_TYPE_SZ-1:0] instruction_type;
     logic [WORD_SIZE-1:0] pc;
     logic exception;
     logic [WORD_SIZE-1:0] virtual_addr_exception;
     logic [WORD_SIZE-1:0] aluResult;
     logic valid;
     logic reset;
-    logic [6:0] rob_id;
-    logic [1:0] instruction_type_out;
+    logic[`ROB_ENTRY_WIDTH-1:0] rob_id;
+    logic [INSTR_TYPE_SZ-1:0] instruction_type_out;
     logic [WORD_SIZE-1:0] pc_out;
     logic exception_out;
     logic [WORD_SIZE-1:0] virtual_addr_exception_out;
     logic [WORD_SIZE-1:0] aluResult_out;
     logic [6:0] rob_id_out;
+    logic[`ROB_ENTRY_WIDTH-1:0] rob_id_out;
     logic valid_out;
 
     M_WB_Registers 

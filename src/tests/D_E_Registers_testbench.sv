@@ -9,9 +9,10 @@ module D_E_Registers_testbench();
     `SVUT_SETUP
 
     parameter WORD_SIZE = `WORD_SIZE;
+    parameter INSTR_TYPE_SZ = `INSTR_TYPE_SZ;
 
     logic clk;
-    logic [1:0] instruction_type;
+    logic [INSTR_TYPE_SZ-1:0] instruction_type;
     logic [WORD_SIZE-1:0] pc;
     logic [6:0] opcode;
     logic [6:0] funct7;
@@ -22,7 +23,7 @@ module D_E_Registers_testbench();
     logic stall;
     logic valid;
     logic reset;
-    logic[1:0] instruction_type_out;
+    logic [INSTR_TYPE_SZ-1:0] instruction_type_out;
     logic[WORD_SIZE-1:0] pc_out;
     logic[6:0] opcode_out;
     logic[6:0] funct7_out;
