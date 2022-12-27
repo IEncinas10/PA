@@ -105,11 +105,12 @@
 
 `define STORE_BUFFER_ENTRIES	8
 
-`define SIZE_WRITE_WIDTH 2
+`define SIZE_WRITE_WIDTH 3
 
-`define BYTE_SIZE	2'b00
-`define HALF_SIZE	2'b01
-`define FULL_WORD_SIZE	2'b10
+// unsigned..
+`define BYTE_SIZE	3'b000
+`define HALF_SIZE	3'b001
+`define FULL_WORD_SIZE	3'b010
 
 `define ADDRESS_WIDTH 32
 
