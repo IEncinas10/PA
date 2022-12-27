@@ -11,7 +11,7 @@ module M4_M5_Registers #(
     input wire [WORD_SIZE-1:0] result,
     input wire [ROB_ENTRY_WITDH-1:0] rob_id,
     input wire valid,
-    input wire satll,
+    input wire stall,
     input wire reset,
     output reg [INSTR_TYPE_SZ-1:0] instruction_type_out,
     output reg [WORD_SIZE-1:0] pc_out,
