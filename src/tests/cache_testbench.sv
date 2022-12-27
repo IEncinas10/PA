@@ -177,10 +177,39 @@ module cache_testbench();
 	addr  = 128 + 2;
 	wenable = 0;
 	mem_res = 0;
-	#3;
+	#2;
+	#0.1;
 	`ASSERT((dut.pin_counters[0] === 3));
 
+	store = 0;
+
 	
+
+        // Describe here the testcase scenario
+        //
+        // Because SVUT uses long nested macros, it's possible
+        // some local variable declaration leads to compilation issue.
+        // You should declare your variables after the IOs declaration to avoid that.
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("Stores from SB")
+	sb_addr = 128;
+	sb_value = 32'h12345678;
+	sb_size = `FULL_WORD_SIZE;
+	wenable = 1;
+	#2;
+	#0.1;
+	`ASSERT((dut.pin_counters[0] === 2));
+	#2;
+	#0.1;
+	`ASSERT((dut.pin_counters[0] === 1));
+	#2;
+	#0.1;
+	`ASSERT((dut.pin_counters[0] === 0));
+	`ASSERT((read_data == 32'h00000034));
+	
+
 
         // Describe here the testcase scenario
         //
