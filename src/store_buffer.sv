@@ -62,6 +62,8 @@ module store_buffer #(
 	    cache_physical_address <= physical_addresses[head];
 	    cache_store_value <= value[head];
 	    cache_wenable <= 1;
+	end else begin
+	    cache_wenable = 0;
 	end
 
 	if(!store) begin 
