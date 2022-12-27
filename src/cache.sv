@@ -9,7 +9,7 @@ module cache #(
     parameter SB_ENTRIES       = `STORE_BUFFER_ENTRIES,
     parameter SIZE_WRITE_WIDTH = `SIZE_WRITE_WIDTH,
     parameter OFFSET_SIZE      = `OFFSET_SIZE,
-    parameter SET_SIZE         = (`CACHE_N_LINES - `CACHE_ASSOCIATIVITY),
+    parameter SET_SIZE         = $clog2(`CACHE_N_LINES - `CACHE_ASSOCIATIVITY),
     parameter INIT             = 0
 ) (
     input wire clk,
@@ -18,7 +18,8 @@ module cache #(
     input wire [WORD_SIZE-1:0]        addr,
     input wire [SIZE_WRITE_WIDTH-1:0] load_size, 
     input wire                        store,    // 1 store, 0 load
-    output reg                        hit,      // !hit == stall. Different meaning depending on store/load
+    output reg                        hit,      // 
+    output reg                        store_stall,  // do we need to stall because we cant issue the mem request?
     output reg [WORD_SIZE-1:0] read_data,
     output reg                 mem_req,         // memory request
     output reg [WORD_SIZE-1:0] mem_req_addr,    
@@ -100,6 +101,7 @@ module cache #(
 	// Defaults
 	hit	      = 0; // Cache stage
 	read_data     = 0;
+	store_stall   = 0;
 
 	mem_req       = 0; // Memory
 	mem_write     = 0; 
@@ -118,11 +120,11 @@ module cache #(
 		mem_req = 0;
 	    end
 
-	    // If we're a store, we stall (!hit) whenever we miss the cache AND
+	    // If we're a store, we stall whenever we miss the cache AND
 	    // we can't request the memory we want. If we're load, we stall
 	    // whenever the data is not in the cache
 	    if(store) begin
-		hit = hit || mem_req_tags[set] == tag || !mem_req_present[set];
+		store_stall = !(hit || mem_req_tags[set] == tag || !mem_req_present[set]);
 	    end
 
 	    // Stores from SB should always succeed
@@ -145,7 +147,8 @@ module cache #(
 		`BYTE_SIZE: begin
 		    //read_data = {24'b0, line_read[(offset + 1)*8:offset*8]};
 		    read_offset = (offset + 1) * 8 - 1;
-		    read_data = {24'b0, line_read[read_offset-:8]};
+		    // LB sign extends!
+		    read_data = {{24{line_read[read_offset]}}, line_read[read_offset-:8]};
 		end
 		`FULL_WORD_SIZE: begin
 		    //read_data = line_read[(offset + 4)*8:offset*8];
@@ -161,14 +164,15 @@ module cache #(
 	if(rst) begin
 	    reset();
 	end else if (valid) begin
-	    handle_requests();
-
 	    // If we're a store and we have HIT cache, we have to
 	    // increase the pin counter. When we write from the SB we will
 	    // decrement it back
 	    if(store && hit) begin
 		pin_counters[set] = pin_counters[set] + 1;
 	    end
+
+	    handle_requests();
+
 
 
 	    // Store Buffer. Write and decrement pin counter
@@ -197,37 +201,6 @@ module cache #(
     end
 
     task handle_requests;
-	if(mem_res) begin
-	    // Update replaced line
-	    tags[mem_res_set] = mem_res_tag;
-	    data[mem_res_set] = mem_res_data;
-	    dirtys[mem_res_set] = 0;
-	    // We have to inherit the pin counter from the memory request
-	    pin_counters[mem_res_set] = mem_req_pin_counters[mem_res_set];
-
-	    // Clear memory request info 
-	    mem_req_pin_counters[mem_res_set] = 0;
-	    mem_req_present[mem_res_set]      = 0;
-	    mem_req_tags[mem_res_set]         = 0;
-	end
-
-	// If we're already requesting this memory block, just update its pin counter.
-	// If this request already exists, a store will only stay 1 cycle in
-	// this stage (and if the SB is full we will get a 'valid = 0')
-	if(store && mem_req_present[set] && mem_req_tags[set] == tag) begin
-	    mem_req_pin_counters[set] = mem_req_pin_counters[set] + 1;
-	end
-
-
-	//Internal bookkeeping. We need the tag for the pin_counter, and
-	//the pin counter to pin lines for stores in the store buffer
-	if(mem_req) begin
-	    mem_req_tags[set] = tag;
-	    mem_req_present[set] = 1;
-	    // If a load brings the line we must not pin it
-	    mem_req_pin_counters[set] = store ? 1 : 0;
-	end
-
 	//
 	// Request model:
 	// 
@@ -240,6 +213,37 @@ module cache #(
 	// We can ask for several lines before getting a reply,
 	// 1 per cycle.
 
+
+	//Internal bookkeeping. We need the tag for the pin_counter, and
+	//the pin counter to pin lines for stores in the store buffer
+	if(mem_req) begin
+	    mem_req_tags[set] = tag;
+	    mem_req_present[set] = 1;
+	    // If a load brings the line we must not pin it
+	    mem_req_pin_counters[set] = store ? 1 : 0;
+	end
+
+	// If we're already requesting this memory block, just update its pin counter.
+	// If this request already exists, a store will only stay 1 cycle in
+	// this stage (and if the SB is full we will get a 'valid = 0')
+	if(!mem_req && store && mem_req_present[set] && mem_req_tags[set] == tag) begin
+	    mem_req_pin_counters[set] = mem_req_pin_counters[set] + 1;
+	end
+
+	// response latency 1 doesnt work
+	if(mem_res && mem_req_present[mem_res_set]) begin
+	    // Update replaced line
+	    tags[mem_res_set] = mem_res_tag;
+	    data[mem_res_set] = mem_res_data;
+	    dirtys[mem_res_set] = 0;
+	    // We have to inherit the pin counter from the memory request
+	    pin_counters[mem_res_set] = mem_req_pin_counters[mem_res_set];
+
+	    // Clear memory request info 
+	    mem_req_pin_counters[mem_res_set] = 0;
+	    mem_req_present[mem_res_set]      = 0;
+	    mem_req_tags[mem_res_set]         = 0;
+	end
     endtask
 
     task reset;
