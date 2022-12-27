@@ -94,10 +94,15 @@ module decode_stage #(
 	wire [WORD_SIZE-1:0] s2_data_wire;
 	
 	wire stall_wire;
+
+	/* Require rob entry logic and output assignation */
+	require_rob_entry = instr_type != `INSTR_TYPE_NO_WB && !jump_taken;
 	
 	/* Renaming wire logic */
-	assign renaming_reg_wire = !full && require_rob_entry && !jump_taken && !stall_in;
-	
+	assign renaming_reg_wire = !full && require_rob_entry && !jump_taken && !stall_in && instr_type != `INSTR_TYPE_STORE;
+	//he puesto instr_type != INSTR_TYPE_STORE, ya que si lo pusiese a igual
+	//no encaja con el comentario que haces en el commit...
+
 	// decoder
 
 	decoder decoder(
@@ -186,13 +191,12 @@ module decode_stage #(
 	/* Output for require_rob_entry ROB: TODO missing... en diagrama pone que es salida 
 	* del decoder sale de decoder, comprobar de donde viene realmente. */
 
-	require_rob_entry = 0;
 	is_store = instr_type_wire == `INSTR_TYPE_STORE ? 1 : 0;
 	rd <= rd_wire;
 	
 	//output assignation from Forward Unit wires to stage output wires
 	s1_data_out <= s1_data_wire;
 	s2_data_out <= s2_data_wire;
-	stall_out <= stall_wire;
+	stall_out <= stall_wire || stall_in; // stall if forward_unit says stall or if we receive stall
 
 endmodule
