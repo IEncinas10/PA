@@ -178,6 +178,7 @@ module cache #(
 	    // Store Buffer. Write and decrement pin counter
 	    if(wenable) begin
 		`assert(tags[sb_set], sb_tag);
+		dirtys[sb_set] = 1;
 
 		line_write = data[sb_set];
 		case(sb_size)
