@@ -84,6 +84,11 @@ module cache #(
     wire [SET_SIZE-1:0] mem_res_set = mem_res_addr[OFFSET_SIZE + SET_SIZE - 1:OFFSET_SIZE];
     wire [TAG_SIZE-1:0] mem_res_tag = mem_res_addr[31:OFFSET_SIZE + SET_SIZE];
 
+    // Ty icarus verilog: Chapuzas...
+    reg [LINE_SIZE-1:0] line_read;
+    reg [WORD_SIZE-1:0] read_offset;
+    reg [WORD_SIZE-1:0] write_offset;
+    reg [LINE_SIZE-1:0] line_write;
 
     integer i;
 
@@ -135,6 +140,20 @@ module cache #(
 
 	    // data output¿?
 	    //read_data = data[set] ¿?¿?;
+	    line_read = data[set];
+	    case(load_size) 
+		`BYTE_SIZE: begin
+		    //read_data = {24'b0, line_read[(offset + 1)*8:offset*8]};
+		    read_offset = (offset + 1) * 8 - 1;
+		    read_data = {24'b0, line_read[read_offset-:8]};
+		end
+		`FULL_WORD_SIZE: begin
+		    //read_data = line_read[(offset + 4)*8:offset*8];
+		    read_offset = (offset + 4) * 8 - 1;
+		    read_data = line_read[read_offset-:32];
+		end
+	    endcase
+
 	end 
     end
 
@@ -155,8 +174,21 @@ module cache #(
 	    // Store Buffer. Write and decrement pin counter
 	    if(wenable) begin
 		`assert(tags[sb_set], sb_tag);
-		// word, byte??
-		//data[sb_set][sb_offset ¿?] = 
+
+		line_write = data[sb_set];
+		case(sb_size)
+		    `BYTE_SIZE: begin
+			write_offset = (sb_offset+1) * 8 - 1;
+			line_write[write_offset-:8] = sb_value[7:0];
+			data[sb_set] = line_write;
+		    end
+		    `FULL_WORD_SIZE: begin
+			write_offset = (sb_offset+4) * 8 - 1;
+			line_write[write_offset-:32] = sb_value;
+			data[sb_set] = line_write;
+			
+		    end
+		endcase
 
 		pin_counters[sb_set] = pin_counters[sb_set] - 1;
 	    end
