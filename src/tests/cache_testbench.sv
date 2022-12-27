@@ -2,7 +2,7 @@
 `include "svut_h.sv"
 // Specify the module to load or on files.f
 `include "cache.sv"
-`timescale 1 ns / 100 ps
+`timescale 1 ns / 1 ns
 
 module cache_testbench();
 
@@ -16,7 +16,7 @@ module cache_testbench();
     parameter SB_ENTRIES       = `STORE_BUFFER_ENTRIES;
     parameter SIZE_WRITE_WIDTH = `SIZE_WRITE_WIDTH;
     parameter OFFSET_SIZE      = `OFFSET_SIZE;
-    parameter SET_SIZE         = (`CACHE_N_LINES - `CACHE_ASSOCIATIVITY);
+    parameter SET_SIZE         = $clog2(`CACHE_N_LINES - `CACHE_ASSOCIATIVITY);
     parameter INIT             = 0;
 
     logic clk;
@@ -81,14 +81,14 @@ module cache_testbench();
 
 
     // To create a clock:
-    // initial aclk = 0;
-    // always #2 aclk = ~aclk;
+     initial clk = 0;
+     always #1 clk = ~clk;
 
     // To dump data for visualization:
-    // initial begin
-    //     $dumpfile("cache_testbench.vcd");
-    //     $dumpvars(0, cache_testbench);
-    // end
+     initial begin
+	 $dumpfile("cache_testbench.vcd");
+	 $dumpvars(0, cache_testbench);
+     end
 
     // Setup time format when printing with $realtime()
     initial $timeformat(-9, 1, "ns", 8);
@@ -127,7 +127,60 @@ module cache_testbench();
     //
     //    - `LAST_STATUS: tied to 1 is last macro did experience a failure, else tied to 0
 
-    `UNIT_TEST("TESTCASE_NAME")
+    `UNIT_TEST("Miss - Store - Load + LB sign extends")
+	valid = 1;
+	store = 1;
+	addr  = 128;
+	wenable = 0;
+	mem_res = 0;
+	#2;
+	#0.1;
+	`ASSERT((dut.pin_counters[0] === 0));
+	`ASSERT((dut.mem_req_pin_counters[0] === 1));
+
+	mem_res = 1;
+	mem_res_addr = 128;
+	mem_res_data =  340282366920938463463374607431768211327;
+	#0.9;
+	
+	#0.1;
+	`ASSERT((dut.pin_counters[0] === 2));
+
+	#2;
+	store = 0;
+	load_size = `FULL_WORD_SIZE;
+	#0.1;
+	`ASSERT((read_data === 32'hFFFFFF7F));
+	#2;
+	load_size = `BYTE_SIZE;
+	#0.1;
+	`ASSERT((read_data === 32'h0000007F));
+	#2;
+	addr  = 132;
+	#0.1;
+	`ASSERT((read_data === 32'hFFFFFFFF));
+
+	
+
+        // Describe here the testcase scenario
+        //
+        // Because SVUT uses long nested macros, it's possible
+        // some local variable declaration leads to compilation issue.
+        // You should declare your variables after the IOs declaration to avoid that.
+
+    `UNIT_TEST_END
+
+    `UNIT_TEST("Increase pin counter")
+	`ASSERT((dut.pin_counters[0] === 2));
+	valid = 1;
+	store = 1;
+	addr  = 128 + 2;
+	wenable = 0;
+	mem_res = 0;
+	#3;
+	`ASSERT((dut.pin_counters[0] === 3));
+
+	
 
         // Describe here the testcase scenario
         //
