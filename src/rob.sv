@@ -150,7 +150,7 @@ module rob #(
 	sb_rob_id	    = head;
 
 	/* RF - ROB */
-	commit		 = !exception && readys[head];
+	commit		 = !exception && readys[head] && are_store[head];
 	commit_rd	 = rds[head];
 	commit_value	 = values[head];
 	commit_rob_entry = head;
