@@ -39,11 +39,12 @@
 
 `define CACHE_LINE_SIZE 128
 `define CACHE_N_LINES   4
-`define CACHE_ASSOCIATIVITY 0
+`define CACHE_ASSOCIATIVITY (0)
 `define CACHE_DELAY_CYCLES 5
+`define OFFSET_SIZE $clog2(`CACHE_LINE_SIZE / 8)
 
 /* WORD_SIZE - line index bits - byte offset bits. Associativity increases tag size */
-`define TAG_SIZE (`WORD_SIZE - $clog2(`CACHE_N_LINES) - $clog(`CACHE_LINE_SIZE / 8) + CACHE_ASSOCIATIVITY)
+`define TAG_SIZE (`WORD_SIZE - $clog2(`CACHE_N_LINES) - `OFFSET_SIZE + `CACHE_ASSOCIATIVITY)
 
 `define REPLACEMENT_POLICY_LRU 3'000
 
