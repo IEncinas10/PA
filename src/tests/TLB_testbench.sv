@@ -15,6 +15,7 @@ module TLB_testbench();
     logic [WIDTH-1:0] virtual_page;
     logic[WIDTH-1:0] physical_page_out;
     logic hit;
+    logic valid;
     logic exception;
 
     TLB 
@@ -26,6 +27,7 @@ module TLB_testbench();
     (
     .clk               (clk),
     .virtual_page      (virtual_page),
+    .valid             (valid),
     .physical_page_out (physical_page_out),
     .hit           (hit),
     .exception (exception)
@@ -80,6 +82,7 @@ module TLB_testbench();
     //    - `LAST_STATUS: tied to 1 is last macro did experience a failure, else tied to 0
 
     `UNIT_TEST("TESTCASE_TLB_MISS")
+	valid = 1;
         virtual_page = 2;
         `ASSERT((dut.hit==0));
         #2

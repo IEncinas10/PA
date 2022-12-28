@@ -8,6 +8,7 @@ module TLB #(
 ) (
     input wire clk,
     input wire [WIDTH-1:0] virtual_page,
+    input wire valid,
     output reg [WIDTH-1:0] physical_page_out,
     output reg exception,
     output reg hit
@@ -15,17 +16,17 @@ module TLB #(
 
     reg [N] [WIDTH-1:0] virtual_addresses;
     reg [N] [WIDTH-1:0] physical_addresses;
-    reg [N] valid;
+    reg [N] valids;
     reg inserted;
 
     // Artificial delay for doing translations
-    reg [TLB_DELAY_WIDTH-1:0] delay;
+    reg [TLB_DELAY]             input_valid;
     
     integer i;
 
     initial begin
         for(i = 0; i < N; i = i + 1) begin
-            valid[i] = 0;
+            valids[i] = 0;
             virtual_addresses[i] = 0;
             physical_addresses[i] = 0;
             hit = 0;
@@ -40,13 +41,12 @@ module TLB #(
     always @(*) begin
         hit = 0;
         for(i = 0; i < N; i = i + 1) begin
-            if ((virtual_addresses[i] == virtual_page) && valid[i]) begin
+            if ((virtual_addresses[i] == virtual_page) && valids[i]) begin
                 hit = 1;
                 physical_page_out = physical_addresses[i];
             end
         end
 
-	delay = TLB_DELAY;
 	exception = virtual_page == 0 && hit;
     end
 
@@ -55,15 +55,22 @@ module TLB #(
         inserted = 0; 
         if(hit == 0) begin 
             for (i = 0; i < N; i = i + 1) begin
-                if(valid[i] == 0 && inserted == 0 && delay == 0) begin
+                if(valids[i] == 0 && inserted == 0 && input_valid[0] && valid) begin
                     virtual_addresses[i] = virtual_page;
                     physical_addresses[i] = virtual_page + 1;
-                    valid[i] = 1;
+                    valids[i] = 1;
                     inserted = 1;
                 end
             end
-	    delay = delay - 1;
-        end
+
+	    // Valid has to be 1 for every cycle of the delay. If at any
+	    // moment it resets, we have to reset the valid bits
+	    for(i = 0; i < TLB_DELAY - 1; i = i + 1) begin
+		input_valid[i] = input_valid[i + 1] && valid;
+	    end
+	    input_valid[TLB_DELAY - 1]        = valid;
+	end 
+
     end
 
    
