@@ -2,7 +2,7 @@
 `include "svut_h.sv"
 // Specify the module to load or on files.f
 `include "cache_stage.sv"
-`timescale 1 ns / 100 ps
+`timescale 1 ns / 1 ns
 
 module cache_stage_testbench();
 
@@ -77,14 +77,14 @@ module cache_stage_testbench();
 
 
     // To create a clock:
-    // initial aclk = 0;
-    // always #2 aclk = ~aclk;
+     initial clk = 0;
+     always #1 clk = ~clk;
 
     // To dump data for visualization:
-    // initial begin
-    //     $dumpfile("cache_stage_testbench.vcd");
-    //     $dumpvars(0, cache_stage_testbench);
-    // end
+     initial begin
+	 $dumpfile("cache_stage_testbench.vcd");
+	 $dumpvars(0, cache_stage_testbench);
+     end
 
     // Setup time format when printing with $realtime()
     initial $timeformat(-9, 1, "ns", 8);
@@ -130,6 +130,28 @@ module cache_stage_testbench();
         // Because SVUT uses long nested macros, it's possible
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
+	//
+	
+	dut.sb.entries = `STORE_BUFFER_ENTRIES;
+	`ASSERT((dut.sb.full));
+	instruction_type = `INSTR_TYPE_STORE;
+	valid = 1;
+	v_mem_addr = 1024;
+	mem_res = 0;
+	rob_store_permission = 0;
+
+	#(2*`TLB_DELAY);
+
+	dut.sb.entries = `STORE_BUFFER_ENTRIES;
+	#8;
+	`FAIL_IF(mem_req);
+
+	#2;
+	instruction_type = `INSTR_TYPE_LOAD;
+	#0.1;
+	`FAIL_IF_NOT(mem_req);
+	#2;
+	`FAIL_IF(mem_req);
 
     `UNIT_TEST_END
 
