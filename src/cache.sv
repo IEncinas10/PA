@@ -130,18 +130,6 @@ module cache #(
 	    // Stores from SB should always succeed
 	    store_success = wenable && sb_tag == tags[sb_set];
 
-	    // Evict line before it is replaced
-	    if(mem_res && dirtys[mem_res_set]) begin
-		`assert(pin_counters[mem_res_set], 0);
-		mem_write      = 1;
-		mem_write_data = data[mem_res_set];
-		//mem_write_addr = {tags[mem_res_set], mem_res_set, OFFSET_SIZE'b0000};
-		mem_write_addr = {tags[mem_res_set], mem_res_set, 4'b0000};
-	    end
-
-
-	    // data output¿?
-	    //read_data = data[set] ¿?¿?;
 	    line_read = data[set];
 	    case(load_size) 
 		`BYTE_SIZE: begin
@@ -156,8 +144,16 @@ module cache #(
 		    read_data = line_read[read_offset-:32];
 		end
 	    endcase
-
 	end 
+
+	// Evict line before it is replaced
+	if(mem_res && dirtys[mem_res_set]) begin
+	    `assert(pin_counters[mem_res_set], 0);
+	    mem_write      = 1;
+	    mem_write_data = data[mem_res_set];
+	    //mem_write_addr = {tags[mem_res_set], mem_res_set, OFFSET_SIZE'b0000};
+	    mem_write_addr = {tags[mem_res_set], mem_res_set, 4'b0000};
+	end
     end
 
     always @(posedge(clk)) begin
