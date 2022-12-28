@@ -163,7 +163,8 @@ module rob #(
     end
 
     always @(posedge(clk)) begin
-	if(rst) begin
+	// Self nuke when exceptions
+	if(rst || exception) begin
 	    reset();
 	end else begin
 
