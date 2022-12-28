@@ -9,7 +9,6 @@ module decode_stage_testbench();
     `SVUT_SETUP
 
     parameter WORD_SIZE = `WORD_SIZE;
-    parameter N = 5;
 
     logic clk;
     logic rst;
@@ -48,7 +47,7 @@ module decode_stage_testbench();
     logic [`ARCH_REG_INDEX_SIZE-1:0] commit_rd;
     logic [`ROB_ENTRY_WIDTH-1:0] commit_rob_id;
     logic wenable_rf;
-    logic [N-1:0] reg_in;
+    logic [`ARCH_REG_INDEX_SIZE-1:0] reg_in;
     logic [WORD_SIZE-1:0] din;
     logic [`ROB_ENTRY_WIDTH-1:0] assigned_rob_id;
     logic full;
@@ -61,8 +60,7 @@ module decode_stage_testbench();
 
     decode_stage 
     #(
-    .WORD_SIZE (WORD_SIZE),
-    .N         (N)
+    .WORD_SIZE (WORD_SIZE)
     )
     dut 
     (
