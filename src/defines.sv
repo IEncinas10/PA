@@ -5,6 +5,9 @@
 
 `define	WORD_SIZE 32
 
+`define PC_EXCEPTION 32'h00002000
+`define PC_INITIAL   32'h00001000
+
 /*
  * Number of total architectural registers.
  * Size of minimum index needed to address them.
@@ -62,6 +65,8 @@
  * [0x0000, 0xFFFF]
  *
  */
+// do a dummy diagram to see when the data is available
+// lw: F D E Miss1 Miss2 Miss3 ... Fill, Hit¿?¿?
 `define MEM_DELAY_CYCLES 5
 `define MEM_SIZE (1 << 18)
 
@@ -103,7 +108,7 @@
 `define ROB_ENTRY_WIDTH $clog2(`ROB_INVALID_ENTRY)
 
 
-`define STORE_BUFFER_ENTRIES	8
+`define STORE_BUFFER_ENTRIES	4
 
 `define SIZE_WRITE_WIDTH 3
 
