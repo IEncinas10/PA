@@ -12,7 +12,7 @@ module alu #(
     input wire [WORD_SIZE-1:0] immediate,
     output reg [WORD_SIZE-1:0] aluOut,
     output reg [WORD_SIZE-1:0] newpc,
-    output reg branchTaken
+    output reg branchTaken // If instr. is not valid, ignore this and set to 0 from outside
 );
 
   
