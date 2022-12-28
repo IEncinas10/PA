@@ -10,9 +10,9 @@ module F_D_Registers #(
     input wire stall,
     input wire reset,
     input wire exception,
-    output reg [WORD_SIZE-1:0] pc_out,
+    output reg [WORD_SIZE-1:0] pc_out, // Connect to ROB and D_E
     output reg [WORD_SIZE-1:0] instruction_out,
-    output reg exception_out;
+    output reg exception_out, // Connect to ROB
     output reg valid_out
 );
     reg wenable;
