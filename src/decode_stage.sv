@@ -57,7 +57,9 @@ module decode_stage #(
     input wire wenable_rf,
     input wire [N-1:0] reg_in,
     input wire [WORD_SIZE-1:0] din,
-
+	
+	/* Connections to ROB */
+    input wire [`ROB_ENTRY_WIDTH-1:0] assigned_rob_id,
     input wire full,
 	output wire require_rob_entry,
 	output wire is_store,
@@ -191,11 +193,4 @@ module decode_stage #(
 	//output assignation from Forward Unit wires to stage output wires
 	assign stall_out = stall_wire || stall_in; // stall if forward_unit says stall or if we receive stall
 
-    is_store = instr_type_wire == `INSTR_TYPE_STORE ? 1 : 0;
-    rd <= rd_wire;
-    
-    //output assignation from Forward Unit wires to stage output wires
-    s1_data_out <= s1_data_wire;
-    s2_data_out <= s2_data_wire;
-    stall_out <= stall_wire || stall_in; // stall if forward_unit says stall or if we receive stall
 endmodule
