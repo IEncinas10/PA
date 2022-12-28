@@ -15,27 +15,29 @@ module cache_stage_testbench();
 
     logic clk;
     logic rst;
+    logic [INSTR_TYPE_SZ-1:0] instruction_type;
     logic [INSTR_TYPE_SZ-1:0] instruction_type_out;
     logic [WORD_SIZE-1:0] pc;
+    logic [WORD_SIZE-1:0] pc_out;
     logic [2:0] funct3;
     logic [WORD_SIZE-1:0] v_mem_addr;
     logic [WORD_SIZE-1:0] s2;
     logic [ROB_ENTRY_WIDTH-1:0] rob_id;
+    logic [ROB_ENTRY_WIDTH-1:0] rob_id_out;
     logic valid;
-    logic stall_in;
+    logic valid_out;
+    logic stall_out /* STALL  propagate backwards */;
     logic [WORD_SIZE-1:0] read_data;
-    logic mem_req;
+    logic                 mem_req;
     logic [WORD_SIZE-1:0] mem_req_addr;
-    logic	       mem_write;
-    logic[WORD_SIZE-1:0] mem_write_addr;
-    logic[LINE_SIZE-1:0] mem_write_data;
-    logic mem_res;
+    logic		        mem_write;
+    logic [WORD_SIZE-1:0] mem_write_addr;
+    logic [LINE_SIZE-1:0] mem_write_data;
+    logic		       mem_res;
     logic [WORD_SIZE-1:0] mem_res_addr;
     logic [LINE_SIZE-1:0] mem_res_data;
     logic                       rob_store_permission;
     logic [ROB_ENTRY_WIDTH-1:0] rob_sb_permission_rob_id;
-    logic stall_out /* STALL  */;
-    logic valid_out;
 
     cache_stage 
     #(
@@ -48,14 +50,18 @@ module cache_stage_testbench();
     (
     .clk                      (clk),
     .rst                      (rst),
+    .instruction_type         (instruction_type),
     .instruction_type_out     (instruction_type_out),
     .pc                       (pc),
+    .pc_out                   (pc_out),
     .funct3                   (funct3),
     .v_mem_addr               (v_mem_addr),
     .s2                       (s2),
     .rob_id                   (rob_id),
+    .rob_id_out               (rob_id_out),
     .valid                    (valid),
-    .stall_in                 (stall_in),
+    .valid_out                (valid_out),
+    .stall_out                (stall_out),
     .read_data                (read_data),
     .mem_req                  (mem_req),
     .mem_req_addr             (mem_req_addr),
@@ -66,9 +72,7 @@ module cache_stage_testbench();
     .mem_res_addr             (mem_res_addr),
     .mem_res_data             (mem_res_data),
     .rob_store_permission     (rob_store_permission),
-    .rob_sb_permission_rob_id (rob_sb_permission_rob_id),
-    .stall_out           (stall_out),
-    .valid_out           (valid_out)
+    .rob_sb_permission_rob_id (rob_sb_permission_rob_id)
     );
 
 

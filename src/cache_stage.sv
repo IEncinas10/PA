@@ -11,30 +11,39 @@ module cache_stage #(
 ) (
     input wire clk,
     input wire rst,
-    input wire [INSTR_TYPE_SZ-1:0] instruction_type_out,
-    input wire [WORD_SIZE-1:0] pc,
+    input  wire [INSTR_TYPE_SZ-1:0] instruction_type,
+    output wire [INSTR_TYPE_SZ-1:0] instruction_type_out,
+    input  wire [WORD_SIZE-1:0] pc,
+    output wire [WORD_SIZE-1:0] pc_out,
     input wire [2:0] funct3,
     input wire [WORD_SIZE-1:0] v_mem_addr,  // alu out
     input wire [WORD_SIZE-1:0] s2,        // store value
-    input wire [ROB_ENTRY_WIDTH-1:0] rob_id,
-    input wire valid,
-    input wire stall_in, 
-    output wire [WORD_SIZE-1:0] read_data,                       // result of the load
-    output wire mem_req,                         // memory read port
+    input  wire [ROB_ENTRY_WIDTH-1:0] rob_id,
+    output wire [ROB_ENTRY_WIDTH-1:0] rob_id_out,
+    input  wire valid,
+    output wire valid_out,
+    output wire stall_out, /* STALL output, propagate backwards */
+    output wire [WORD_SIZE-1:0] read_data,      // result of the load
+    output wire                 mem_req,        // memory read port
     output wire [WORD_SIZE-1:0] mem_req_addr,
-    output reg		       mem_write,       // Memory write port
-    output reg [WORD_SIZE-1:0] mem_write_addr,  // 
-    output reg [LINE_SIZE-1:0] mem_write_data,
-    input wire mem_res,                        // Memory response
+    output wire		        mem_write,       // Memory write port
+    output wire [WORD_SIZE-1:0] mem_write_addr, 
+    output wire [LINE_SIZE-1:0] mem_write_data,
+    input wire		       mem_res,         // Memory response
     input wire [WORD_SIZE-1:0] mem_res_addr, 
     input wire [LINE_SIZE-1:0] mem_res_data,
     input wire                       rob_store_permission,
-    input wire [ROB_ENTRY_WIDTH-1:0] rob_sb_permission_rob_id,
-    output reg stall_out, /* STALL output */
-    output reg valid_out
+    input wire [ROB_ENTRY_WIDTH-1:0] rob_sb_permission_rob_id
 );
 
-    wire is_store = instruction_type_out == `INSTR_TYPE_STORE;
+    wire is_store = (instruction_type == `INSTR_TYPE_STORE);
+    
+    assign stall_out = (valid && (is_store && (sb_full || cache_store_stall) || !tlb_hit));
+
+    assign instruction_type_out = instruction_type;
+    assign pc_out = pc;
+    assign valid_out = valid && !stall_out;
+    assign rob_id_out = rob_id;
 
     wire cache_hit;
     wire cache_store_stall;
@@ -42,13 +51,16 @@ module cache_stage #(
     wire tlb_exception;
     wire tlb_hit;
 
-    wire sb_store = is_store && !cache_store_stall;
     
     wire [WORD_SIZE-1:0] phy_mem_addr;
 
     assign phy_mem_addr[WORD_SIZE-1-`PAGE_WIDTH:0] = v_mem_addr[WORD_SIZE-1-`PAGE_WIDTH:0];
 
-
+    // sb_store informs the SB that we want to add current store into
+    // the store buffer in this cycle. Then, we have to check that
+    // the instruction is valid, it's a store, and we can issue the mem
+    // request from the cache in this cycle.
+    wire                         sb_store = valid && is_store && !cache_store_stall && tlb_hit;
     wire [WORD_SIZE-1:0]         sb_store_value; // sb -> cache
     wire [WORD_SIZE-1:0]         sb_store_phy_addr;
     wire                         sb_cache_wenable;
@@ -61,15 +73,21 @@ module cache_stage #(
     TLB dtlb(
 	.clk(clk),
 	.virtual_page(v_mem_addr[WORD_SIZE-1-:`PAGE_WIDTH]),
+	.valid(valid),
 	.physical_page_out(phy_mem_addr[WORD_SIZE-1-:`PAGE_WIDTH]),
 	.exception(tlb_exception),
 	.hit(tlb_hit)
     );
 
+    // A load is valid if the instruction itself is valid AND it hits TLB
+
+    // A store is valid if the instruction itself is valid, it hits TLB and
+    // can be stored into the Store Buffer
+
     cache dcache(
 	.clk(clk),
 	.rst(rst),
-	.valid(valid),
+	.valid(valid && (!is_store || !sb_full) && tlb_hit),// store has to be able to get into SB
 	.addr(phy_mem_addr),
 	.load_size(funct3),
 	.store(is_store),
