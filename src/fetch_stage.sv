@@ -25,8 +25,9 @@ module fetch_stage #(
 );
 
     reg [WORD_SIZE-1:0] pc;
+    reg exception = 0;
 
-    assign valid_out = hit_tlb && !stall_in;
+    assign valid_out = hit_tlb && !stall_in && !exception;
 
     assign pc_out = pc;
 
@@ -51,10 +52,15 @@ module fetch_stage #(
     wire store_stall;
     wire [`SIZE_WRITE_WIDTH-1:0] load_size = `FULL_WORD_SIZE; //Hardcode, we always want the full instruction (word size)
 
+    initial begin
+	pc = `PC_INITIAL;
+    end
+
     /* PC selection */
     always @(posedge(clk)) begin
-	if(exception_in) begin
+	if(exception_in || exception) begin
 	    pc = `PC_EXCEPTION;
+	    exception = 1;
 	end else if(jump_taken) begin
 	    pc = nextpc;
 	end else if (rst) begin 
