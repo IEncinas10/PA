@@ -127,8 +127,6 @@ module cache #(
 		store_stall = !(hit || mem_req_tags[set] == tag || !mem_req_present[set]);
 	    end
 
-	    // Stores from SB should always succeed
-	    store_success = wenable && sb_tag == tags[sb_set];
 
 	    line_read = data[set];
 	    case(load_size) 
@@ -146,6 +144,9 @@ module cache #(
 	    endcase
 	end 
 
+	// Stores from SB should always succeed
+	store_success = wenable && sb_tag == tags[sb_set];
+
 	// Evict line before it is replaced
 	if(mem_res && dirtys[mem_res_set]) begin
 	    `assert(pin_counters[mem_res_set], 0);
@@ -159,7 +160,7 @@ module cache #(
     always @(posedge(clk)) begin
 	if(rst) begin
 	    reset();
-	end else if (valid) begin
+	end else begin
 	    // If we're a store and we have HIT cache, we have to
 	    // increase the pin counter. When we write from the SB we will
 	    // decrement it back
@@ -223,7 +224,7 @@ module cache #(
 	// If we're already requesting this memory block, just update its pin counter.
 	// If this request already exists, a store will only stay 1 cycle in
 	// this stage (and if the SB is full we will get a 'valid = 0')
-	if(!mem_req && store && mem_req_present[set] && mem_req_tags[set] == tag) begin
+	if(!mem_req && valid && store && mem_req_present[set] && mem_req_tags[set] == tag) begin
 	    mem_req_pin_counters[set] = mem_req_pin_counters[set] + 1;
 	end
 
