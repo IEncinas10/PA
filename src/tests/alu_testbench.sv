@@ -148,6 +148,7 @@ module alu_testbench();
        opcode = `OPCODE_BRANCH;
        aluIn1 = 4;
        aluIn2 = 3;
+	   funct3 = `BEQ_FUNCT3;
        #2;
        `ASSERT((aluOut != 0));
        `ASSERT((branchTaken == 0));
@@ -159,11 +160,49 @@ module alu_testbench();
        opcode = `OPCODE_BRANCH;
        aluIn1 = 4;
        aluIn2 = 4;
+	   funct3 = `BEQ_FUNCT3;
        immediate = 60;
        #2;
        `ASSERT((aluOut == 0));
        `ASSERT((branchTaken == 1));
        `ASSERT((newpc == 460));
+       #2;
+    `UNIT_TEST_END
+
+    `UNIT_TEST("OPCODE_BNE")
+       pc = 400;
+       opcode = `OPCODE_BRANCH;
+       aluIn1 = 4;
+       aluIn2 = 4;
+	   funct3 = `BNE_FUNCT3;
+       immediate = 60;
+       #2;
+       `ASSERT((aluOut == 0));
+       `ASSERT((branchTaken == 0));
+       #2;
+    `UNIT_TEST_END
+    
+	`UNIT_TEST("OPCODE_BGE")
+       pc = 400;
+       opcode = `OPCODE_BRANCH;
+       aluIn1 = 5;
+       aluIn2 = 4;
+	   funct3 = `BGE_FUNCT3;
+       immediate = 60;
+       #2;
+       `ASSERT((branchTaken == 1));
+       #2;
+    `UNIT_TEST_END
+
+	`UNIT_TEST("OPCODE_BLT")
+       pc = 400;
+       opcode = `OPCODE_BRANCH;
+       aluIn1 = 3;
+       aluIn2 = 4;
+	   funct3 = `BLT_FUNCT3;
+       immediate = 60;
+       #2;
+       `ASSERT((branchTaken == 1));
        #2;
     `UNIT_TEST_END
 

@@ -59,8 +59,24 @@ module alu #(
         aluOut = newpc;
       end
       `OPCODE_BRANCH: begin
-        aluOut = aluSub;
-        branchTaken = aluOut == 0;
+		case(funct3)
+			`BEQ_FUNCT3: begin
+				aluOut = aluSub;
+				branchTaken = aluOut == 0;
+			end
+			`BNE_FUNCT3: begin
+				aluOut = aluSub;
+				branchTaken = aluOut != 0;
+			end
+			`BGE_FUNCT3: begin
+				aluOut = aluSub;
+				branchTaken = (aluIn1 > aluIn2) || aluOut == 0;
+			end
+			`BLT_FUNCT3: begin
+				aluOut = aluSub;
+				branchTaken = aluIn1 < aluIn2;
+			end
+		endcase
       end
       `OPCODE_JUMP: begin
         branchTaken = 1;

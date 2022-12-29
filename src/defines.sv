@@ -32,6 +32,12 @@
 `define ADDI_FUNCT3     3'b000 //solo se necesita f3 para addi
  
 
+/* Funct3 of branches */
+`define BEQ_FUNCT3      3'b000
+`define BNE_FUNCT3		3'b010
+`define BLT_FUNCT3      3'b100
+`define BGE_FUNCT3      3'b101
+
 //TODO revisar todos los f7 y f3 necesarios para las operaciones
 `define SUB_FUNCT7      7'b0100000
 `define MUL_FUNCT7      7'b0000001
