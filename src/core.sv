@@ -127,7 +127,8 @@ module core #(
     wire [WORD_SIZE-1:0]        m5_wb_alu_result_out;
     wire [`ROB_ENTRY_WIDTH-1:0] m5_wb_rob_id_out;
     wire                        m5_wb_valid_out;
-wire		 rob_exception_out;
+
+    wire		 rob_exception_out;
     wire [WORD_SIZE-1:0] rob_ex_pc;
 
     wire [`ROB_ENTRY_WIDTH-1:0] rob_assigned_rob_id;
@@ -146,13 +147,13 @@ wire		 rob_exception_out;
     wire		       rob_sb_store_permission;
     wire [`ROB_ENTRY_WIDTH-1:0] rob_sb_rob_id;
 
+    wire zero = 0;
 
     fetch_stage fetch(
 	.clk(clk),
 	.rst(rst),
 	.jump_taken(alu_branch_taken && alu_instr_valid),
 	.nextpc(alu_newpc),
-	.stall_in(),
 	.exception_in(rob_exception_out),
 	.mem_req(i_read),
 	.mem_req_addr(i_addr),
@@ -170,7 +171,7 @@ wire		 rob_exception_out;
 	.pc(fetch_pc_out),
 	.instruction(fetch_instr_out),
 	.valid(fetch_valid_out),
-	.stall(),
+	.stall((cache_stall_out && d_e_valid_out) || decode_stall_out), // We have to stall if decode signals stall and we have a valid instr
 	.reset(rst || rob_exception_out || (alu_branch_taken && alu_instr_valid)),
 	.exception(fetch_exception_out),
 	.pc_out(f_d_pc_out), 
@@ -225,7 +226,7 @@ wire		 rob_exception_out;
 	.is_store(decode_is_store),
 	.rd(decode_rd),
 	.jump_taken(alu_branch_taken && alu_instr_valid),
-	.stall_in(),//This stall is used for RF_ROB renaming, 
+	.stall_in(cache_stall_out),//This stall is used for RF_ROB renaming, 
 	.stall_out(decode_stall_out)
     );
 
@@ -240,7 +241,7 @@ wire		 rob_exception_out;
 	.s2(decode_s2_data_out), // rs2 
 	.immediate(decode_imm_out),
 	.rob_id(rob_assigned_rob_id), // salida del rob
-	.stall(),
+	.stall(cache_stall_out),
 	.valid(f_d_valid_out && !decode_stall_out),
 	.reset(rst || rob_exception_out || (alu_branch_taken && alu_instr_valid)),
 	.instruction_type_out(d_e_instr_type_out),
@@ -277,7 +278,7 @@ wire		 rob_exception_out;
 	.funct3(d_e_funct3_out),
 	.aluResult(alu_result), 
 	.s2(d_e_s2_out),
-	.stall(),
+	.stall(cache_stall_out),
 	.valid(d_e_valid_out),
 	.reset(rst || rob_exception_out),
 	.rob_id(d_e_rob_id_out),
@@ -325,7 +326,7 @@ wire		 rob_exception_out;
 	.virtual_addr_exception(cache_v_addr_exception),
 	.load_data(cache_load_data), 
 	.valid(cache_valid_out),
-	.stall(),
+	.stall(zero),
 	.reset(rst || rob_exception_out),
 	.rob_id(e_m_rob_id_out),
 	.instruction_type_out(m_wb_instr_type_out),
@@ -343,7 +344,7 @@ wire		 rob_exception_out;
 	.pc(e_m_pc_out),
 	.aluResult(e_m_alu_result_out),
 	.valid(e_m_valid_out && (e_m_instr_type_out == `INSTR_TYPE_MUL)),
-	.stall(),
+	.stall(zero),
 	.reset(rst || rob_exception_out),
 	.rob_id(e_m_rob_id_out),
 	.instruction_type_out(m2_m3_instr_type_out),
@@ -359,7 +360,7 @@ wire		 rob_exception_out;
 	.pc(m2_m3_pc_out),
 	.result(m2_m3_alu_result_out),
 	.valid(m2_m3_valid_out),
-	.stall(),
+	.stall(zero),
 	.reset(rst || rob_exception_out),
 	.rob_id(m2_m3_rob_id_out),
 	.instruction_type_out(m3_m4_instr_type_out),
@@ -377,7 +378,7 @@ wire		 rob_exception_out;
 	.pc(m3_m4_pc_out),
 	.result(m3_m4_alu_result_out),
 	.valid(m3_m4_valid_out),
-	.stall(),
+	.stall(zero),
 	.reset(rst || rob_exception_out),
 	.rob_id(m3_m4_rob_id_out),
 	.instruction_type_out(m4_m5_instr_type_out),
@@ -394,7 +395,7 @@ wire		 rob_exception_out;
 	.pc(m4_m5_pc_out),
 	.result(m4_m5_alu_result_out),
 	.valid(m4_m5_valid_out),
-	.stall(),
+	.stall(zero),
 	.reset(rst || rob_exception_out),
 	.rob_id(m4_m5_rob_id_out),
 	.instruction_type_out(m5_wb_instr_type_out),
