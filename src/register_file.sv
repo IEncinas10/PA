@@ -1,5 +1,9 @@
 `include "register.sv"
 
+
+`ifndef REGISTER_FILE
+`define REGISTER_FILE
+
 module register_file #(
     parameter N = 5,      //-- Bits needed for the register. 2^N registers
     parameter WIDTH = 32  //-- Number of bits held by the register
@@ -47,3 +51,4 @@ module register_file #(
     end
 
 endmodule
+`endif

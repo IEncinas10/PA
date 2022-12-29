@@ -1,5 +1,8 @@
 `include "../defines.sv"
 
+`ifndef MEMORY
+`define MEMORY
+
 module memory #(
   parameter MEM_DELAY_CYCLES = `MEM_DELAY_CYCLES,
   parameter NUM_BLOCKS       = `MEM_SIZE / LINE_SIZE,
@@ -107,3 +110,5 @@ module memory #(
 
    
 endmodule
+
+`endif

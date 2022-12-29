@@ -1,5 +1,8 @@
 `include "../defines.sv"
 
+`ifndef F_D
+`define F_D
+
 module F_D_Registers #(
   parameter WORD_SIZE = `WORD_SIZE
 ) (
@@ -44,3 +47,5 @@ module F_D_Registers #(
         
     end
 endmodule
+
+`endif

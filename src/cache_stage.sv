@@ -3,6 +3,9 @@
 `include "../TLB.sv"
 `include "../store_buffer.sv"
 
+`ifndef CACHE_STAGE
+`define CACHE_STAGE
+
 module cache_stage #(
     parameter WORD_SIZE = `WORD_SIZE,
     parameter INSTR_TYPE_SZ = `INSTR_TYPE_SZ,
@@ -126,3 +129,5 @@ module cache_stage #(
 	.bypass_possible(sb_bypass_possible)
     );
 endmodule
+
+`endif

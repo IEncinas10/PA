@@ -1,5 +1,8 @@
 `include "../defines.sv"
 
+`ifndef TLB
+`define TLB
+
 module TLB #(
   parameter N = `TLB_ENTRIES,  //Number of entries of TLB
   parameter WIDTH = `PAGE_WIDTH,
@@ -75,3 +78,4 @@ module TLB #(
 
    
 endmodule
+`endif

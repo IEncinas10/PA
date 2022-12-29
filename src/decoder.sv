@@ -1,5 +1,8 @@
 `include "defines.sv"
 
+`ifndef DECODER
+`define DECODER
+
 module decoder #(
     parameter INSTR_SIZE = `WORD_SIZE
 ) (
@@ -73,3 +76,5 @@ module decoder #(
     //end
 
 endmodule
+
+`endif

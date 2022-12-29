@@ -1,5 +1,9 @@
 `include "../defines.sv"
 
+
+`ifndef E_M
+`define E_M
+
 module E_M_Registers #(
   parameter WORD_SIZE = `WORD_SIZE,
   parameter INSTR_TYPE_SZ = `INSTR_TYPE_SZ,
@@ -59,3 +63,4 @@ module E_M_Registers #(
         end
     end
 endmodule
+`endif

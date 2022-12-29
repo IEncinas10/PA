@@ -2,6 +2,8 @@
 `include "TLB.sv"
 `include "cache.sv"
 
+`ifndef FETCH_STAGE
+`define FETCH_STAGE
 
 module fetch_stage #(
     parameter WORD_SIZE = `WORD_SIZE,
@@ -111,3 +113,4 @@ module fetch_stage #(
     );
 
 endmodule
+`endif

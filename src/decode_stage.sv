@@ -4,6 +4,9 @@
 `include "forward_unit.sv"
 `include "register_file.sv"
 
+`ifndef DECODE_STAGE
+`define DECODE_STAGE
+
 module decode_stage #(
   parameter WORD_SIZE = `WORD_SIZE
 ) (
@@ -177,3 +180,5 @@ module decode_stage #(
     assign stall_out = stall_wire || stall_in; // stall if forward_unit says stall or if we receive stall
 
 endmodule
+
+`endif

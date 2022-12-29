@@ -1,5 +1,9 @@
 `include "../defines.sv"
 
+
+`ifndef ALU
+`define ALU
+
 module alu #(
   parameter WORD_SIZE = `WORD_SIZE 
 ) (
@@ -81,3 +85,5 @@ module alu #(
   
   end
   endmodule
+
+`endif

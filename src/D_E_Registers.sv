@@ -1,5 +1,8 @@
 `include "../defines.sv"
 
+`ifndef D_E
+`define D_E
+
 module D_E_Registers #(
   parameter WORD_SIZE = `WORD_SIZE,
   parameter INSTR_TYPE_SZ = `INSTR_TYPE_SZ,
@@ -70,3 +73,5 @@ module D_E_Registers #(
         end
     end
 endmodule
+
+`endif

@@ -1,9 +1,21 @@
 `include "defines.sv"
-`include "TLB.sv"
-`include "cache.sv"
 `include "cache_stage.sv"
+`include "fetch_stage.sv"
+`include "decode_stage.sv"
 `include "memory.sv"
 `include "alu.sv"
+`include "F_D_Registers.sv"
+`include "D_E_Registers.sv"
+`include "E_M_Registers.sv"
+`include "M_WB_Registers.sv"
+`include "M2_M3_Registers.sv"
+`include "M3_M4_Registers.sv"
+`include "M4_M5_Registers.sv"
+`include "M5_WB_Registers.sv"
+`include "rob.sv"
+
+`ifndef CORE
+`define CORE
 
 
 module core #(
@@ -38,7 +50,7 @@ module core #(
     wire                 f_d_valid_out;
 
     wire                       decode_stall_out;
-    wire [`INSTR_TYPE_OUT-1:0] decode_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0] decode_instr_type_out;
     wire [WORD_SIZE-1:0]       decode_s1_data_out;
     wire [WORD_SIZE-1:0]       decode_s2_data_out;
     wire [WORD_SIZE-1:0]       decode_imm_out;
@@ -49,7 +61,7 @@ module core #(
     wire [6:0]		       decode_funct7_out;
     wire [6:0]		       decode_opcode_out;
 
-    wire [`INSTR_TYPE_OUT-1:0]  d_e_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0]  d_e_instr_type_out;
     wire [WORD_SIZE-1:0]        d_e_pc_out;
     wire [WORD_SIZE-1:0]        d_e_imm_out;
     wire [2:0]		        d_e_funct3_out;
@@ -67,7 +79,7 @@ module core #(
     wire		 alu_instr_valid;
     assign alu_instr_valid = d_e_valid_out;
 
-    wire [`INSTR_TYPE_OUT-1:0]  e_m_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0]  e_m_instr_type_out;
     wire [WORD_SIZE-1:0]        e_m_pc_out;
     wire [WORD_SIZE-1:0]        e_m_imm_out;
     wire [2:0]		        e_m_funct3_out;
@@ -82,7 +94,7 @@ module core #(
     wire                 	cache_valid_out;
     wire                 	cache_stall_out;
 
-    wire [`INSTR_TYPE_OUT-1:0]  m_wb_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0]  m_wb_instr_type_out;
     wire [WORD_SIZE-1:0]        m_wb_pc_out;
     wire [WORD_SIZE-1:0]        m_wb_load_data_out;
     wire [`ROB_ENTRY_WIDTH-1:0] m_wb_rob_id_out;
@@ -90,41 +102,40 @@ module core #(
     wire                        m_wb_exception_out;
     wire                        m_wb_v_addr_exception_out;
 
-    wire [`INSTR_TYPE_OUT-1:0]  m2_m3_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0]  m2_m3_instr_type_out;
     wire [WORD_SIZE-1:0]        m2_m3_pc_out;
     wire [WORD_SIZE-1:0]        m2_m3_alu_result_out;
     wire [`ROB_ENTRY_WIDTH-1:0] m2_m3_rob_id_out;
     wire                        m2_m3_valid_out;
 
-    wire [`INSTR_TYPE_OUT-1:0]  m3_m4_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0]  m3_m4_instr_type_out;
     wire [WORD_SIZE-1:0]        m3_m4_pc_out;
     wire [WORD_SIZE-1:0]        m3_m4_alu_result_out;
     wire [`ROB_ENTRY_WIDTH-1:0] m3_m4_rob_id_out;
     wire                        m3_m4_valid_out;
 
-    wire [`INSTR_TYPE_OUT-1:0]  m4_m5_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0]  m4_m5_instr_type_out;
     wire [WORD_SIZE-1:0]        m4_m5_pc_out;
     wire [WORD_SIZE-1:0]        m4_m5_alu_result_out;
     wire [`ROB_ENTRY_WIDTH-1:0] m4_m5_rob_id_out;
     wire                        m4_m5_valid_out;
 
-    wire [`INSTR_TYPE_OUT-1:0]  m5_wb_instr_type_out;
+    wire [`INSTR_TYPE_SZ-1:0]  m5_wb_instr_type_out;
     wire [WORD_SIZE-1:0]        m5_wb_pc_out;
     wire [WORD_SIZE-1:0]        m5_wb_alu_result_out;
     wire [`ROB_ENTRY_WIDTH-1:0] m5_wb_rob_id_out;
     wire                        m5_wb_valid_out;
-
-    wire		 rob_exception_out;
+wire		 rob_exception_out;
     wire [WORD_SIZE-1:0] rob_ex_pc;
 
     wire [`ROB_ENTRY_WIDTH-1:0] rob_assigned_rob_id;
     wire			rob_full;
 
     /* RF and RF-ROB. Don't write into RF if exception present */
-    wire                        rob_commit;
-    wire [`REG_INDEX_SIZE-1:0]  rob_commit_rd;
-    wire [WORD_SIZE-1:0]        rob_commit_value;
-    wire [`ROB_ENTRY_WIDTH-1:0] rob_commit_rob_entry;
+    wire			     rob_commit;
+    wire [`ARCH_REG_INDEX_SIZE-1:0]  rob_commit_rd;
+    wire [WORD_SIZE-1:0]	     rob_commit_value;
+    wire [`ROB_ENTRY_WIDTH-1:0]      rob_commit_rob_entry;
 
     wire [WORD_SIZE-1:0] rob_bypass_s1;
     wire [WORD_SIZE-1:0] rob_bypass_s2;
@@ -147,7 +158,7 @@ module core #(
 	.mem_res_addr(i_res_addr),
 	.mem_res_data(i_res_data),
 	.pc_out(fetch_pc_out),
-	instruction_out(fetch_instr_out),
+	.instruction_out(fetch_instr_out),
 	.exception_out(fetch_exception_out),
 	.valid_out(fetch_valid_out)
     );
@@ -247,12 +258,12 @@ module core #(
 	.opcode(d_e_opcode_out),
 	.funct7(d_e_funct7_out),
 	.funct3(d_e_funct3_out),
-	.aluIn1(d_e_s1_data_out),
-	.aluIn2(d_e_s2_data_out), 
+	.aluIn1(d_e_s1_out),
+	.aluIn2(d_e_s2_out), 
 	.immediate(d_e_imm_out),
 	.aluOut(alu_result),
 	.newpc(alu_newpc),
-	.branchTaken(branch_taken) // If instr. is not valid, ignore this and set to 0 from outside
+	.branchTaken(alu_branch_taken) // If instr. is not valid, ignore this and set to 0 from outside
     );
 
     // This stage has to forward its result
@@ -262,7 +273,7 @@ module core #(
 	.pc(d_e_pc_out),
 	.funct3(d_e_funct3_out),
 	.aluResult(alu_result), 
-	.s2(d_e_s2_data_out),
+	.s2(d_e_s2_out),
 	.stall(),
 	.valid(d_e_valid_out),
 	.reset(rst || rob_exception_out),
@@ -297,8 +308,8 @@ module core #(
 	.mem_res(d_res),         // Memory response
 	.mem_res_addr(d_res_addr), 
 	.mem_res_data(d_res_data),
-	.rob_store_permission(),
-	.rob_sb_permission_rob_id()
+	.rob_store_permission(rob_sb_store_permission),
+	.rob_sb_permission_rob_id(rob_sb_rob_id),
 	.exception(cache_exception),
 	.v_addr_exception(cache_v_addr_exception)
 
@@ -450,3 +461,5 @@ module core #(
     );
 
 endmodule
+
+`endif

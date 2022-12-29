@@ -1,5 +1,8 @@
 `include "../defines.sv"
 
+`ifndef CACHE
+`define CACHE
+
 module cache #(
     parameter N                = `CACHE_N_LINES,
     parameter LINE_SIZE        = `CACHE_LINE_SIZE,
@@ -258,3 +261,5 @@ module cache #(
     endtask
 
 endmodule
+
+`endif

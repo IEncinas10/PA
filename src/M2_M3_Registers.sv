@@ -1,6 +1,6 @@
 `include "../defines.sv"
 
-module M_M3_Registers #(
+module M2_M3_Registers #(
   parameter WORD_SIZE = `WORD_SIZE,
   parameter INSTR_TYPE_SZ = `INSTR_TYPE_SZ,
   parameter ROB_ENTRY_WIDTH = `ROB_ENTRY_WIDTH

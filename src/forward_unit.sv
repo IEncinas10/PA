@@ -1,5 +1,8 @@
 `include "defines.sv"
 
+`ifndef FORWARD_UNIT
+`define FORWARD_UNIT
+
 module forward_unit #(
     parameter WORD_SIZE = `WORD_SIZE,
     parameter ROB_ENTRY_WIDTH = `ROB_ENTRY_WIDTH
@@ -128,3 +131,5 @@ always @(*) begin
 end
 
 endmodule
+
+`endif
