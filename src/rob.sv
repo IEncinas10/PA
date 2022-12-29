@@ -17,18 +17,18 @@ module rob #(
     output reg                       full,
 
     /* Exceptions from decode: ITLB */
-    input wire d_exception,
-    input wire d_pc,
+    input wire		       d_exception,
+    input wire [WORD_SIZE-1:0] d_pc,
     // d_exception's rob entry comes from TAIL if we're not full (of course?)
 
     /* ALU write port */
-    input wire [WORD_SIZE-1:0] alu_result,
-    input wire 		       alu_rob_wenable,
-    input wire 		       alu_rob_id,
+    input wire [WORD_SIZE-1:0]	     alu_result,
+    input wire 		       	     alu_rob_wenable,
+    input wire [ROB_ENTRY_WIDTH-1:0] alu_rob_id,
     /* MEM write port */
-    input wire [WORD_SIZE-1:0] mem_result,
-    input wire 		       mem_rob_wenable,
-    input wire 		       mem_rob_id,
+    input wire [WORD_SIZE-1:0]       mem_result,
+    input wire 		             mem_rob_wenable,
+    input wire [ROB_ENTRY_WIDTH-1:0] mem_rob_id,
 
     /* EXCEPTION INFO. MEM ONLY */
     input wire		       mem_exception,
@@ -36,9 +36,9 @@ module rob #(
     input wire [WORD_SIZE-1:0] mem_pc,
 
     /* MUL write port */
-    input wire [WORD_SIZE-1:0] mul_result,
-    input wire 		       mul_rob_wenable,
-    input wire 		       mul_rob_id,
+    input wire [WORD_SIZE-1:0]       mul_result,
+    input wire 		             mul_rob_wenable,
+    input wire [ROB_ENTRY_WIDTH-1:0] mul_rob_id,
 
     /* Bypasses */
     input wire [ROB_ENTRY_WIDTH-1:0] rs1_rob_entry,
