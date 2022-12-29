@@ -17,7 +17,7 @@ module decode_stage #(
     /* Connections for Forward Unit */
     input wire [WORD_SIZE-1:0] rob_s1_data,
     input wire [WORD_SIZE-1:0] rob_s2_data,
-    input wire                 rob_s1_valid,
+    input wire                 rob_s1_valid, //This are the rob sources valid bit
     input wire                 rob_s2_valid,
     input wire [WORD_SIZE-1:0]        alu_data,          /* ALU stage bypass */
     input wire [`ROB_ENTRY_WIDTH-1:0] alu_rob_id,
@@ -61,6 +61,9 @@ module decode_stage #(
     output wire                            require_rob_entry,
     output wire                            is_store,
     output wire [`ARCH_REG_INDEX_SIZE-1:0] rd,
+	output wire [`ROB_ENTRY_WIDTH-1:0] rs1_rob_entry_out, //Rob entries from RF_ROB
+	output wire [`ROB_ENTRY_WIDTH-1:0] rs2_rob_entry_out,
+
     
     /* Connections from other stages */
     input wire jump_taken,
@@ -78,8 +81,6 @@ module decode_stage #(
     wire [WORD_SIZE-1:0] rf_s2_data_wire;
     
     /* Wires for RF-ROB connection with Forward Unit */
-    wire [`ROB_ENTRY_WIDTH-1:0] rs1_rob_entry_wire;
-    wire [`ROB_ENTRY_WIDTH-1:0] rs2_rob_entry_wire;
     wire rs1_rob_entry_valid_wire;
     wire rs2_rob_entry_valid_wire;
     
@@ -124,9 +125,9 @@ module decode_stage #(
 	.reset(rst),
 	.rs1(rs1_wire),
 	.rs2(rs2_wire),
-	.rs1_rob_entry(rs1_rob_entry_wire),
+	.rs1_rob_entry(rs1_rob_entry_out),
 	.rs1_rob_entry_valid(rs1_rob_entry_valid_wire),
-	.rs2_rob_entry(rs2_rob_entry_wire),
+	.rs2_rob_entry(rs2_rob_entry_out),
 	.rs2_rob_entry_valid(rs2_rob_entry_valid_wire),
 	.renaming_reg(renaming_reg_wire),
 	.rd(rd),
@@ -143,8 +144,8 @@ module decode_stage #(
 	.rob_s2_data(rob_s2_data),
 	.rob_s1_valid(rob_s1_valid),
 	.rob_s2_valid(rob_s2_valid),
-	.rs1_rob_entry(rs1_rob_entry_wire),
-	.rs2_rob_entry(rs2_rob_entry_wire),
+	.rs1_rob_entry(rs1_rob_entry_out),
+	.rs2_rob_entry(rs2_rob_entry_out),
 	.rs1_rob_entry_valid(rs1_rob_entry_valid_wire),
 	.rs2_rob_entry_valid(rs2_rob_entry_valid_wire),
 	.alu_data(alu_data),
