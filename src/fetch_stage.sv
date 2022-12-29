@@ -13,7 +13,6 @@ module fetch_stage #(
     input wire rst,
     input wire jump_taken,
     input wire [WORD_SIZE-1:0] nextpc,
-    input wire stall_in,
     input wire exception_in,
     output wire                 mem_req,        // memory read port
     output wire [WORD_SIZE-1:0] mem_req_addr,
@@ -29,7 +28,7 @@ module fetch_stage #(
     reg [WORD_SIZE-1:0] pc;
     reg exception = 0;
 
-    assign valid_out = hit_tlb && !stall_in && !exception;
+    assign valid_out = hit_tlb && cache_hit && !exception;
 
     assign pc_out = pc;
 
