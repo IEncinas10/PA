@@ -64,8 +64,8 @@ module decode_stage #(
     output wire                            require_rob_entry,
     output wire                            is_store,
     output wire [`ARCH_REG_INDEX_SIZE-1:0] rd,
-	output wire [`ROB_ENTRY_WIDTH-1:0] rs1_rob_entry_out, //Rob entries from RF_ROB
-	output wire [`ROB_ENTRY_WIDTH-1:0] rs2_rob_entry_out,
+    output wire [`ROB_ENTRY_WIDTH-1:0] rs1_rob_entry_out, //Rob entries from RF_ROB
+    output wire [`ROB_ENTRY_WIDTH-1:0] rs2_rob_entry_out,
 
     
     /* Connections from other stages */
