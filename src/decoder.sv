@@ -50,7 +50,7 @@ module decoder #(
     wire instr_U_type  = instr_AUIPC;
 
     assign instr_type = (instr_R_type && funct7 == `MUL_FUNCT7) ? `INSTR_TYPE_MUL :
-			((instr_R_type && funct7 != `MUL_FUNCT7) || instr_AUIPC) ? `INSTR_TYPE_ALU :
+			((instr_R_type && funct7 != `MUL_FUNCT7) || instr_AUIPC || instr_ALU_IMM) ? `INSTR_TYPE_ALU :
 			instr_LOAD ? `INSTR_TYPE_LOAD : 
             instr_STORE ? `INSTR_TYPE_STORE : `INSTR_TYPE_NO_WB;
 
