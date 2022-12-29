@@ -53,8 +53,6 @@ module decode_stage #(
     input wire [`ROB_ENTRY_WIDTH-1:0]     commit_rob_id,
 
     /* Connections RF with ROB*/
-    input wire                            wenable_rf,
-    input wire [`ARCH_REG_INDEX_SIZE-1:0] reg_in,
     input wire [WORD_SIZE-1:0]            din,
 	
     /* Connections to ROB */
@@ -112,8 +110,8 @@ module decode_stage #(
     register_file register_file(
 	.rst(rst),
 	.clk(clk),
-	.wenable(wenable_rf),
-	.reg_in(reg_in),//TODO ver en los test si funciona teniendo los mismos nombres
+	.wenable(commit),
+	.reg_in(commit_rd),
 	.din(din),
 	.a(rs1_wire),
 	.b(rs1_wire),

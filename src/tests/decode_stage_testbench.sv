@@ -46,8 +46,6 @@ module decode_stage_testbench();
     logic commit;
     logic [`ARCH_REG_INDEX_SIZE-1:0] commit_rd;
     logic [`ROB_ENTRY_WIDTH-1:0] commit_rob_id;
-    logic wenable_rf;
-    logic [`ARCH_REG_INDEX_SIZE-1:0] reg_in;
     logic [WORD_SIZE-1:0] din;
     logic [`ROB_ENTRY_WIDTH-1:0] assigned_rob_id;
     logic full;
@@ -100,8 +98,6 @@ module decode_stage_testbench();
     .commit               (commit),
     .commit_rd            (commit_rd),
     .commit_rob_id        (commit_rob_id),
-    .wenable_rf           (wenable_rf),
-    .reg_in               (reg_in),
     .din                  (din),
     .assigned_rob_id	  (assigned_rob_id),
     .full                 (full),
