@@ -22,7 +22,6 @@ module F_D_Registers #(
 
     initial begin
         pc_out = 0;
-	exception = 0;
         instruction_out = 0;
         valid_out = 0;
         wenable = 0;
