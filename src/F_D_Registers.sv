@@ -29,16 +29,12 @@ module F_D_Registers #(
 
     always @(posedge(clk)) begin
 
-        if (reset == 1) begin
-	    valid_out = 0;
-        end
-        else begin
-            valid_out = valid;
-        end
-
         wenable = stall == 0 || valid_out == 0;
 
-        if (wenable) begin
+        if (reset == 1) begin
+	    valid_out = 0;
+        end else if (wenable) begin
+            valid_out = valid;
             pc_out = pc;
             instruction_out = instruction;
 	    exception_out = exception;

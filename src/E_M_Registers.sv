@@ -43,17 +43,12 @@ module E_M_Registers #(
 
     always @(posedge(clk)) begin
 
+        wenable = stall == 0 || valid_out == 0;
 
         if (reset == 1) begin
             valid_out = 0;
-        end
-        else begin
+        end else if (wenable) begin
             valid_out = valid;
-        end
-
-        wenable = stall == 0 || valid_out == 0;
-
-        if (wenable) begin
             instruction_type_out = instruction_type;
             pc_out = pc;
             funct3_out = funct3;
