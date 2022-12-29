@@ -12,14 +12,10 @@ module cache_stage #(
     input wire clk,
     input wire rst,
     input  wire [INSTR_TYPE_SZ-1:0] instruction_type,
-    output wire [INSTR_TYPE_SZ-1:0] instruction_type_out,
-    input  wire [WORD_SIZE-1:0] pc,
-    output wire [WORD_SIZE-1:0] pc_out,
     input wire [2:0] funct3,
     input wire [WORD_SIZE-1:0] v_mem_addr,  // alu out
     input wire [WORD_SIZE-1:0] s2,        // store value
     input  wire [ROB_ENTRY_WIDTH-1:0] rob_id,
-    output wire [ROB_ENTRY_WIDTH-1:0] rob_id_out,
     input  wire valid,
     output wire valid_out,
     output wire stall_out, /* STALL output, propagate backwards */
@@ -33,17 +29,16 @@ module cache_stage #(
     input wire [WORD_SIZE-1:0] mem_res_addr, 
     input wire [LINE_SIZE-1:0] mem_res_data,
     input wire                       rob_store_permission,
-    input wire [ROB_ENTRY_WIDTH-1:0] rob_sb_permission_rob_id
+    input wire [ROB_ENTRY_WIDTH-1:0] rob_sb_permission_rob_id,
+    output wire exception,
+    output wire [WORD_SIZE-1:0] v_addr_exception
 );
 
     wire is_store = (instruction_type == `INSTR_TYPE_STORE);
     
     assign stall_out = (valid && (is_store && (sb_full || cache_store_stall) || !tlb_hit));
 
-    assign instruction_type_out = instruction_type;
-    assign pc_out = pc;
     assign valid_out = valid && !stall_out;
-    assign rob_id_out = rob_id;
 
     wire cache_hit;
     wire cache_store_stall;
