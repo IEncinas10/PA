@@ -103,7 +103,10 @@ module memory_testbench();
 
     `UNIT_TEST("TESTCASE_NAME")
 
-	dut.data[1] = 128'h12345678123456781234567812345678;
+	dut.data[0] = 32'h12345678;
+	dut.data[1] = 32'h12345678;
+	dut.data[2] = 32'h12345678;
+	dut.data[3] = 32'h12345678;
 	i_read = 1;	
 	i_addr = (1 << 4);
 
