@@ -59,8 +59,8 @@ module rob #(
     output reg [ROB_ENTRY_WIDTH-1:0] sb_rob_id,
 
     /* Exception output */
-    output reg exception,
-    output reg ex_pc
+    output reg                 exception,
+    output reg [WORD_SIZE-1:0] ex_pc
 );
 
     reg [N] [REG_INDEX_SIZE-1:0] rds;
