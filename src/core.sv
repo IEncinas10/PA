@@ -114,9 +114,25 @@ module core #(
     wire [`ROB_ENTRY_WIDTH-1:0] m5_wb_rob_id_out;
     wire                        m5_wb_valid_out;
 
-    wire rob_exception_out;
-    wire rob_assigned_rob_id;
-    wire rob_full;
+    wire		 rob_exception_out;
+    wire [WORD_SIZE-1:0] rob_ex_pc;
+
+    wire [`ROB_ENTRY_WIDTH-1:0] rob_assigned_rob_id;
+    wire			rob_full;
+
+    /* RF and RF-ROB. Don't write into RF if exception present */
+    wire                        rob_commit;
+    wire [`REG_INDEX_SIZE-1:0]  rob_commit_rd;
+    wire [WORD_SIZE-1:0]        rob_commit_value;
+    wire [`ROB_ENTRY_WIDTH-1:0] rob_commit_rob_entry;
+
+    wire [WORD_SIZE-1:0] rob_bypass_s1;
+    wire [WORD_SIZE-1:0] rob_bypass_s2;
+    wire                 rob_bypass_s1_valid;
+    wire                 rob_bypass_s2_valid;
+    wire		       rob_sb_store_permission;
+    wire [`ROB_ENTRY_WIDTH-1:0] rob_sb_rob_id;
+
 
     fetch_stage fetch(
 	.clk(clk),
@@ -155,28 +171,28 @@ module core #(
 	.rst(rst || rob_exception_out), //incorrectly resetting register file 
 	.instruction(f_d_instr_out),
 	.valid(f_d_valid_out),
-	.rob_s1_data,
-	.rob_s2_data,
-	.rob_s1_valid,
-	.rob_s2_valid,
-	.alu_data,          /* ALU stage bypass */
-	.alu_rob_id,
-	.alu_bypass_enable, 
-	.alu_wb_data,       /* ALU writeback bypass */
-	.alu_wb_rob_id,
-	.alu_wb_bypass_enable,
-	.mem_data,          /* MEM stage bypass */
-	.mem_rob_id,
-	.mem_bypass_enable,
-	.mem_wb_data,      /* MEM writeback bypass */
-	.mem_wb_rob_id,
-	.mem_wb_bypass_enable,
-	.mul_data,         /* MUL stage bypass */
-	.mul_rob_id,
-	.mul_bypass_enable,
-	.mul_wb_data,      /* MUL writeback bypass */
-	.mul_wb_rob_id,
-	.mul_wb_bypass_enable,	
+	.rob_s1_data(rob_bypass_s1),
+	.rob_s2_data(rob_bypass_s2),
+	.rob_s1_valid(rob_bypass_s1_valid),
+	.rob_s2_valid(rob_bypass_s2_valid),
+	.alu_data(alu_result),          /* ALU stage bypass */
+	.alu_rob_id(d_e_rob_id_out),
+	.alu_bypass_enable(d_e_valid_out && d_e_instr_type_out == `INSTR_TYPE_ALU), 
+	.alu_wb_data(e_m_alu_result_out),       /* ALU writeback bypass */
+	.alu_wb_rob_id(e_m_rob_id_out),
+	.alu_wb_bypass_enable(e_m_valid_out && e_m_instr_type_out == `INSTR_TYPE_ALU),
+	.mem_data(cache_load_data),          /* MEM stage bypass */
+	.mem_rob_id(e_m_rob_id_out),
+	.mem_bypass_enable(cache_valid_out),
+	.mem_wb_data(m_wb_load_data_out),      /* MEM writeback bypass */
+	.mem_wb_rob_id(m_wb_rob_id_out),
+	.mem_wb_bypass_enable(m_wb_valid_out),
+	.mul_data(m4_m5_alu_result_out),         /* MUL stage bypass */
+	.mul_rob_id(m4_m5_rob_id_out),
+	.mul_bypass_enable(m4_m5_valid_out),
+	.mul_wb_data(m5_wb_alu_result_out),      /* MUL writeback bypass */
+	.mul_wb_rob_id(m5_wb_rob_id_out),
+	.mul_wb_bypass_enable(m5_wb_valid_out),	
 	.s1_data_out(decode_s1_data_out),
 	.s2_data_out(decode_s2_data_out),
 	.funct3_out(decode_funct3_out),
@@ -184,14 +200,13 @@ module core #(
 	.opcode_out(decode_opcode_out),
 	.imm_out(decode_imm_out),
 	.instr_type_out(decode_instr_type_out),
-	.commit,
-	.commit_rd,
-	.commit_rob_id,
-	.din,
-	.assigned_rob_id,
-	.full,
-	.rs1_rob_entry_wire,
-	.rs2_rob_entry_wire,
+	.commit(rob_commit),
+	.commit_rd(rob_commit_rd),
+	.commit_rob_id(rob_commit_rob_entry),
+	.din(rob_commit_value),
+	.assigned_rob_id(rob_assigned_rob_id),
+	.full(rob_full),
+	// TODO: add connections with rob: rs1_rob_entry, rs2_rob_entry
 	.require_rob_entry(decode_require_rob_entry),
 	.is_store(decode_is_store),
 	.rd(decode_rd),
@@ -314,10 +329,10 @@ module core #(
 	.instruction_type(e_m_instr_type_out),
 	.pc(e_m_pc_out),
 	.aluResult(e_m_alu_result_out),
-	.valid(d_e_valid_out && (d_e_instr_type_out == `INSTR_TYPE_MUL)),
+	.valid(e_m_valid_out && (e_m_instr_type_out == `INSTR_TYPE_MUL)),
 	.stall,
 	.reset(rst || rob_exception_out),
-	.rob_id(d_e_rob_id_out),
+	.rob_id(e_m_rob_id_out),
 	.instruction_type_out(m2_m3_instr_type_out),
 	.pc_out(m2_m3_pc_out),
 	.aluResult_out(m2_m3_alu_result_out),
@@ -361,20 +376,6 @@ module core #(
 
     // This stage has to forward its result
     M5_WB_Registers m4_wb(
-	.clk(clk),
-	.instruction_type(m4_m5_in),
-	.pc,
-	.aluResult,
-	.valid,
-	.stall,
-	.reset(rst || rob_exception_out),
-	.rob_id,
-	.instruction_type_out,
-	.pc_out,
-	.aluResult_out,
-	.rob_id_out,
-	.valid_out
-
 	.clk(clk),
 	.instruction_type(m4_m5_instr_type_out),
 	.pc(m4_m5_pc_out),
@@ -426,26 +427,26 @@ module core #(
 	mul_rob_id(m5_wb_rob_id_out),
 
 	/* Bypasses */
-	rs1_rob_entry,
-	rs2_rob_entry,
-	bypass_s1,
-	bypass_s2,
-	bypass_s1_valid,
-	bypass_s2_valid,
+	rs1_rob_entry(), // ADRI, cambiar decode_stage
+	rs2_rob_entry(),
+	bypass_s1(rob_bypass_s1),
+	bypass_s2(rob_bypass_s2),
+	bypass_s1_valid(rob_bypass_s1_valid),
+	bypass_s2_valid(rob_bypass_s2_valid),
 
 	/* RF and RF-ROB. Don't write into RF if exception present */
-	commit,
-	commit_rd,
-	commit_value,
-	commit_rob_entry,
+	commit(rob_commit),
+	commit_rd(rob_commit_rd),
+	commit_value(rob_commit_value),
+	commit_rob_entry(rob_commit_rob_entry),
 
 	/* Store Buffer */
-	sb_store_permission,
-	sb_rob_id,
+	sb_store_permission(rob_sb_store_permission),
+	sb_rob_id(rob_sb_rob_id),
 
 	/* Exception output */
 	exception(rob_exception_out),
-	ex_pc()
+	ex_pc(rob_ex_pc)
     );
 
 endmodule
