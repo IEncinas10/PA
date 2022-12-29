@@ -44,7 +44,7 @@ module memory #(
     integer i;
 
     initial begin
-        for(i = 0; i < NUM_BLOCKS; i = i + 1) begin
+        for(i = 0; i < NUM_WORDS; i = i + 1) begin
 	    data[i] = 0;
         end
 
