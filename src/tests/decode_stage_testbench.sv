@@ -52,6 +52,8 @@ module decode_stage_testbench();
     logic require_rob_entry;
     logic is_store;
     logic [`ARCH_REG_INDEX_SIZE-1:0] rd;
+	logic [`ROB_ENTRY_WIDTH-1:0] rs1_rob_entry_out;
+	logic [`ROB_ENTRY_WIDTH-1:0] rs2_rob_entry_out;
     logic jump_taken;
     logic stall_in;
     logic stall_out;
@@ -104,6 +106,8 @@ module decode_stage_testbench();
     .require_rob_entry    (require_rob_entry),
     .is_store             (is_store),
     .rd                   (rd),
+	.rs1_rob_entry_out    (rs1_rob_entry_out),
+	.rs2_rob_entry_out    (rs2_rob_entry_out),
     .jump_taken           (jump_taken),
     .stall_in             (stall_in),
     .stall_out            (stall_out)
