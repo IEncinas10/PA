@@ -33,6 +33,8 @@ module D_E_Registers_testbench();
     logic[WORD_SIZE-1:0] immediate_out;
     logic wenable;
     logic valid_out;
+    logic[`ROB_ENTRY_WIDTH-1:0] rob_id;
+    logic[`ROB_ENTRY_WIDTH-1:0] rob_id_out;
 
     D_E_Registers 
     #(
@@ -49,6 +51,7 @@ module D_E_Registers_testbench();
     .s1                   (s1),
     .s2                   (s2),
     .immediate            (immediate),
+    .rob_id               (rob_id),
     .stall                (stall),
     .valid                (valid),
     .reset                (reset),
@@ -60,6 +63,7 @@ module D_E_Registers_testbench();
     .s1_out               (s1_out),
     .s2_out               (s2_out),
     .immediate_out        (immediate_out),
+    .rob_id_out           (rob_id_out),
     .valid_out            (valid_out)
     );
 

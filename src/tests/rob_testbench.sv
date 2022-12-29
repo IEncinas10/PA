@@ -48,7 +48,7 @@ module rob_testbench();
     logic		     sb_store_permission;
     logic[ROB_ENTRY_WIDTH-1:0] sb_rob_id;
     logic exception;
-    logic ex_pc;
+    logic [WORD_SIZE-1:0] ex_pc;
 
     rob 
     #(
