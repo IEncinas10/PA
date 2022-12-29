@@ -1,7 +1,7 @@
 `include "../defines.sv"
 
 module F_D_Registers #(
-  parameter WORD_SIZE = `WORD_SIZE,
+  parameter WORD_SIZE = `WORD_SIZE
 ) (
     input wire clk,
     input wire [WORD_SIZE-1:0] pc,
