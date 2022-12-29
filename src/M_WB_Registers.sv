@@ -10,7 +10,7 @@ module M_WB_Registers #(
     input wire [WORD_SIZE-1:0] pc,
     input wire exception,
     input wire [WORD_SIZE-1:0] virtual_addr_exception,
-    input wire [WORD_SIZE-1:0] aluResult, 
+    input wire [WORD_SIZE-1:0] load_data, 
     input wire valid,
     input wire stall,
     input wire reset,
@@ -19,7 +19,7 @@ module M_WB_Registers #(
     output reg [WORD_SIZE-1:0] pc_out,
     output reg exception_out,
     output reg [WORD_SIZE-1:0] virtual_addr_exception_out,
-    output reg [WORD_SIZE-1:0] aluResult_out, 
+    output reg [WORD_SIZE-1:0] load_data_out, 
     output reg [ROB_ENTRY_WIDTH-1:0] rob_id_out,
     output reg valid_out
 );
@@ -31,7 +31,7 @@ module M_WB_Registers #(
         pc_out = 0;
         exception_out = 0;
         virtual_addr_exception_out = 0;
-        aluResult_out = 0;
+        load_data_out = 0;
         rob_id_out = 0;
         valid_out = 0;
         wenable = 0;
@@ -52,7 +52,7 @@ module M_WB_Registers #(
             instruction_type_out = instruction_type;
             pc_out = pc;
             exception_out = exception;
-            aluResult_out = aluResult;
+            load_data_out = load_data;
             virtual_addr_exception_out = virtual_addr_exception;
             rob_id_out = rob_id;
         end
