@@ -22,18 +22,18 @@ module core #(
     parameter WORD_SIZE = `WORD_SIZE,
     parameter LINE_SIZE = `CACHE_LINE_SIZE
 ) (
-    input wire clk,
-    input wire rst,
+    input  wire clk,
+    input  wire rst,
     output wire                 i_read,    // I cache read request and addr
     output wire [WORD_SIZE-1:0] i_addr,
-    input wire                 i_res,     // I cache response, addr and data
-    input wire [LINE_SIZE-1:0] i_res_data,
-    input wire [WORD_SIZE-1:0] i_res_addr,
+    input  wire                 i_res,     // I cache response, addr and data
+    input  wire [LINE_SIZE-1:0] i_res_data,
+    input  wire [WORD_SIZE-1:0] i_res_addr,
     output wire                 d_read,    // D cache read request and addr
     output wire [WORD_SIZE-1:0] d_addr,
-    input reg                 d_res,     // D cache response, addr and data
-    input reg [LINE_SIZE-1:0] d_res_data,
-    input reg [WORD_SIZE-1:0] d_res_addr,
+    input  wire                 d_res,     // D cache response, addr and data
+    input  wire [LINE_SIZE-1:0] d_res_data,
+    input  wire [WORD_SIZE-1:0] d_res_addr,
     output wire                 d_wenable,   // D cache write port
     output wire [LINE_SIZE-1:0] d_w_data,    
     output wire [WORD_SIZE-1:0] d_w_addr
@@ -56,10 +56,12 @@ module core #(
     wire [WORD_SIZE-1:0]       decode_imm_out;
     wire		       decode_require_rob_entry;
     wire 		       decode_is_store;
-    wire 		       decode_rd;
+    wire [`ARCH_REG_INDEX_SIZE-1:0] decode_rd;
     wire [2:0]		       decode_funct3_out;
     wire [6:0]		       decode_funct7_out;
     wire [6:0]		       decode_opcode_out;
+    wire [`ROB_ENTRY_WIDTH-1:0] decode_rs1_rob_entry_out; //Rob entries from RF_ROB
+    wire [`ROB_ENTRY_WIDTH-1:0] decode_rs2_rob_entry_out;
 
     wire [`INSTR_TYPE_SZ-1:0]  d_e_instr_type_out;
     wire [WORD_SIZE-1:0]        d_e_pc_out;
@@ -100,7 +102,7 @@ module core #(
     wire [`ROB_ENTRY_WIDTH-1:0] m_wb_rob_id_out;
     wire                        m_wb_valid_out;
     wire                        m_wb_exception_out;
-    wire                        m_wb_v_addr_exception_out;
+    wire [WORD_SIZE-1:0]        m_wb_v_addr_exception_out;
 
     wire [`INSTR_TYPE_SZ-1:0]  m2_m3_instr_type_out;
     wire [WORD_SIZE-1:0]        m2_m3_pc_out;
@@ -217,7 +219,8 @@ wire		 rob_exception_out;
 	.din(rob_commit_value),
 	.assigned_rob_id(rob_assigned_rob_id),
 	.full(rob_full),
-	// TODO: add connections with rob: rs1_rob_entry, rs2_rob_entry
+	.rs1_rob_entry_out(),
+	.rs2_rob_entry_out(),
 	.require_rob_entry(decode_require_rob_entry),
 	.is_store(decode_is_store),
 	.rd(decode_rd),
@@ -236,13 +239,13 @@ wire		 rob_exception_out;
 	.s1(decode_s1_data_out), // rs1
 	.s2(decode_s2_data_out), // rs2 
 	.immediate(decode_imm_out),
-	.rob_id(), // salida del rob
+	.rob_id(rob_assigned_rob_id), // salida del rob
 	.stall(),
 	.valid(f_d_valid_out && !decode_stall_out),
 	.reset(rst || rob_exception_out || (alu_branch_taken && alu_instr_valid)),
 	.instruction_type_out(d_e_instr_type_out),
 	.pc_out(d_e_pc_out),
-	.opcode_out(d_e_pc_out),
+	.opcode_out(d_e_opcode_out),
 	.funct7_out(d_e_funct7_out),
 	.funct3_out(d_e_funct3_out),
 	.s1_out(d_e_s1_out), // rs1
@@ -280,7 +283,7 @@ wire		 rob_exception_out;
 	.rob_id(d_e_rob_id_out),
 	.instruction_type_out(e_m_instr_type_out),
 	.pc_out(e_m_pc_out),
-	.funct3_out(e_m_pc_out),
+	.funct3_out(e_m_funct3_out),
 	.aluResult_out(e_m_alu_result_out), 
 	.s2_out(e_m_s2_out),
 	.rob_id_out(e_m_rob_id_out),
@@ -291,7 +294,6 @@ wire		 rob_exception_out;
 	.clk(clk),
 	.rst(rst),
 	.instruction_type(e_m_instr_type_out),
-	.pc(e_m_pc_out),
 	.funct3(e_m_funct3_out),
 	.v_mem_addr(e_m_alu_result_out),  // alu out
 	.s2(e_m_s2_out),        // store value
@@ -323,7 +325,7 @@ wire		 rob_exception_out;
 	.virtual_addr_exception(cache_v_addr_exception),
 	.load_data(cache_load_data), 
 	.valid(cache_valid_out),
-	.stall,
+	.stall(),
 	.reset(rst || rob_exception_out),
 	.rob_id(e_m_rob_id_out),
 	.instruction_type_out(m_wb_instr_type_out),
@@ -341,7 +343,7 @@ wire		 rob_exception_out;
 	.pc(e_m_pc_out),
 	.aluResult(e_m_alu_result_out),
 	.valid(e_m_valid_out && (e_m_instr_type_out == `INSTR_TYPE_MUL)),
-	.stall,
+	.stall(),
 	.reset(rst || rob_exception_out),
 	.rob_id(e_m_rob_id_out),
 	.instruction_type_out(m2_m3_instr_type_out),
@@ -355,14 +357,14 @@ wire		 rob_exception_out;
 	.clk(clk),
 	.instruction_type(m2_m3_instr_type_out),
 	.pc(m2_m3_pc_out),
-	.aluResult(m2_m3_alu_result_out),
+	.result(m2_m3_alu_result_out),
 	.valid(m2_m3_valid_out),
 	.stall(),
 	.reset(rst || rob_exception_out),
 	.rob_id(m2_m3_rob_id_out),
 	.instruction_type_out(m3_m4_instr_type_out),
 	.pc_out(m3_m4_pc_out),
-	.aluResult_out(m3_m4_alu_result_out),
+	.result_out(m3_m4_alu_result_out),
 	.rob_id_out(m3_m4_rob_id_out),
 	.valid_out(m3_m4_valid_out)
 
@@ -373,14 +375,14 @@ wire		 rob_exception_out;
 	.clk(clk),
 	.instruction_type(m3_m4_instr_type_out),
 	.pc(m3_m4_pc_out),
-	.aluResult(m3_m4_alu_result_out),
+	.result(m3_m4_alu_result_out),
 	.valid(m3_m4_valid_out),
 	.stall(),
 	.reset(rst || rob_exception_out),
 	.rob_id(m3_m4_rob_id_out),
 	.instruction_type_out(m4_m5_instr_type_out),
 	.pc_out(m4_m5_pc_out),
-	.aluResult_out(m4_m5_alu_result_out),
+	.result_out(m4_m5_alu_result_out),
 	.rob_id_out(m4_m5_rob_id_out),
 	.valid_out(m4_m5_valid_out)
     );
@@ -390,74 +392,74 @@ wire		 rob_exception_out;
 	.clk(clk),
 	.instruction_type(m4_m5_instr_type_out),
 	.pc(m4_m5_pc_out),
-	.aluResult(m4_m5_alu_result_out),
+	.result(m4_m5_alu_result_out),
 	.valid(m4_m5_valid_out),
 	.stall(),
 	.reset(rst || rob_exception_out),
 	.rob_id(m4_m5_rob_id_out),
 	.instruction_type_out(m5_wb_instr_type_out),
 	.pc_out(m5_wb_pc_out),
-	.aluResult_out(m5_wb_alu_result_out),
+	.result_out(m5_wb_alu_result_out),
 	.rob_id_out(m5_wb_rob_id_out),
 	.valid_out(m5_wb_valid_out)
     );
 
 
     rob reorder_buffer(
-	clk(clk),
-	rst(rst),
+	.clk(clk),
+	.rst(rst),
 	/* Connections from decode */
-	require_rob_entry(decode_require_rob_entry),
-	is_store(decode_is_store),
-	rd(decode_rd),
-	assigned_rob_id(rob_assigned_rob_id),
-	full(rob_full),
+	.require_rob_entry(decode_require_rob_entry),
+	.is_store(decode_is_store),
+	.rd(decode_rd),
+	.assigned_rob_id(rob_assigned_rob_id),
+	.full(rob_full),
 
 	/* Exceptions from decode: ITLB */
-	d_exception(f_d_exception_out),
-	d_pc(f_d_pc_out),
+	.d_exception(f_d_exception_out),
+	.d_pc(f_d_pc_out),
 	// d_exception's rob entry comes from TAIL if we're not full (of course?)
 
 	/* ALU write port */
-	alu_result(e_m_alu_result_out),
-	alu_rob_wenable(e_m_valid_out && (e_m_instr_type_out == `INSTR_TYPE_ALU)),
-	alu_rob_id(e_m_rob_id_out),
+	.alu_result(e_m_alu_result_out),
+	.alu_rob_wenable(e_m_valid_out && (e_m_instr_type_out == `INSTR_TYPE_ALU)),
+	.alu_rob_id(e_m_rob_id_out),
 	/* MEM write port */
-	mem_result(m_wb_load_data_out),
-	mem_rob_wenable(m_wb_valid_out),
-	mem_rob_id(m_wb_rob_id_out),
+	.mem_result(m_wb_load_data_out),
+	.mem_rob_wenable(m_wb_valid_out),
+	.mem_rob_id(m_wb_rob_id_out),
 
 	/* EXCEPTION INFO. MEM ONLY */
-	mem_exception(m_wb_exception_out),
-	mem_v_addr(m_wb_v_addr_exception_out),
-	mem_pc(m_wb_pc_out),
+	.mem_exception(m_wb_exception_out),
+	.mem_v_addr(m_wb_v_addr_exception_out),
+	.mem_pc(m_wb_pc_out),
 
 	/* MUL write port */
-	mul_result(m5_wb_alu_result_out),
-	mul_rob_wenable(m5_wb_valid_out),
-	mul_rob_id(m5_wb_rob_id_out),
+	.mul_result(m5_wb_alu_result_out),
+	.mul_rob_wenable(m5_wb_valid_out),
+	.mul_rob_id(m5_wb_rob_id_out),
 
 	/* Bypasses */
-	rs1_rob_entry(), // ADRI, cambiar decode_stage
-	rs2_rob_entry(),
-	bypass_s1(rob_bypass_s1),
-	bypass_s2(rob_bypass_s2),
-	bypass_s1_valid(rob_bypass_s1_valid),
-	bypass_s2_valid(rob_bypass_s2_valid),
+	.rs1_rob_entry(decode_rs1_rob_entry_out), // ADRI, cambiar decode_stage
+	.rs2_rob_entry(decode_rs2_rob_entry_out),
+	.bypass_s1(rob_bypass_s1),
+	.bypass_s2(rob_bypass_s2),
+	.bypass_s1_valid(rob_bypass_s1_valid),
+	.bypass_s2_valid(rob_bypass_s2_valid),
 
 	/* RF and RF-ROB. Don't write into RF if exception present */
-	commit(rob_commit),
-	commit_rd(rob_commit_rd),
-	commit_value(rob_commit_value),
-	commit_rob_entry(rob_commit_rob_entry),
+	.commit(rob_commit),
+	.commit_rd(rob_commit_rd),
+	.commit_value(rob_commit_value),
+	.commit_rob_entry(rob_commit_rob_entry),
 
 	/* Store Buffer */
-	sb_store_permission(rob_sb_store_permission),
-	sb_rob_id(rob_sb_rob_id),
+	.sb_store_permission(rob_sb_store_permission),
+	.sb_rob_id(rob_sb_rob_id),
 
 	/* Exception output */
-	exception(rob_exception_out),
-	ex_pc(rob_ex_pc)
+	.exception(rob_exception_out),
+	.ex_pc(rob_ex_pc)
     );
 
 endmodule
