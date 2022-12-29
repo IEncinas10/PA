@@ -29,7 +29,7 @@ module decoder_testbench();
     .imm   (imm)
     );
 
-    reg [31:0] MEM [0:1535]; // 1536 4-bytes words = 6 Kb of RAM in total
+    reg [31:0] MEM [0:15350]; // 1536 4-bytes words = 6 Kb of RAM in total
 
     //00000000 <a>:
     //.text
@@ -71,14 +71,14 @@ module decoder_testbench();
      //always #2 aclk = ~aclk;
 
     // To dump data for visualization:
+     reg[32:0] i;
      initial begin
 
 
-         reg[5:0] i;
 	 $dumpfile("decoder_testbench.vcd");
 	 $dumpvars(0, decoder_testbench);
-	 $readmemh("../../testRisc-V/assembly.hex", MEM);
-	 for(i = 0; i < 20; i = i+1) begin
+	 $readmemh("../../testRisc-V/output.hex", MEM,128, 160);
+	 for(i = 128; i < 138; i = i+1) begin
 	     $display("%h",MEM[i]);
 	 end
      end
@@ -122,48 +122,10 @@ module decoder_testbench();
 
     `UNIT_TEST("INSTRUCTIONS_FROM_MEM")
 
-	 instr = MEM[0];
-	 #1;
-	 instr = MEM[1];
-	 #1;
-	 instr = MEM[2];
-	 #1;
-	 instr = MEM[3];
-	 #1;
-	 instr = MEM[4];
-	 #1;
-	 instr = MEM[5];
-	 #1;
-	 instr = MEM[6];
-	 #1;
-	 instr = MEM[7];
-	 #1;
-	 instr = MEM[8];
-	 #1;
-	 instr = MEM[9];
-	 #1;
-	 instr = MEM[10];
-	 #1;
-	 instr = MEM[11];
-	 #1;
-	 instr = MEM[12];
-	 #1;
-	 instr = MEM[13];
-	 #1;
-	 instr = MEM[14];
-	 #1;
-	 instr = MEM[15];
-	 #1;
-	 instr = MEM[16];
-	 #1;
-	 instr = MEM[17];
-	 #1;
-	 instr = MEM[18];
-	 #1;
-	 instr = MEM[19];
-	 #1;
-	 instr = MEM[20];
-	 #1;
+	 for(i = 128; i < 138; i = i+1) begin
+	     instr=MEM[i];
+	     #1;
+	 end
 
     `UNIT_TEST_END
 
