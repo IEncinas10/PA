@@ -1,7 +1,8 @@
+`timescale 1 ns / 1 ns
+
 `ifndef DEFINES
 `define DEFINES
 
-`timescale 1 ns / 1 ns
 
 `define	WORD_SIZE 32
 
