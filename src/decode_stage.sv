@@ -94,10 +94,10 @@ module decode_stage #(
     wire stall_wire;
 
     /* Require rob entry logic and output assignation */
-    assign require_rob_entry = instr_type_out != `INSTR_TYPE_NO_WB && !jump_taken && valid;//TODO revisar error de compilacion en esta linea(?)
+    assign require_rob_entry = !stall_out && instr_type_out != `INSTR_TYPE_NO_WB && !jump_taken && valid;//TODO revisar error de compilacion en esta linea(?)
     
     /* Renaming wire logic */
-    wire renaming_reg_wire = !full && require_rob_entry && !jump_taken && !stall_in && instr_type_out != `INSTR_TYPE_STORE && valid;
+    wire renaming_reg_wire = !stall_wire && !full && require_rob_entry && !jump_taken && !stall_in && instr_type_out != `INSTR_TYPE_STORE && valid;
 
     decoder decoder(
 	.instr(instruction),
