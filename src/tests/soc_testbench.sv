@@ -2,14 +2,14 @@
 `include "svut_h.sv"
 // Specify the module to load or on files.f
 `include "soc.sv"
-`timescale 1 ns / 1 ns
+//`timescale 1 ns / 1 ns
 
 module soc_testbench();
 
     `SVUT_SETUP
 
     logic clk;
-    logic rst;
+    logic rst = 0;
 
     soc 
     dut 
@@ -31,8 +31,9 @@ module soc_testbench();
         $dumpfile("soc_testbench.vcd");
         $dumpvars(0, soc_testbench);
 
-        $readmemh("../../testRisc-V/output.hex", dut.mem.data,32,80);
-        for(i = 32; i < 40; i = i+1) begin
+        $readmemh("../../testRisc-V/output.hex", dut.mem.data,2048,3000);
+        //$readmemh("../../testRisc-V/output.hex", dut.mem.data,128,250);
+        for(i = 255; i < 500; i = i+1) begin
 	    $display("%h",dut.mem.data[i]);
         end
 
@@ -82,6 +83,19 @@ module soc_testbench();
         // Because SVUT uses long nested macros, it's possible
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
+	//
+	#(2*`TLB_DELAY);
+	#2;
+	`ASSERT(dut.cpu.fetch.hit_tlb);
+	#(2*`MEM_DELAY_CYCLES);
+	#2;
+	`ASSERT(dut.cpu.fetch.cache_hit);
+	`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
+	#2;
+	`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
+
+
+	#500;
 
     `UNIT_TEST_END
 
