@@ -155,6 +155,7 @@ module core #(
 	.jump_taken(alu_branch_taken && alu_instr_valid),
 	.nextpc(alu_newpc),
 	.exception_in(rob_exception_out),
+	.stall_in((cache_stall_out && f_d_valid_out) || decode_stall_out),
 	.mem_req(i_read),
 	.mem_req_addr(i_addr),
 	.mem_res(i_res),

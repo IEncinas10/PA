@@ -14,6 +14,7 @@ module fetch_stage #(
     input wire jump_taken,
     input wire [WORD_SIZE-1:0] nextpc,
     input wire exception_in,
+	input wire stall_in,
     output wire                 mem_req,        // memory read port
     output wire [WORD_SIZE-1:0] mem_req_addr,
     input wire		       mem_res,         // Memory response
@@ -66,7 +67,7 @@ module fetch_stage #(
 	    pc <= nextpc;
 	end else if (rst) begin 
 	    pc <= `PC_INITIAL; // definir un pc initial
-	end else if (!valid_out) begin
+	end else if (!valid_out || stall_in) begin
 	    pc <= pc; //in case of stall, we stay in the same pc
 	end else begin
 	    pc <= pc + 4;
