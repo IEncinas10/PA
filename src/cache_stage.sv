@@ -38,15 +38,18 @@ module cache_stage #(
 );
 
     wire is_store = (instruction_type == `INSTR_TYPE_STORE);
+    wire is_load  = (instruction_type == `INSTR_TYPE_LOAD);
     
-    assign stall_out = (valid && (is_store && (sb_full || cache_store_stall) || !tlb_hit));
+    assign stall_out = (valid && ((is_store && (sb_full || cache_store_stall)) || (is_load && !cache_hit) || !tlb_hit));
 
     assign valid_out = valid && !stall_out;
+
+    assign v_addr_exception = v_mem_addr;
 
     wire cache_hit;
     wire cache_store_stall;
     wire cache_store_success; // for SB
-    wire tlb_exception;
+    //wire tlb_exception;
     wire tlb_hit;
 
     
@@ -73,7 +76,7 @@ module cache_stage #(
 	.virtual_page(v_mem_addr[WORD_SIZE-1-:`PAGE_WIDTH]),
 	.valid(valid),
 	.physical_page_out(phy_mem_addr[WORD_SIZE-1-:`PAGE_WIDTH]),
-	.exception(tlb_exception),
+	.exception(exception),
 	.hit(tlb_hit)
     );
 
@@ -116,7 +119,7 @@ module cache_stage #(
 	.op_size(funct3),
 	.store(sb_store), // check SB comments
 	.store_success(cache_store_success),
-	.TLBexception(tlb_exception),
+	.TLBexception(exception),
 	.store_permission(rob_store_permission), // ROB
 	.store_permission_rob_id(rob_sb_permission_rob_id),
 	.cache_store_value(sb_store_value),
