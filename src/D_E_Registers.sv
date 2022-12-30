@@ -56,16 +56,16 @@ module D_E_Registers #(
         if (reset == 1) begin
             valid_out = 0;
         end else if (wenable) begin
-            valid_out = valid;
-            instruction_type_out = instruction_type;
-            pc_out = pc;
-            opcode_out = opcode;
-            funct7_out = funct7;
-            funct3_out = funct3;
-            s1_out = s1;
-            s2_out = s2;
-            immediate_out = immediate;
-            rob_id_out = rob_id;
+            pc_out               <= pc;
+            valid_out		 <= valid;
+            instruction_type_out <= instruction_type;
+            opcode_out		 <= opcode;
+            funct7_out 		 <= funct7;
+            funct3_out 		 <= funct3;
+            s1_out		 <= s1;
+            s2_out 		 <= s2;
+            immediate_out	 <= immediate;
+            rob_id_out		 <= rob_id;
         end
     end
 endmodule

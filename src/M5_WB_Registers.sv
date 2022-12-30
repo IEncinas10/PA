@@ -43,10 +43,10 @@ module M5_WB_Registers #(
         wenable = stall == 0 || valid_out == 0;
 
         if(wenable) begin
-            instruction_type_out = instruction_type;
-            pc_out = pc;
-            result_out = result;
-            rob_id_out = rob_id;
+            instruction_type_out <= instruction_type;
+            pc_out		 <= pc;
+            result_out		 <= result;
+            rob_id_out		 <= rob_id;
         end
     end
 endmodule

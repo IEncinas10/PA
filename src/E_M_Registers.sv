@@ -48,13 +48,13 @@ module E_M_Registers #(
         if (reset == 1) begin
             valid_out = 0;
         end else if (wenable) begin
-            valid_out = valid;
-            instruction_type_out = instruction_type;
-            pc_out = pc;
-            funct3_out = funct3;
-            aluResult_out = aluResult;
-            s2_out = s2;
-            rob_id_out = rob_id;
+            valid_out		 <= valid;
+            instruction_type_out <= instruction_type;
+            pc_out		 <= pc;
+            funct3_out		 <= funct3;
+            aluResult_out	 <= aluResult;
+            s2_out		 <= s2;
+            rob_id_out		 <= rob_id;
         end
     end
 endmodule

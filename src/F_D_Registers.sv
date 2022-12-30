@@ -34,10 +34,10 @@ module F_D_Registers #(
         if (reset == 1) begin
 	    valid_out = 0;
         end else if (wenable) begin
-            valid_out = valid;
-            pc_out = pc;
-            instruction_out = instruction;
-	    exception_out = exception;
+            valid_out	    <= valid;
+            pc_out          <= pc;
+            instruction_out <= instruction;
+	    exception_out   <= exception;
         end
         
     end
