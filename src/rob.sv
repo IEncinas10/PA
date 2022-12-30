@@ -172,6 +172,7 @@ module rob #(
 	    if(readys[head] && entries > 0) begin 
 		// Freed entry's state. 
 		readys[head] = 0;
+		are_store[head] = 0;
 
 		// ROB state
 		head = (head + 1) % N;
