@@ -181,7 +181,7 @@ module rob #(
 	    // Give tail
 	    if(require_rob_entry && !full) begin 
 		// New entry's state
-		rds[tail]       = rd;
+		rds[tail]       = is_store ? 0 : rd;
 		values[tail]    = 0;
 		readys[tail]    = 0;
 		are_store[tail] = is_store;
