@@ -95,7 +95,7 @@ module soc_testbench();
 	`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
 
 
-	#500;
+	#10000;
 
     `UNIT_TEST_END
 
