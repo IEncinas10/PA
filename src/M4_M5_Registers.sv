@@ -32,22 +32,16 @@ module M4_M5_Registers #(
     end
 
     always @(posedge(clk)) begin
+        wenable = stall == 0 || valid_out == 0;
 
         if (reset == 1) begin
             valid_out = 0;
-        end
-        else begin
-            valid_out = valid;
-        end
-
-        wenable = stall == 0 || valid_out == 0;
-        
-        if(wenable) begin
+        end else if (wenable) begin
+            valid_out		 <= valid;
             instruction_type_out <= instruction_type;
             pc_out		 <= pc;
-            result_out		 <= result;
-            rob_id_out		 <= rob_id;
+            aluResult_out	 <= aluResult;
+            rob_id_out	         <= rob_id;
         end
-        
     end
 endmodule
