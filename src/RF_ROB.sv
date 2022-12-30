@@ -61,7 +61,7 @@ always @(posedge(clk)) begin
 	 * BUT if in the current cycle a newer instruction is renaming "rd" we
 	 * DON'T have to clear it.
 	 */
-        if(rob_entry[rd] == commit_rob_id && commit && (!renaming_reg || commit_rd != rd)) begin
+        if(rob_entry[commit_rd] == commit_rob_id && commit && (!renaming_reg || commit_rd != rd)) begin
             valid[commit_rd] <= 0;
         end    
 
