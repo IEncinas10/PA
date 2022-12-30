@@ -118,7 +118,7 @@ module decode_stage #(
 	.reg_in(commit_rd),
 	.din(din),
 	.a(rs1_wire),
-	.b(rs1_wire),
+	.b(rs2_wire),
 	.data_a(rf_s1_data_wire),
 	.data_b(rf_s2_data_wire)
     );
