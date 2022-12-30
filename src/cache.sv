@@ -148,7 +148,7 @@ module cache #(
 	end 
 
 	// Stores from SB should always succeed
-	store_success = wenable && sb_tag == tags[sb_set];
+	store_success = !mem_res && wenable && sb_tag == tags[sb_set];
 
 	// Evict line before it is replaced
 	if(mem_res && dirtys[mem_res_set]) begin
@@ -167,7 +167,7 @@ module cache #(
 	    // If we're a store and we have HIT cache, we have to
 	    // increase the pin counter. When we write from the SB we will
 	    // decrement it back
-	    if(store && hit) begin
+	    if(valid && store && hit) begin
 		pin_counters[set] = pin_counters[set] + 1;
 	    end
 
@@ -176,7 +176,7 @@ module cache #(
 
 
 	    // Store Buffer. Write and decrement pin counter
-	    if(wenable && sb_tag == tags[sb_set]) begin
+	    if(!mem_res && wenable && sb_tag == tags[sb_set]) begin
 		`assert(tags[sb_set], sb_tag);
 		dirtys[sb_set] = 1;
 
