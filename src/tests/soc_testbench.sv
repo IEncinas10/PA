@@ -31,10 +31,13 @@ module soc_testbench();
         $dumpfile("soc_testbench.vcd");
         $dumpvars(0, soc_testbench);
 
-        $readmemh("../../testRisc-V/output.hex", dut.mem.data,2048,8000);
+        $readmemh("../../testRisc-V/experiments/assembly.hex", dut.mem.data,2048);
         //$readmemh("../../testRisc-V/output.hex", dut.mem.data,128,250);
-        for(i = 255; i < 500; i = i+1) begin
+        for(i = 2048; i < 2200; i = i+1) begin
 	    $display("%h",dut.mem.data[i]);
+
+		
+		dut.cpu.decode.register_file.registers[2].dout = 32'h00003000;
         end
 
     end
@@ -77,7 +80,6 @@ module soc_testbench();
     //    - `LAST_STATUS: tied to 1 is last macro did experience a failure, else tied to 0
 
     `UNIT_TEST("TESTCASE_NAME")
-
         // Describe here the testcase scenario
         //
         // Because SVUT uses long nested macros, it's possible
@@ -86,16 +88,16 @@ module soc_testbench();
 	//
 	#(2*`TLB_DELAY);
 	#2;
-	`ASSERT(dut.cpu.fetch.hit_tlb);
+	//`ASSERT(dut.cpu.fetch.hit_tlb);
 	#(2*`MEM_DELAY_CYCLES);
 	#2;
-	`ASSERT(dut.cpu.fetch.cache_hit);
-	`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
+	//`ASSERT(dut.cpu.fetch.cache_hit);
+	//`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
 	#2;
-	`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
+	//`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
 
 
-	#10000;
+	#400;
 
     `UNIT_TEST_END
 
