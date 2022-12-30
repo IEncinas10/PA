@@ -54,22 +54,22 @@ module fetch_stage #(
     wire [`SIZE_WRITE_WIDTH-1:0] load_size = `FULL_WORD_SIZE; //Hardcode, we always want the full instruction (word size)
 
     initial begin
-	pc = `PC_INITIAL;
+	pc <= `PC_INITIAL;
     end
 
     /* PC selection */
     always @(posedge(clk)) begin
 	if(exception_in || exception) begin
-	    pc = `PC_EXCEPTION;
+	    pc <= `PC_EXCEPTION;
 	    exception = 1;
 	end else if(jump_taken) begin
-	    pc = nextpc;
+	    pc <= nextpc;
 	end else if (rst) begin 
-	    pc = `PC_INITIAL; // definir un pc initial
+	    pc <= `PC_INITIAL; // definir un pc initial
 	end else if (!valid_out) begin
-	    pc = pc; //in case of stall, we stay in the same pc
+	    pc <= pc; //in case of stall, we stay in the same pc
 	end else begin
-	    pc = pc + 4;
+	    pc <= pc + 4;
 	end
     end
 
