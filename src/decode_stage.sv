@@ -177,7 +177,7 @@ module decode_stage #(
     assign is_store = (instr_type_out == `INSTR_TYPE_STORE) ? 1 : 0;
     
     //output assignation from Forward Unit wires to stage output wires
-    assign stall_out = stall_wire || stall_in; // stall if forward_unit says stall or if we receive stall
+    assign stall_out = full || stall_wire || stall_in; // stall if forward_unit says stall or if we receive stall
 
 endmodule
 
