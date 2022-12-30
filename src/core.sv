@@ -389,7 +389,7 @@ module core #(
     );
 
     // This stage has to forward its result
-    M5_WB_Registers m4_wb(
+    M5_WB_Registers m5_wb(
 	.clk(clk),
 	.instruction_type(m4_m5_instr_type_out),
 	.pc(m4_m5_pc_out),
