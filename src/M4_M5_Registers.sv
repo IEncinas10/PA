@@ -40,7 +40,7 @@ module M4_M5_Registers #(
             valid_out		 <= valid;
             instruction_type_out <= instruction_type;
             pc_out		 <= pc;
-            aluResult_out	 <= aluResult;
+            result_out	 	 <= result;
             rob_id_out	         <= rob_id;
         end
     end
