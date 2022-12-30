@@ -39,16 +39,12 @@ module M_WB_Registers #(
 
     always @(posedge(clk)) begin
 
-        if (reset == 1) begin
-            valid_out = 0;
-        end
-        else begin
-            valid_out = valid;
-        end
-
         wenable = stall == 0 || valid_out == 0;
 
-        if(wenable) begin
+        if (reset == 1) begin
+            valid_out = 0;
+        end else if(wenable) begin
+            valid_out		       <= valid;
             instruction_type_out       <= instruction_type;
             pc_out                     <= pc;
             exception_out              <= exception;
