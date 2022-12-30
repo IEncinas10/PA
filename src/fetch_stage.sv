@@ -19,7 +19,7 @@ module fetch_stage #(
     input wire		       mem_res,         // Memory response
     input wire [WORD_SIZE-1:0] mem_res_addr, 
     input wire [LINE_SIZE-1:0] mem_res_data,
-    output reg [WORD_SIZE-1:0] pc_out,
+    output wire [WORD_SIZE-1:0] pc_out,
     output wire [WORD_SIZE-1:0] instruction_out,
     output wire exception_out,
     output wire valid_out
@@ -30,7 +30,7 @@ module fetch_stage #(
 
     assign valid_out = hit_tlb && cache_hit && !exception;
 
-    //assign pc_out = pc;
+    assign pc_out = pc;
 
     /* Wires for iTLB */
     wire hit_tlb;
@@ -55,10 +55,6 @@ module fetch_stage #(
 
     initial begin
 	pc = `PC_INITIAL;
-    end
-
-    always @(*) begin
-	pc_out = pc;	
     end
 
     /* PC selection */
