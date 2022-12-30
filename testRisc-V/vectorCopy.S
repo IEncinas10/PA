@@ -11,7 +11,7 @@ vectorcopy:
 	
 	la a0, vectorA # a0 = destination
 	la a1, vectorB # a1 = source
-	addi a2, a0, 128
+	addi a2, zero, 128
 	addi t0, zero, 0
 	addi t1, zero, 0
 	addi t3, zero, 4
