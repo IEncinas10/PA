@@ -84,7 +84,7 @@ always @(*) begin
 	end
 	/* WB bypasses */
 	else if(rs1_rob_entry == alu_wb_rob_id && alu_wb_bypass_enable) begin
-	    s1_data = alu_data;
+	    s1_data = alu_wb_data;
 	    s1_available = 1;
 	end else if(rs1_rob_entry == mem_wb_rob_id && mem_wb_bypass_enable) begin
 	    s1_data = mem_wb_data;
@@ -111,7 +111,7 @@ always @(*) begin
 	end
 	/* WB bypasses */
 	else if(rs2_rob_entry == alu_wb_rob_id && alu_wb_bypass_enable) begin
-	    s2_data = alu_data;
+	    s2_data = alu_wb_data;
 	    s2_available = 1;
 	end else if(rs2_rob_entry == mem_wb_rob_id && mem_wb_bypass_enable) begin
 	    s2_data = mem_wb_data;
