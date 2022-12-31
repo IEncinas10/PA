@@ -75,7 +75,7 @@
 // do a dummy diagram to see when the data is available
 // lw: F D E Miss1 Miss2 Miss3 ... Fill, Hit¿?¿?
 `define MEM_DELAY_CYCLES 5
-`define MEM_SIZE (1 << 19)
+`define MEM_SIZE (1 << 20)
 
 
 /*
