@@ -9,7 +9,7 @@ int main() {
     static unsigned twos[ARR_SIZE][ARR_SIZE] = {[0 ... ARR_SIZE - 1][0 ... ARR_SIZE - 1] = 2};
 
     static unsigned result[ARR_SIZE][ARR_SIZE] = {[0 ... ARR_SIZE - 1][0 ... ARR_SIZE - 1] = -1};
-    
+    int final = 0;
 
     const unsigned size = ARR_SIZE;
     for(int i = 0; i < ARR_SIZE; i++)
@@ -21,7 +21,9 @@ int main() {
 	    }
 
 	    result[i][j] = tmp;
+		final += tmp;
 	}
+
 
     while(1);
 }
