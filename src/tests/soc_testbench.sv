@@ -31,7 +31,7 @@ module soc_testbench();
         $dumpfile("soc_testbench.vcd");
         $dumpvars(0, soc_testbench);
 
-        $readmemh("../../testRisc-V/experiments/assembly.hex", dut.mem.data,2048);
+        $readmemh("../../testRisc-V/experiments/mul.hex", dut.mem.data,2048);
         //$readmemh("../../testRisc-V/output.hex", dut.mem.data,128,250);
         for(i = 2048; i < 2200; i = i+1) begin
 	    $display("%h",dut.mem.data[i]);
@@ -97,7 +97,7 @@ module soc_testbench();
 	//`ASSERT(dut.cpu.fetch.instruction_out == 32'h00003517);
 
 
-	#400;
+	#1000;
 
     `UNIT_TEST_END
 
