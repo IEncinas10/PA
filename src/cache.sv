@@ -45,7 +45,7 @@ module cache #(
     //
     // 1) Missing request "queue" -> {tag, counter}_n
     // When a line comes in we match it with his MRQ and initialize the value
-    reg [N] [$clog2(SB_ENTRIES)-1:0] pin_counters;
+    reg [N] [$clog2(SB_ENTRIES):0] pin_counters;
     reg [N]                          dirtys;
     reg [N] [TAG_SIZE -1:0]          tags;
     reg [N] [LINE_SIZE-1:0]          data;
@@ -72,7 +72,7 @@ module cache #(
 
     // Missing request pin counter, tag and a bit indicating if it is present
     reg [N]                          mem_req_present;
-    reg [N] [$clog2(SB_ENTRIES)-1:0] mem_req_pin_counters;
+    reg [N] [$clog2(SB_ENTRIES):0] mem_req_pin_counters;
     reg [N] [TAG_SIZE-1:0]	     mem_req_tags;
 
     // Store buffer
