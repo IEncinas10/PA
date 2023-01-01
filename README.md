@@ -11,11 +11,11 @@ https://github.com/UCSBarchlab/PyRTL
 - [https://stackoverflow.com/questions/33459048/what-is-the-difference-between-reg-and-wire-in-a-verilog-module#:~:text=wire%20elements%20must%20be%20continuously,it%20can%20store%20some%20value.](https://stackoverflow.com/questions/33459048/what-is-the-difference-between-reg-and-wire-in-a-verilog-module#:~:text=wire%20elements%20must%20be%20continuously,it%20can%20store%20some%20value.)
 
 ## Exceptions
-Protect the wenable for DCache and TLB when exceptions are raised
 
-Also, perhaps stop issuing misses to the cache if an exception was produced, no point in fetching data?
+If iTLB raises exception, that exception is written into the ROB at decode stage.
+If dTLB raises exception, that exception is written into the ROB at MEM_WB stage.
 
-Interrupts wired into WB stage. **DIFERENCE** if interrupt, instr at WB finishes but if we have an exception we don't finish, so return PC is PC or PC+4, also we have or dont have to write into RF
+When the offending exception becomes the head of the ROB, we jump to 0x2000 and stay there forever, we reset everything. Because we're lazy we also reset the register file although we shouldn't. Fixing it would be easy but there isn't too much point to it.
 
 ## Resources
 
