@@ -10,6 +10,12 @@ https://github.com/UCSBarchlab/PyRTL
 - [Wire vs regs](https://inst.eecs.berkeley.edu//~cs150/Documents/Nets.pdf)
 - [https://stackoverflow.com/questions/33459048/what-is-the-difference-between-reg-and-wire-in-a-verilog-module#:~:text=wire%20elements%20must%20be%20continuously,it%20can%20store%20some%20value.](https://stackoverflow.com/questions/33459048/what-is-the-difference-between-reg-and-wire-in-a-verilog-module#:~:text=wire%20elements%20must%20be%20continuously,it%20can%20store%20some%20value.)
 
+## Test
+
+- Store Buffer bypass present in sumSquares.c
+- veccopy_optimized.s is a vector copy that operates in bundles of 4 elements (much faster because we don't fight over cache lines)
+- loadadd.s shows how we can do independent adds while a load is waiting for memory data
+
 ## Exceptions
 
 If iTLB raises exception, that exception is written into the ROB at decode stage.
