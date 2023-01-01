@@ -104,6 +104,12 @@ module core #(
     wire                        m_wb_exception_out;
     wire [WORD_SIZE-1:0]        m_wb_v_addr_exception_out;
 
+    wire [`INSTR_TYPE_SZ-1:0]   m1_m2_instr_type_out;
+    wire [WORD_SIZE-1:0]        m1_m2_pc_out;
+    wire [WORD_SIZE-1:0]        m1_m2_alu_result_out;
+    wire [`ROB_ENTRY_WIDTH-1:0] m1_m2_rob_id_out;
+    wire                        m1_m2_valid_out;
+
     wire [`INSTR_TYPE_SZ-1:0]  m2_m3_instr_type_out;
     wire [WORD_SIZE-1:0]        m2_m3_pc_out;
     wire [WORD_SIZE-1:0]        m2_m3_alu_result_out;
@@ -193,9 +199,9 @@ module core #(
 	.alu_data(alu_result),          /* ALU stage bypass */
 	.alu_rob_id(d_e_rob_id_out),
 	.alu_bypass_enable(d_e_valid_out && d_e_instr_type_out == `INSTR_TYPE_ALU), 
-	.alu_wb_data(e_m_alu_result_out),       /* ALU writeback bypass */
-	.alu_wb_rob_id(e_m_rob_id_out),
-	.alu_wb_bypass_enable(e_m_valid_out && e_m_instr_type_out == `INSTR_TYPE_ALU),
+	.alu_wb_data(m1_m2_alu_result_out),       /* ALU writeback bypass */
+	.alu_wb_rob_id(m1_m2_rob_id_out),
+	.alu_wb_bypass_enable(m1_m2_valid_out && m1_m2_instr_type_out == `INSTR_TYPE_ALU),
 	.mem_data(cache_load_data),          /* MEM stage bypass */
 	.mem_rob_id(e_m_rob_id_out),
 	.mem_bypass_enable(cache_valid_out),
@@ -280,7 +286,7 @@ module core #(
 	.aluResult(alu_result), 
 	.s2(d_e_s2_out),
 	.stall(cache_stall_out),
-	.valid(d_e_valid_out),
+	.valid(d_e_valid_out && (d_e_instr_type_out == `INSTR_TYPE_LOAD || d_e_instr_type_out == `INSTR_TYPE_STORE)),
 	.reset(rst || rob_exception_out),
 	.rob_id(d_e_rob_id_out),
 	.instruction_type_out(e_m_instr_type_out),
@@ -339,12 +345,29 @@ module core #(
 	.valid_out(m_wb_valid_out)
     );
 
+    // M1 / M2 REGISTER
+    M2_M3_Registers m1_m2(
+	.clk(clk),
+	.instruction_type(d_e_instr_type_out),
+	.pc(d_e_pc_out),
+	.aluResult(alu_result),
+	.valid(d_e_valid_out && (d_e_instr_type_out == `INSTR_TYPE_MUL || d_e_instr_type_out == `INSTR_TYPE_ALU)),
+	.stall(zero),
+	.reset(rst || rob_exception_out),
+	.rob_id(d_e_rob_id_out),
+	.instruction_type_out(m1_m2_instr_type_out),
+	.pc_out(m1_m2_pc_out),
+	.aluResult_out(m1_m2_alu_result_out),
+	.rob_id_out(m1_m2_rob_id_out),
+	.valid_out(m1_m2_valid_out)
+    );
+
     M2_M3_Registers m2_m3(
 	.clk(clk),
-	.instruction_type(e_m_instr_type_out),
-	.pc(e_m_pc_out),
-	.aluResult(e_m_alu_result_out),
-	.valid(e_m_valid_out && (e_m_instr_type_out == `INSTR_TYPE_MUL)),
+	.instruction_type(m1_m2_instr_type_out),
+	.pc(m1_m2_pc_out),
+	.aluResult(m1_m2_alu_result_out),
+	.valid(m1_m2_valid_out && (m1_m2_instr_type_out == `INSTR_TYPE_MUL)),
 	.stall(zero),
 	.reset(rst || rob_exception_out),
 	.rob_id(e_m_rob_id_out),
@@ -423,9 +446,9 @@ module core #(
 	// d_exception's rob entry comes from TAIL if we're not full (of course?)
 
 	/* ALU write port */
-	.alu_result(e_m_alu_result_out),
-	.alu_rob_wenable(e_m_valid_out && (e_m_instr_type_out == `INSTR_TYPE_ALU)),
-	.alu_rob_id(e_m_rob_id_out),
+	.alu_result(m1_m2_alu_result_out),
+	.alu_rob_wenable(m1_m2_valid_out && (m1_m2_instr_type_out == `INSTR_TYPE_ALU)),
+	.alu_rob_id(m1_m2_rob_id_out),
 	/* MEM write port */
 	.mem_result(m_wb_load_data_out),
 	.mem_rob_wenable(m_wb_valid_out),
@@ -442,7 +465,7 @@ module core #(
 	.mul_rob_id(m5_wb_rob_id_out),
 
 	/* Bypasses */
-	.rs1_rob_entry(decode_rs1_rob_entry_out), // ADRI, cambiar decode_stage
+	.rs1_rob_entry(decode_rs1_rob_entry_out), 
 	.rs2_rob_entry(decode_rs2_rob_entry_out),
 	.bypass_s1(rob_bypass_s1),
 	.bypass_s2(rob_bypass_s2),

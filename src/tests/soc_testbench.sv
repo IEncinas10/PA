@@ -31,8 +31,9 @@ module soc_testbench();
         $dumpfile("soc_testbench.vcd");
         $dumpvars(0, soc_testbench);
 
-        $readmemh("../../testRisc-V/muladri.hex", dut.mem.data,2048);
-        //$readmemh("../../testRisc-V/output.hex", dut.mem.data,128,250);
+        //$readmemh("../../testRisc-V/muladri.hex", dut.mem.data,2048);
+	$readmemh("../../testRisc-V/output.hex", dut.mem.data,2048);
+	//$readmemh("../../testRisc-V/veccopy_opt.hex", dut.mem.data,2048);
         for(i = 2048; i < 2200; i = i+1) begin
 	    $display("%h",dut.mem.data[i]);
 
