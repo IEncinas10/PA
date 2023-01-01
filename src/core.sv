@@ -155,13 +155,27 @@ module core #(
 
     wire zero = 0;
 
+    // D_E stalls if Cache stage needs to stall and D_E's instruction is
+    // a load or a store.
+    //
+    // We have to stall because if we didnt, we would overwrite E_M's
+    // instruction (which is stalling) or lose current D_E instr
+    wire d_e_stalls = cache_stall_out && (d_e_instr_type_out == `INSTR_TYPE_LOAD || d_e_instr_type_out == `INSTR_TYPE_STORE);
+
+    // F_D has to stall if D_E stalls (and has valid input, we can't overwrite it) or if decode stage detects a hazard
+    // For example: ROB is full, we can't bypass the data because it's not ready...
+    wire f_d_stalls = (d_e_stalls && d_e_valid_out) || decode_stall_out;
+
+    // Fetch has to stall (PC <= PC) when F_D stalls and F_D doesn't have a bubble
+    wire fetch_stalls = f_d_valid_out && f_d_stalls;
+
     fetch_stage fetch(
 	.clk(clk),
 	.rst(rst),
 	.jump_taken(alu_branch_taken && alu_instr_valid),
 	.nextpc(alu_newpc),
 	.exception_in(rob_exception_out),
-	.stall_in((cache_stall_out && f_d_valid_out) || decode_stall_out),
+	.stall_in(fetch_stalls), 
 	.mem_req(i_read),
 	.mem_req_addr(i_addr),
 	.mem_res(i_res),
@@ -178,7 +192,8 @@ module core #(
 	.pc(fetch_pc_out),
 	.instruction(fetch_instr_out),
 	.valid(fetch_valid_out),
-	.stall((cache_stall_out && d_e_valid_out) || decode_stall_out), // We have to stall if decode signals stall and we have a valid instr
+	// We have to stall if decode signals stall and we have a valid instr
+	.stall(f_d_stalls), 
 	.reset(rst || rob_exception_out || (alu_branch_taken && alu_instr_valid)),
 	.exception(fetch_exception_out),
 	.pc_out(f_d_pc_out), 
@@ -233,7 +248,7 @@ module core #(
 	.is_store(decode_is_store),
 	.rd(decode_rd),
 	.jump_taken(alu_branch_taken && alu_instr_valid),
-	.stall_in(cache_stall_out),//This stall is used for RF_ROB renaming, 
+	.stall_in(d_e_stalls),//This stall is used for RF_ROB renaming, 
 	.stall_out(decode_stall_out)
     );
 
@@ -248,7 +263,7 @@ module core #(
 	.s2(decode_s2_data_out), // rs2 
 	.immediate(decode_imm_out),
 	.rob_id(rob_assigned_rob_id), // salida del rob
-	.stall(cache_stall_out),
+	.stall(d_e_stalls),
 	.valid(f_d_valid_out && !decode_stall_out),
 	.reset(rst || rob_exception_out || (alu_branch_taken && alu_instr_valid)),
 	.instruction_type_out(d_e_instr_type_out),
@@ -351,6 +366,7 @@ module core #(
 	.instruction_type(d_e_instr_type_out),
 	.pc(d_e_pc_out),
 	.aluResult(alu_result),
+	// Filter instructions. In this path we just want ALUs (for ROB writeback) and MULs
 	.valid(d_e_valid_out && (d_e_instr_type_out == `INSTR_TYPE_MUL || d_e_instr_type_out == `INSTR_TYPE_ALU)),
 	.stall(zero),
 	.reset(rst || rob_exception_out),
@@ -370,7 +386,7 @@ module core #(
 	.valid(m1_m2_valid_out && (m1_m2_instr_type_out == `INSTR_TYPE_MUL)),
 	.stall(zero),
 	.reset(rst || rob_exception_out),
-	.rob_id(e_m_rob_id_out),
+	.rob_id(m1_m2_rob_id_out),
 	.instruction_type_out(m2_m3_instr_type_out),
 	.pc_out(m2_m3_pc_out),
 	.aluResult_out(m2_m3_alu_result_out),
