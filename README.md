@@ -39,7 +39,26 @@ We take 5 cycles to go to memory but we can make 1 request per cycle:
 | R3 | - | - | Create req | Wait | Wait | Wait | Wait |
 | R4 | - | - | - | - | Create req | Wait | Wait |
 
+- Wrong: delay from Memory to Cache is 1 cycle instead of 5 
+- No unaligned support
 
+### Pipeline(s)
+F D E Wb
+F D E Mem Wb
+F D M1 M2  M3  M4 M5 Wb
+
+- Complete set of bypasses: one from the execution stages themselves, other from the writeback registers (write port to ROB) and another one from the ROB.
+- Reorder buffer
+- Store buffer
+
+### Virtual memory
+Again, no OS code. Hardware *Page walker*. We take a configurable amount of cycles to get the translation from our TLBs, and then output the translation to be used by the caches (or signal exception). **Agreed in class**
+
+Only accessing page 0 raises an exception.
+
+Always enabled, again, no OS.
+
+### Performance tests
 
 ## Test
 
