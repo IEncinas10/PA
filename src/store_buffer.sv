@@ -48,6 +48,9 @@ module store_buffer #(
 
     reg [WORD_SIZE-1:0] aux_value;
 
+    reg removing_one_element;
+    reg adding_one_element;
+
     integer i;
     integer j;
 
@@ -106,6 +109,8 @@ module store_buffer #(
 		end
 	    end
 	end
+	removing_one_element = store_success && entries > 0;
+	adding_one_element = store && !full && !TLBexception;
 
 	full = (entries == N);
     end
@@ -121,7 +126,7 @@ module store_buffer #(
 		found = 0; 
 		for(i = 0; i < N; i = i + 1) begin
 		    if(!found && rob_id[i] == store_permission_rob_id) begin
-			can_store[i] = 1;
+			can_store[i] <= 1;
 			found = 1;
 		    end
 		end
@@ -130,30 +135,34 @@ module store_buffer #(
 	    // We've succesfully written into the cache, so we have to
 	    // erase the entry corresponding to the current head,
 	    // and update the head value.
-	    if(store_success && entries > 0) begin 
+	    if(removing_one_element) begin 
 		// Freed entry's state. 
-		can_store[head] = 0;
+		can_store[head] <= 0;
 
 		// SB state
-		head = (head + 1) % N; //update de head
-		entries = entries - 1;
+		head <= (head + 1) % N; //update de head
 	    end
 
 	    // New store comes in. We add it into the Store Buffer if:
 	    //   - it IS a store 
 	    //   - SB is not full
 	    //   - That store didn't cause a TLB exception
-	    if(store && !full && !TLBexception) begin 
+	    if(adding_one_element) begin 
 		// New entry's state
-		physical_addresses[tail] = physical_address;
-		can_store[tail] = 0;
-		rob_id[tail] = input_rob_id;
-		value[tail] = store_value;
-		size[tail] = op_size;
+		physical_addresses[tail] <= physical_address;
+		can_store[tail]		 <= 0;
+		rob_id[tail]	 	 <= input_rob_id;
+		value[tail]		 <= store_value;
+		size[tail]		 <= op_size;
 
 		// SB state
-		tail = (tail + 1) % N; //update the tail
-		entries = entries + 1;
+		tail <= (tail + 1) % N; //update the tail
+	    end
+
+	    if(removing_one_element && !adding_one_element) begin
+		entries <= entries - 1;
+	    end else if(!removing_one_element && adding_one_element) begin
+		entries <= entries + 1;
 	    end
 	end
     end
