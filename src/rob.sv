@@ -117,6 +117,8 @@ module rob #(
     reg			itlb_ex_rob_id;
 
     // reg ¿?¿? exception_code
+    reg removing_one_element;
+    reg adding_one_element;
 
     integer i;
 
@@ -134,6 +136,9 @@ module rob #(
 	// nobody will try to consume this invalid entry (doesnt 'rename' any
 	// register in our register file)
 	assigned_rob_id = (require_rob_entry && !full) ? tail : `ROB_INVALID_ENTRY;
+
+	removing_one_element = readys[head] && entries > 0;
+	adding_one_element = require_rob_entry && !full;
 
 	if(itlb_ex_present && head == itlb_ex_rob_id && readys[head]) begin
 	    exception = 1;
@@ -169,57 +174,62 @@ module rob #(
 	end else begin
 
 	    // Free head
-	    if(readys[head] && entries > 0) begin 
+	    if(removing_one_element) begin 
 		// Freed entry's state. 
-		readys[head] = 0;
-		are_store[head] = 0;
+		readys[head]	<= 0;
+		are_store[head] <= 0;
 
 		// ROB state
-		head = (head + 1) % N;
-		entries = entries - 1;
+		head <= (head + 1) % N;
 	    end
 
 	    // Give tail
-	    if(require_rob_entry && !full) begin 
+	    if(adding_one_element) begin 
 		// New entry's state
-		rds[tail]       = is_store ? 0 : rd;
-		values[tail]    = 0;
-		readys[tail]    = 0;
-		are_store[tail] = is_store;
+		rds[tail]       <= is_store ? 0 : rd;
+		values[tail]    <= 0;
+		readys[tail]    <= 0;
+		are_store[tail] <= is_store;
+
+		// ROB state
+		tail <= (tail + 1) % N;
 
 		/* Exceptions from decode: ITLB */
 		if(d_exception) begin
-		    itlb_ex_present = 1;
-		    itlb_ex_pc  = d_pc;
-		    itlb_ex_rob_id  = tail;
+		    itlb_ex_present <= 1;
+		    itlb_ex_pc	    <= d_pc;
+		    itlb_ex_rob_id  <= tail;
 		end
-
-		// ROB state
-		tail    = (tail + 1) % N;
-		entries = entries + 1;
 	    end
+
+	    if(removing_one_element && !adding_one_element) begin
+		entries <= entries - 1;
+	    end else if(!removing_one_element && adding_one_element) begin
+		entries <= entries + 1;
+	    end
+
 
 	    // Write port ALU
 	    if(alu_rob_wenable) begin
-		readys[alu_rob_id] = 1;
-		values[alu_rob_id] = alu_result;
+		readys[alu_rob_id] <= 1;
+		values[alu_rob_id] <= alu_result;
 	    end
 	    // Write port MEM
 	    if(mem_rob_wenable) begin
-		readys[mem_rob_id] = 1;
-		values[mem_rob_id] = mem_result;
+		readys[mem_rob_id] <= 1;
+		values[mem_rob_id] <= mem_result;
 
 		// MEM exceptions
-		mem_ex_pc      = mem_pc;
-		mem_ex_v_addr  = mem_v_addr;
-		mem_ex_present = mem_exception;
-		mem_ex_rob_id  = mem_rob_id;
+		mem_ex_pc      <= mem_pc;
+		mem_ex_v_addr  <= mem_v_addr;
+		mem_ex_present <= mem_exception;
+		mem_ex_rob_id  <= mem_rob_id;
 	    end
 	    
 	    // Write port MUL
 	    if(mul_rob_wenable) begin
-		readys[mul_rob_id] = 1;
-		values[mul_rob_id] = mul_result;
+		readys[mul_rob_id] <= 1;
+		values[mul_rob_id] <= mul_result;
 	    end
 	end
     end
