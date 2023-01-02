@@ -58,10 +58,10 @@ module store_buffer #(
     always @(*) begin
 	//if head can write send to cache
 	if(can_store[head]) begin 
-	    cache_store_size <= size[head];
-	    cache_physical_address <= physical_addresses[head];
-	    cache_store_value <= value[head];
-	    cache_wenable <= 1;
+	    cache_store_size = size[head];
+	    cache_physical_address = physical_addresses[head];
+	    cache_store_value = value[head];
+	    cache_wenable = 1;
 	end else begin
 	    cache_wenable = 0;
 	end
