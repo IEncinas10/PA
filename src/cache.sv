@@ -94,6 +94,12 @@ module cache #(
     reg [WORD_SIZE-1:0] write_offset;
     reg [LINE_SIZE-1:0] line_write;
 
+
+    reg increase_pin_counter;
+    reg decrease_pin_counter;
+    reg increase_mem_req_pin_counter;
+
+
     integer i;
 
     initial begin
@@ -148,7 +154,15 @@ module cache #(
 	end 
 
 	// Stores from SB should always succeed
-	store_success = !mem_res && wenable && sb_tag == tags[sb_set];
+	store_success = wenable && sb_tag == tags[sb_set];
+	
+	// We can only create 1 request per set. If we're asking this cycle
+	// for a new memory block, we don't need to increase it's pin counter
+	increase_mem_req_pin_counter = !mem_req && valid && store && mem_req_present[set] && mem_req_tags[set] == tag;
+
+	increase_pin_counter = valid && store && hit;
+	decrease_pin_counter = store_success;
+
 
 	// Evict line before it is replaced
 	if(mem_res && dirtys[mem_res_set]) begin
@@ -167,9 +181,6 @@ module cache #(
 	    // If we're a store and we have HIT cache, we have to
 	    // increase the pin counter. When we write from the SB we will
 	    // decrement it back
-	    if(valid && store && hit) begin
-		pin_counters[set] = pin_counters[set] + 1;
-	    end
 
 	    handle_requests();
 
@@ -178,24 +189,28 @@ module cache #(
 	    // Store Buffer. Write and decrement pin counter
 	    if(!mem_res && wenable && sb_tag == tags[sb_set]) begin
 		`assert(tags[sb_set], sb_tag);
-		dirtys[sb_set] = 1;
+		dirtys[sb_set] <= 1;
 
 		line_write = data[sb_set];
 		case(sb_size)
 		    `BYTE_SIZE: begin
 			write_offset = (sb_offset+1) * 8 - 1;
 			line_write[write_offset-:8] = sb_value[7:0];
-			data[sb_set] = line_write;
+			data[sb_set] <= line_write;
 		    end
 		    `FULL_WORD_SIZE: begin
 			write_offset = (sb_offset+4) * 8 - 1;
 			line_write[write_offset-:32] = sb_value;
-			data[sb_set] = line_write;
+			data[sb_set] <= line_write;
 			
 		    end
 		endcase
+	    end
 
-		pin_counters[sb_set] = pin_counters[sb_set] - 1;
+	    if(increase_pin_counter && !decrease_pin_counter) begin
+		pin_counters[set] <= pin_counters[set] + 1;
+	    end else if (decrease_pin_counter && !increase_pin_counter) begin
+		pin_counters[sb_set] <= pin_counters[sb_set] - 1;
 	    end
 
 	end
@@ -218,32 +233,32 @@ module cache #(
 	//Internal bookkeeping. We need the tag for the pin_counter, and
 	//the pin counter to pin lines for stores in the store buffer
 	if(mem_req) begin
-	    mem_req_tags[set] = tag;
-	    mem_req_present[set] = 1;
+	    mem_req_tags[set]	 <= tag;
+	    mem_req_present[set] <= 1;
 	    // If a load brings the line we must not pin it
-	    mem_req_pin_counters[set] = store ? 1 : 0;
+	    mem_req_pin_counters[set] <= store ? 1 : 0;
 	end
 
 	// If we're already requesting this memory block, just update its pin counter.
 	// If this request already exists, a store will only stay 1 cycle in
 	// this stage (and if the SB is full we will get a 'valid = 0')
-	if(!mem_req && valid && store && mem_req_present[set] && mem_req_tags[set] == tag) begin
-	    mem_req_pin_counters[set] = mem_req_pin_counters[set] + 1;
+	if(increase_mem_req_pin_counter) begin
+	    mem_req_pin_counters[set] <= mem_req_pin_counters[set] + 1;
 	end
 
 	// response latency 1 doesnt work
 	if(mem_res && mem_req_present[mem_res_set]) begin
 	    // Update replaced line
-	    tags[mem_res_set] = mem_res_tag;
-	    data[mem_res_set] = mem_res_data;
-	    dirtys[mem_res_set] = 0;
+	    tags[mem_res_set]   <= mem_res_tag;
+	    data[mem_res_set]   <= mem_res_data;
+	    dirtys[mem_res_set] <= 0;
 	    // We have to inherit the pin counter from the memory request
-	    pin_counters[mem_res_set] = mem_req_pin_counters[mem_res_set];
+	    pin_counters[mem_res_set] <= mem_req_pin_counters[mem_res_set];
 
 	    // Clear memory request info 
-	    mem_req_pin_counters[mem_res_set] = 0;
-	    mem_req_present[mem_res_set]      = 0;
-	    mem_req_tags[mem_res_set]         = 0;
+	    mem_req_pin_counters[mem_res_set] <= 0;
+	    mem_req_present[mem_res_set]      <= 0;
+	    mem_req_tags[mem_res_set]         <= 0;
 	end
     endtask
 
