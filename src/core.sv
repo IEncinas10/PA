@@ -195,7 +195,7 @@ module core #(
 	// We have to stall if decode signals stall and we have a valid instr
 	.stall(f_d_stalls), 
 	.reset(rst || rob_exception_out || (alu_branch_taken && alu_instr_valid)),
-	.exception(fetch_exception_out),
+	.exception(fetch_exception_out), // If we get a fetch_exception and it is a store, it will go into the store buffer (we don't care because we loop forever, but...)
 	.pc_out(f_d_pc_out), 
 	.instruction_out(f_d_instr_out),
 	.exception_out(f_d_exception_out), 
