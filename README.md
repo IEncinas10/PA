@@ -2,6 +2,9 @@
 
 ## Correction guide
 
+![image](https://user-images.githubusercontent.com/42119338/210269195-29d96a1f-f1c1-4cdf-95c9-b1f9ea1b094a.png)
+
+
 "Wrong stuff"
 - Delay from Memory to Cache is 1 cycle instead of 5. It doesn't matter, we can just take 10 cycles to "get" to memory and that's 10
 
