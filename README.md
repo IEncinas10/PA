@@ -1,5 +1,7 @@
 # MIRI - Processor Architecture
 
+[pa_final.odg](https://github.com/IEncinas10/PA/files/10333272/pa_final.odg)
+
 ## Correction guide
 
 ![image](https://user-images.githubusercontent.com/42119338/210269195-29d96a1f-f1c1-4cdf-95c9-b1f9ea1b094a.png)
