@@ -2,6 +2,9 @@
 
 ## Correction guide
 
+"Wrong stuff"
+- Delay from Memory to Cache is 1 cycle instead of 5. It doesn't matter, we can just take 10 cycles to "get" to memory and that's 10
+
 ### Architectural state
 
 - [ ] Special register rm0 for holding the PC the OS should return to on exceptions: ROB ex_pc signal. We could just hook up the rob_ex_pc wire from core.sv to anything and call it rm0, or just say that rm0 is inside ROB.
@@ -39,7 +42,6 @@ We take 5 cycles to go to memory but we can make 1 request per cycle:
 | R3 | - | - | Create req | Wait | Wait | Wait | Wait |
 | R4 | - | - | - | - | Create req | Wait | Wait |
 
-- Wrong: delay from Memory to Cache is 1 cycle instead of 5 
 - No unaligned support
 
 ### Pipeline(s)
