@@ -1,5 +1,46 @@
 # MIRI - Processor Architecture
 
+## Correction guide
+
+### Architectural state
+
+- [ ] Special register rm0 for holding the PC the OS should return to on exceptions: ROB ex_pc signal. We could just hook up the rob_ex_pc wire from core.sv to anything and call it rm0, or just say that rm0 is inside ROB.
+- [ ] Faulting addr is held in mem_ex_v_addr inside ROB.
+- [ ] We differenciate from iTLB exceptions and dTLB exceptions, but that's it
+
+### Interface to OS
+We **don't have OS code**. We do boot at PC = 0x1000, and when we get an exception we jump to 0x2000 and **stay there forever**
+
+https://github.com/IEncinas10/PA/blob/master/src/fetch_stage.sv
+
+### Instruction set
+
+Memory: lw, lb, sw, sb
+
+Branches: jump (not jal although jump is jal rd=0), beq, bne, bge, blt
+
+ALU: auipc (needed to support la - load address for symbols), add addi, or, and...
+
+M extension: good old multiplication
+
+Summary: required + some others, but not too many.
+
+### Caches
+
+Directly mapped.
+
+We take 5 cycles to go to memory but we can make 1 request per cycle:
+
+|  | Cycles |  |  |  |  |  |  |
+|---|---|---|---|---|---|---|---|
+| Request | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+| R1 | Create req | Wait | Wait | Wait | Wait | Wait | Recv response |
+| R2 | - | Create req | Wait | Wait | Wait | Wait | Wait |
+| R3 | - | - | Create req | Wait | Wait | Wait | Wait |
+| R4 | - | - | - | - | Create req | Wait | Wait |
+
+
+
 ## Test
 
 - Store Buffer bypass present in sumSquares.c
