@@ -3,7 +3,8 @@
 
 module soc#(
     parameter WORD_SIZE = `WORD_SIZE,
-    parameter LINE_SIZE = `CACHE_LINE_SIZE
+    parameter LINE_SIZE = `CACHE_LINE_SIZE,
+    parameter MEM_SIZE = `MEM_SIZE
 ) (
     input wire clk,
     input wire rst
@@ -41,7 +42,10 @@ module soc#(
 	.d_w_addr(d_w_addr)
     );
 
-    memory mem(
+    memory #(
+	.NUM_BLOCKS = MEM_SIZE / LINE_SIZE, 
+	.NUM_WORDS = MEM_SIZE / WORD_SIZE) 
+	mem (
 	.clk(clk),
 	.i_read(i_read),
 	.i_addr(i_addr),
