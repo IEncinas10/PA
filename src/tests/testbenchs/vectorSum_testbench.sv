@@ -79,7 +79,15 @@ module vectorSum_testbench();
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
 	
-		#10000;
+		for(i = 0; i < 4200; i = i + 1) begin
+			#1;
+			if(dut.cpu.fetch.instruction_out == 32'h0000006F && dut.cpu.decode.instruction == 32'h00000000) begin
+				$display("Cycles = %d", i/2);
+				i = 100000;
+			end
+		end
+
+		#10
 
     `UNIT_TEST_END
 

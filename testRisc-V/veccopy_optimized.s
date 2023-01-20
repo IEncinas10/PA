@@ -33,3 +33,4 @@ for: 	# For loop
     	jal   zero, for     # Jump back to start of loop (1 backwards)
 	nop
 endfor:
+	j endfor

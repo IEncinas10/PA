@@ -31,7 +31,7 @@ module vectorCopy_testbench();
         $dumpfile("vectorCopy_testbench.vcd");
         $dumpvars(0, vectorCopy_testbench);
 
-        $readmemh("../../../testRisc-V/veccopy_opt.hex", dut.mem.data,2048);
+        $readmemh("../../../testRisc-V/veccopy.hex", dut.mem.data,2048);
 
     end
 
@@ -79,7 +79,16 @@ module vectorCopy_testbench();
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
 	
-		#1000;
+		
+		for(i = 0; i < 100000; i = i + 1) begin
+			#1;
+			if(dut.cpu.fetch.instruction_out == 32'h0000006F && dut.cpu.decode.instruction == 32'h00000000) begin
+				$display("Cycles = %d", i/2);
+				i = 100000;
+			end
+		end
+
+		#10
 
     `UNIT_TEST_END
 
