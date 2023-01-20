@@ -43,8 +43,9 @@ module soc#(
     );
 
     memory #(
-	.NUM_BLOCKS = MEM_SIZE / LINE_SIZE, 
-	.NUM_WORDS = MEM_SIZE / WORD_SIZE) 
+	.NUM_BLOCKS (MEM_SIZE / LINE_SIZE), 
+	.NUM_WORDS (MEM_SIZE / WORD_SIZE)
+	) 
 	mem (
 	.clk(clk),
 	.i_read(i_read),
