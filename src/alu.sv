@@ -50,7 +50,13 @@ module alu #(
             end
             `AND_FUNCT3: begin
               aluOut = aluIn1 & aluIn2;
-            end
+			end
+			`SLLI_FUNCT3: begin
+				aluOut = aluIn1 << aluIn2;
+			end
+			`SRLI_FUNCT3: begin
+				aluOut = aluIn1 >> aluIn2;
+			end
           endcase
           end
         endcase

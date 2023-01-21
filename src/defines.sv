@@ -38,6 +38,8 @@
 `define BNE_FUNCT3		3'b010
 `define BLT_FUNCT3      3'b100
 `define BGE_FUNCT3      3'b101
+`define SLLI_FUNCT3		3'b001
+`define SRLI_FUNCT3		3'b101
 
 //TODO revisar todos los f7 y f3 necesarios para las operaciones
 `define SUB_FUNCT7      7'b0100000
