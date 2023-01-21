@@ -24,6 +24,7 @@
 `define OPCODE_LOAD     7'b0000011
 `define OPCODE_JUMP     7'b1101111
 `define OPCODE_AUIPC    7'b0010111
+`define OPCODE_LUI      7'b0110111
 
 
 //TODO meter todos funt3 y funct7 de funciones alu y aluimm
@@ -31,6 +32,8 @@
 `define AND_FUNCT3      3'b111 
 `define ADD_FUNCT3      3'b000
 `define ADDI_FUNCT3     3'b000 //solo se necesita f3 para addi
+`define SLLI_FUNCT3		3'b001
+`define SRLI_FUNCT3		3'b101
  
 
 /* Funct3 of branches */
@@ -38,8 +41,6 @@
 `define BNE_FUNCT3		3'b010
 `define BLT_FUNCT3      3'b100
 `define BGE_FUNCT3      3'b101
-`define SLLI_FUNCT3		3'b001
-`define SRLI_FUNCT3		3'b101
 
 //TODO revisar todos los f7 y f3 necesarios para las operaciones
 `define SUB_FUNCT7      7'b0100000

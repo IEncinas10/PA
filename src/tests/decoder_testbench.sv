@@ -300,6 +300,18 @@ module decoder_testbench();
 	`FAIL_IF(rd != 10);
 	`FAIL_IF_NOT(dut.instr_U_type);
 	//`FAIL_IF(dut.imm + 'h28 != 'h1c);
+	
+    `UNIT_TEST_END
+	
+	`UNIT_TEST("LUI")
+	instr= 'h00001137;
+	
+	#2
+	`FAIL_IF(dut.opcode != `OPCODE_LUI);
+	`FAIL_IF(rd != 2);
+	`FAIL_IF(dut.imm != 'b1000000000000);
+
+
     `UNIT_TEST_END
 
     `TEST_SUITE_END

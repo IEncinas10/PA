@@ -263,9 +263,8 @@ module alu_testbench();
     `UNIT_TEST_END 
 
     `UNIT_TEST("SLLI")
-       opcode = `OPCODE_ALU;
+       opcode = `OPCODE_ALU_IMM;
        funct3 = `SLLI_FUNCT3;
-	   funct7 = `ADD_OR_AND_FUNCT7;
 	   aluIn1 = 1;
 	   aluIn2 = 2;
 
@@ -275,9 +274,8 @@ module alu_testbench();
     `UNIT_TEST_END 
 
     `UNIT_TEST("SRLI")
-       opcode = `OPCODE_ALU;
+       opcode = `OPCODE_ALU_IMM;
        funct3 = `SRLI_FUNCT3;
-	   funct7 = `ADD_OR_AND_FUNCT7;
 	   aluIn1 = 8;
 	   aluIn2 = 2;
 
@@ -285,6 +283,15 @@ module alu_testbench();
        `ASSERT((aluOut == (8 >> 2)));
        #2;
     `UNIT_TEST_END 
+
+    `UNIT_TEST("LUI")
+       opcode = `OPCODE_LUI;
+	   immediate = 1;
+       #2;
+       `ASSERT((aluOut == 1));
+       #2;
+    `UNIT_TEST_END 
+
     `TEST_SUITE_END
 
 endmodule

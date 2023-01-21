@@ -35,7 +35,7 @@ module matrixmult_testbench();
         $dumpfile("matrixmult_testbench.vcd");
         $dumpvars(0, matrixmult_testbench);
 
-        $readmemh("../../../testRisc-V/muladri.hex", dut.mem.data,2048);
+        $readmemh("../../../../testRisc-V/muladri.hex", dut.mem.data,2048);
 
     end
 

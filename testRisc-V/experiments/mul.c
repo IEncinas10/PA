@@ -1,4 +1,4 @@
-#define ARR_SIZE 128
+#define ARR_SIZE 16
 
 int main() {
     asm volatile ("addi t0, zero,8");

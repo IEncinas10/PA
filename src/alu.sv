@@ -51,19 +51,16 @@ module alu #(
             `AND_FUNCT3: begin
               aluOut = aluIn1 & aluIn2;
 			end
-			`SLLI_FUNCT3: begin
-				aluOut = aluIn1 << aluIn2;
-			end
-			`SRLI_FUNCT3: begin
-				aluOut = aluIn1 >> aluIn2;
-			end
           endcase
           end
         endcase
       end
       `OPCODE_AUIPC: begin
         aluOut = newpc;
-      end
+		end
+		`OPCODE_LUI: begin 
+			aluOut = immediate;
+		end
       `OPCODE_BRANCH: begin
 		case(funct3)
 			`BEQ_FUNCT3: begin
@@ -98,6 +95,12 @@ module alu #(
           `ADDI_FUNCT3: begin
             aluOut = aluIn1 + immediate;
           end
+			`SLLI_FUNCT3: begin
+				aluOut = aluIn1 << aluIn2; //aluIn2 es shamt
+			end
+			`SRLI_FUNCT3: begin
+				aluOut = aluIn1 >> aluIn2;
+			end
         endcase
       end
       default:begin
