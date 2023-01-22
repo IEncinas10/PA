@@ -138,6 +138,7 @@ module store_buffer #(
 	    if(removing_one_element) begin 
 		// Freed entry's state. 
 		can_store[head] <= 0;
+		rob_id[head] <= `ROB_INVALID_ENTRY;
 
 		// SB state
 		head <= (head + 1) % N; //update de head
