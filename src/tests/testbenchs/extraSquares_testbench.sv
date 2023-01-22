@@ -78,7 +78,7 @@ module extraSquares_testbench();
         // Because SVUT uses long nested macros, it's possible
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
-		for(i = 0; i < 1000; i = i + 1) begin
+		for(i = 0; i < 10000; i = i + 1) begin
 			#1;
 			if(dut.cpu.fetch.instruction_out == 32'h0000006F && dut.cpu.decode.instruction == 32'h00000000) begin
 				$display("Cycles = %d", i/2);

@@ -11,7 +11,7 @@ module matrixmult_testbench();
     logic clk;
     logic rst = 0;
 
-	parameter MEM_SIZE = (1 << 22);
+	parameter MEM_SIZE = (1 << 20);
 
     soc #(
 	.MEM_SIZE (MEM_SIZE)
@@ -35,7 +35,7 @@ module matrixmult_testbench();
         $dumpfile("matrixmult_testbench.vcd");
         $dumpvars(0, matrixmult_testbench);
 
-        $readmemh("../../../../testRisc-V/muladri.hex", dut.mem.data,2048);
+        $readmemh("../../../../testRisc-V/mul16.hex", dut.mem.data,2048);
 
     end
 

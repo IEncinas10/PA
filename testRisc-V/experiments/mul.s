@@ -1,6 +1,105 @@
-.global matrix_mul
-.data
-matrixA:
+	.file	"mul.c"
+	.option nopic
+	.attribute arch, "rv32i2p0_m2p0"
+	.attribute unaligned_access, 0
+	.attribute stack_align, 16
+	.text
+	.align	2
+	.globl	main
+	.type	main, @function
+main:
+	addi	sp,sp,-48
+	sw	s0,44(sp)
+	addi	s0,sp,48
+ #APP
+# 4 "mul.c" 1
+	addi t0, zero,8
+# 0 "" 2
+# 5 "mul.c" 1
+	addi sp, zero,1536
+# 0 "" 2
+# 6 "mul.c" 1
+	mul sp, sp,t0
+# 0 "" 2
+ #NO_APP
+	sw	zero,-20(s0)
+	li	a5,16
+	sw	a5,-40(s0)
+	sw	zero,-24(s0)
+	j	.L2
+.L7:
+	sw	zero,-28(s0)
+	j	.L3
+.L6:
+	sw	zero,-32(s0)
+	sw	zero,-36(s0)
+	j	.L4
+.L5:
+	lui	a5,%hi(ones.2)
+	addi	a4,a5,%lo(ones.2)
+	lw	a5,-24(s0)
+	slli	a3,a5,4
+	lw	a5,-36(s0)
+	add	a5,a3,a5
+	slli	a5,a5,2
+	add	a5,a4,a5
+	lw	a4,0(a5)
+	lui	a5,%hi(twos.1)
+	addi	a3,a5,%lo(twos.1)
+	lw	a5,-36(s0)
+	slli	a2,a5,4
+	lw	a5,-28(s0)
+	add	a5,a2,a5
+	slli	a5,a5,2
+	add	a5,a3,a5
+	lw	a5,0(a5)
+	mul	a5,a4,a5
+	lw	a4,-32(s0)
+	add	a5,a4,a5
+	sw	a5,-32(s0)
+	lw	a5,-36(s0)
+	addi	a5,a5,1
+	sw	a5,-36(s0)
+.L4:
+	lw	a4,-36(s0)
+	li	a5,15
+	ble	a4,a5,.L5
+	lui	a5,%hi(result.0)
+	addi	a4,a5,%lo(result.0)
+	lw	a5,-24(s0)
+	slli	a3,a5,4
+	lw	a5,-28(s0)
+	add	a5,a3,a5
+	slli	a5,a5,2
+	add	a5,a4,a5
+	lw	a4,-32(s0)
+	sw	a4,0(a5)
+	lw	a4,-20(s0)
+	lw	a5,-32(s0)
+	add	a5,a4,a5
+	sw	a5,-20(s0)
+	lw	a5,-28(s0)
+	addi	a5,a5,1
+	sw	a5,-28(s0)
+.L3:
+	lw	a4,-28(s0)
+	li	a5,15
+	ble	a4,a5,.L6
+	lw	a5,-24(s0)
+	addi	a5,a5,1
+	sw	a5,-24(s0)
+.L2:
+	lw	a4,-24(s0)
+	li	a5,15
+	ble	a4,a5,.L7
+.L8:
+	j	.L8
+	.size	main, .-main
+	.data
+	.align	2
+	.type	ones.2, @object
+	.size	ones.2, 1024
+ones.2:
 	.word	1
 	.word	1
 	.word	1
@@ -257,264 +356,270 @@ matrixA:
 	.word	1
 	.word	1
 	.word	1
-matrixB:
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-	.word	1
-matrixSol:
+	.align	2
+	.type	twos.1, @object
+	.size	twos.1, 1024
+twos.1:
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.word	2
+	.align	2
+	.type	result.0, @object
+	.size	result.0, 1024
+result.0:
 	.word	-1
 	.word	-1
 	.word	-1
@@ -771,50 +876,4 @@ matrixSol:
 	.word	-1
 	.word	-1
 	.word	-1
-.text
-
-matrix_mul:
-
-    	la a0, matrixA
-    	la a1, matrixB
-    	la a2, matrixSol
-    	
-        addi t0, zero, 16 # size
-        add s11, zero, a1 # B
-
-        add t1, zero, zero # i = 0 
-loop1:  # loop1 #
-        add t2, zero, zero # j = 0
-        # loop2 #
-loop2:   
-        add t3, zero, zero # k = 0
-        add t4, zero, zero # sum = 0
-        # loop3 #
-loop3:
-        lw t5, 0(a0) # A[i][k]
-        lw t6, 0(s11) # B[k][j]
-        mul t5, t5, t6 # A*B
-        add t4, t4, t5 # C += A*B
-        ##andi t4, t4, 1023 # mod 1024
-        addi a0, a0, 4 # A[i][k+1]
-        addi s11, s11, 64 # B[k+1][j]
-        addi t3, t3, 1 # k++ 
-        blt t3, t0, loop3 # k<size , continue
-        # loop3 end #
-        sw t4, 0(a2) # store back to C[i][j]
-        addi a2, a2, 4 # C[i][j+1]
-        addi a0, a0, -64 # A go back
-        addi a1, a1, 4 # B[k][j+1]
-        add  s11, zero, a1 # B
-        addi t2, t2, 1 # j++
-        blt t2, t0, loop2 # j<size , continue
-        # loop2 end #
-        addi a0, a0, 64 # A[i+1][k]
-        addi a1, a1, -64 # B go back (because line 40 add 2*128=256) AQUI SON 12 PORQUE 3 ELEMENTOS * 4 BYTES
-        add s11, zero, a1 # B
-        addi t1, t1, 1 # i++
-        blt t1, t0, loop1 # i<size , continue
-        # loop1 end #
-
-end: 
-	j end
+	.ident	"GCC: () 10.2.0"

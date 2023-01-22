@@ -4,14 +4,18 @@
 `include "soc.sv"
 //`timescale 1 ns / 1 ns
 
-module extraSum_testbench();
+module mult_testbench();
 
     `SVUT_SETUP
 
     logic clk;
     logic rst = 0;
 
-    soc 
+	parameter MEM_SIZE = (1 << 20);
+
+    soc #(
+	.MEM_SIZE (MEM_SIZE)
+	)
     dut 
     (
     .clk (clk),
@@ -28,10 +32,10 @@ module extraSum_testbench();
     reg[32:0] j;
     reg[127:0] xd;
     initial begin
-        $dumpfile("extraSum_testbench.vcd");
-        $dumpvars(0, extraSum_testbench);
+        $dumpfile("mult_testbench.vcd");
+        $dumpvars(0, mult_testbench);
 
-        $readmemh("../../../testRisc-V/experiments/sums.hex", dut.mem.data,2048);
+        $readmemh("../../../../testRisc-V/experiments/mul16.hex", dut.mem.data,2048);
 
     end
 
@@ -50,7 +54,7 @@ module extraSum_testbench();
     end
     endtask
 
-    `TEST_SUITE("TESTSUITE_EXECUTION_CODE_EXTRA_SUM")
+    `TEST_SUITE("TESTSUITE_EXECUTION_CODE_MATRIXMULT")
 
     //  Available macros:"
     //
@@ -79,17 +83,19 @@ module extraSum_testbench();
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
 	
-		for(i = 0; i < 1000; i = i + 1) begin
+
+		for(i = 0; i < 1000000; i = i + 1) begin
 			#1;
 			if(dut.cpu.fetch.instruction_out == 32'h0000006F && dut.cpu.decode.instruction == 32'h00000000) begin
 				$display("Cycles = %d", i/2);
-				i = 100000;
+				i = 1000000;
 			end
 		end
+		
+		#10
 
     `UNIT_TEST_END
 
     `TEST_SUITE_END
 
 	endmodule
-

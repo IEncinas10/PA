@@ -5,6 +5,10 @@ int main() {
     asm volatile ("addi sp, zero,1536");
     asm volatile ("mul sp, sp,t0");
 
+
+
+	asm volatile("" ::: "memory");
+
     static unsigned ones[ARR_SIZE][ARR_SIZE] = {[0 ... ARR_SIZE - 1][0 ... ARR_SIZE - 1] = 1};
     static unsigned twos[ARR_SIZE][ARR_SIZE] = {[0 ... ARR_SIZE - 1][0 ... ARR_SIZE - 1] = 2};
 
