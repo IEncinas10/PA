@@ -8,10 +8,6 @@
 	.globl	main
 	.type	main, @function
 main:
-	addi	sp,sp,-48
-	sw	s0,44(sp)
-	addi	s0,sp,48
- #APP
 # 4 "mul.c" 1
 	addi t0, zero,8
 # 0 "" 2
@@ -20,6 +16,11 @@ main:
 # 0 "" 2
 # 6 "mul.c" 1
 	mul sp, sp,t0
+	addi	sp,sp,-48
+	sw	s0,44(sp)
+	addi	s0,sp,48
+ #APP
+
 # 0 "" 2
  #NO_APP
 	sw	zero,-20(s0)

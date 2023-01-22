@@ -4,18 +4,14 @@
 `include "soc.sv"
 //`timescale 1 ns / 1 ns
 
-module matrixmult_testbench();
+module vectorCopy_testbench();
 
     `SVUT_SETUP
 
     logic clk;
     logic rst = 0;
-
-	parameter MEM_SIZE = (1 << 22);
-
-    soc #(
-	.MEM_SIZE (MEM_SIZE)
-	)
+	
+    soc 
     dut 
     (
     .clk (clk),
@@ -32,10 +28,10 @@ module matrixmult_testbench();
     reg[32:0] j;
     reg[127:0] xd;
     initial begin
-        $dumpfile("matrixmult_testbench.vcd");
-        $dumpvars(0, matrixmult_testbench);
+        $dumpfile("vectorCopyOptimized_testbench.vcd");
+        $dumpvars(0, vectorCopyOptimized_testbench);
 
-        $readmemh("../../../../testRisc-V/mul16.hex", dut.mem.data,2048);
+        $readmemh("../../../testRisc-V/veccopy_opt.hex", dut.mem.data,2048);
 
     end
 
@@ -83,15 +79,15 @@ module matrixmult_testbench();
         // some local variable declaration leads to compilation issue.
         // You should declare your variables after the IOs declaration to avoid that.
 	
-
-		for(i = 0; i < 100000000; i = i + 1) begin
+		
+		for(i = 0; i < 100000; i = i + 1) begin
 			#1;
 			if(dut.cpu.fetch.instruction_out == 32'h0000006F && dut.cpu.decode.instruction == 32'h00000000) begin
 				$display("Cycles = %d", i/2);
-				i = 100000000;
+				i = 100000;
 			end
 		end
-		
+
 		#10
 
     `UNIT_TEST_END
