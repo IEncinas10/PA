@@ -25,6 +25,7 @@
 `define OPCODE_JUMP     7'b1101111
 `define OPCODE_AUIPC    7'b0010111
 `define OPCODE_LUI      7'b0110111
+`define OPCODE_NOP      7'b0000000
 
 
 //TODO meter todos funt3 y funct7 de funciones alu y aluimm
