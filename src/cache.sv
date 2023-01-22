@@ -187,7 +187,7 @@ module cache #(
 
 
 	    // Store Buffer. Write and decrement pin counter
-	    if(!mem_res && wenable && sb_tag == tags[sb_set]) begin
+	    if(wenable && sb_tag == tags[sb_set]) begin
 		`assert(tags[sb_set], sb_tag);
 		dirtys[sb_set] <= 1;
 
