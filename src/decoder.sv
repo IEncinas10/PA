@@ -42,6 +42,7 @@ module decoder #(
     wire instr_JUMP    = (opcode == `OPCODE_JUMP);
     wire instr_AUIPC   = (opcode == `OPCODE_AUIPC);
     wire instr_LUI     = (opcode == `OPCODE_LUI);
+    wire instr_NOP     = (opcode == `OPCODE_NOP);
 
 
     wire instr_R_type  = instr_ALU;
@@ -52,7 +53,7 @@ module decoder #(
     wire instr_U_type  = instr_AUIPC || instr_LUI;
 
     assign instr_type = (instr_R_type && funct7 == `MUL_FUNCT7) ? `INSTR_TYPE_MUL :
-			((instr_R_type && funct7 != `MUL_FUNCT7) || instr_AUIPC || instr_ALU_IMM) ? `INSTR_TYPE_ALU :
+			((instr_R_type && funct7 != `MUL_FUNCT7) || instr_AUIPC || instr_ALU_IMM || instr_NOP) ? `INSTR_TYPE_ALU :
 			(instr_LOAD || instr_LUI) ? `INSTR_TYPE_LOAD : 
             instr_STORE ? `INSTR_TYPE_STORE : `INSTR_TYPE_NO_WB;
 
