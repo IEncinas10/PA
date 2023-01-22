@@ -166,7 +166,7 @@ module cache #(
 
 	// Evict line before it is replaced
 	if(mem_res && dirtys[mem_res_set]) begin
-	    `assert(pin_counters[mem_res_set], 0);
+	    //`assert(pin_counters[mem_res_set], 0);
 	    mem_write      = 1;
 	    mem_write_data = data[mem_res_set];
 	    //mem_write_addr = {tags[mem_res_set], mem_res_set, OFFSET_SIZE'b0000};
@@ -209,7 +209,8 @@ module cache #(
 
 	    if(increase_pin_counter && (!decrease_pin_counter || set != sb_set)) begin
 		pin_counters[set] <= pin_counters[set] + 1;
-	    end else if (decrease_pin_counter && (!increase_pin_counter || set != sb_set)) begin
+	    end 
+	    if (decrease_pin_counter && (!increase_pin_counter || set != sb_set)) begin
 		pin_counters[sb_set] <= pin_counters[sb_set] - 1;
 	    end
 
@@ -248,6 +249,7 @@ module cache #(
 
 	// response latency 1 doesnt work
 	if(mem_res && mem_req_present[mem_res_set]) begin
+	    `assert(pin_counters[mem_res_set], 0);
 	    // Update replaced line
 	    tags[mem_res_set]   <= mem_res_tag;
 	    data[mem_res_set]   <= mem_res_data;
