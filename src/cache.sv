@@ -207,9 +207,9 @@ module cache #(
 		endcase
 	    end
 
-	    if(increase_pin_counter && !decrease_pin_counter) begin
+	    if(increase_pin_counter && (!decrease_pin_counter || set != sb_set)) begin
 		pin_counters[set] <= pin_counters[set] + 1;
-	    end else if (decrease_pin_counter && !increase_pin_counter) begin
+	    end else if (decrease_pin_counter && (!increase_pin_counter || set != sb_set)) begin
 		pin_counters[sb_set] <= pin_counters[sb_set] - 1;
 	    end
 
