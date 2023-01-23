@@ -40,6 +40,9 @@ module fetch_stage #(
 
     wire [WORD_SIZE-1:0] phy_mem_addr;
 
+    wire [WORD_SIZE-1:0] cache_instruction_out;
+    assign instruction_out = exception_out ? 32'h00000000 : cache_instruction_out;
+
     assign phy_mem_addr[WORD_SIZE-1-`PAGE_WIDTH:0] = pc[WORD_SIZE-1-`PAGE_WIDTH:0];
 
     /* Wires for iCache */
@@ -96,7 +99,7 @@ module fetch_stage #(
 	.store(cache_store),
 	.hit(cache_hit),
 	.store_stall(store_stall),
-	.read_data(instruction_out),
+	.read_data(cache_instruction_out),
 	.mem_req(mem_req),
 	.mem_req_addr(mem_req_addr),
 	.mem_res(mem_res),
