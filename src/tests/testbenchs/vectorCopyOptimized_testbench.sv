@@ -4,7 +4,7 @@
 `include "soc.sv"
 //`timescale 1 ns / 1 ns
 
-module vectorCopy_testbench();
+module vectorCopyOptimized_testbench();
 
     `SVUT_SETUP
 
