@@ -21,8 +21,8 @@ module cache_stage #(
     input  wire [ROB_ENTRY_WIDTH-1:0] rob_id,
     input  wire valid,
     output wire valid_out,
-    output wire stall_out, /* STALL output, propagate backwards */
-    output wire [WORD_SIZE-1:0] read_data,      // result of the load
+    output reg stall_out, /* STALL output, propagate backwards */
+    output reg [WORD_SIZE-1:0] read_data,      // result of the load
     output wire                 mem_req,        // memory read port
     output wire [WORD_SIZE-1:0] mem_req_addr,
     output wire		        mem_write,       // Memory write port
@@ -40,7 +40,7 @@ module cache_stage #(
     wire is_store = (instruction_type == `INSTR_TYPE_STORE);
     wire is_load  = (instruction_type == `INSTR_TYPE_LOAD);
     
-    assign stall_out = (valid && ((is_store && (sb_full || cache_store_stall)) || (is_load && !cache_hit) || !tlb_hit));
+    assign stall_out = (valid && ((is_store && (sb_full || cache_store_stall)) || (is_load && (!cache_hit || (sb_bypass_needed && !sb_bypass_possible))) || !tlb_hit));
 
     assign valid_out = valid && !stall_out;
 
@@ -70,6 +70,7 @@ module cache_stage #(
     wire [WORD_SIZE-1:0]         sb_bypass_value;
     wire                         sb_bypass_needed;
     wire                         sb_bypass_possible;
+	wire [WORD_SIZE-1:0]         mem_value;
 
     TLB dtlb(
 	.clk(clk),
@@ -94,7 +95,7 @@ module cache_stage #(
 	.store(is_store),
 	.hit(cache_hit),
 	.store_stall(cache_store_stall),
-	.read_data(read_data),
+	.read_data(mem_value),
 	.mem_req(mem_req),
 	.mem_req_addr(mem_req_addr),
 	.mem_res(mem_res),
@@ -131,6 +132,8 @@ module cache_stage #(
 	.bypass_needed(sb_bypass_needed),
 	.bypass_possible(sb_bypass_possible)
     );
-endmodule
+	
+	assign read_data = (sb_bypass_needed) ? sb_bypass_value : mem_value;
 
+	endmodule
 `endif

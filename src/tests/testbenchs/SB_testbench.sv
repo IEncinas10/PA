@@ -4,7 +4,7 @@
 `include "soc.sv"
 //`timescale 1 ns / 1 ns
 
-module extraSquares_testbench();
+module SB_testbench();
 
     `SVUT_SETUP
 
@@ -28,10 +28,10 @@ module extraSquares_testbench();
     reg[32:0] j;
     reg[127:0] xd;
     initial begin
-        $dumpfile("extraSquares_testbench.vcd");
-        $dumpvars(0, extraSquares_testbench);
+        $dumpfile("SB_testbench.vcd");
+        $dumpvars(0, SB_testbench);
 
-        $readmemh("../../../testRisc-V/experiments/sumSquares.hex", dut.mem.data,2048,3000);
+        $readmemh("../../../testRisc-V/experiments/SB_test.hex", dut.mem.data,2048);
 
     end
 
@@ -86,7 +86,7 @@ module extraSquares_testbench();
 			end
 		end
 		
-		#20
+		#500
 
     `UNIT_TEST_END
 
