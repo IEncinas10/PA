@@ -1,3 +1,4 @@
-If we get an iTLB exception and somehow the data read corresponds to a store, it will write into memory. Easily fixed by outputing a "nop" whenever we get an iTLB exception
+(FIXED) If we get an iTLB exception and somehow the data read corresponds to a store, it will write into memory. Easily fixed by outputing a "nop" whenever we get an iTLB exception
+
 
 In the decode stage we don't take into account that some instructions don't have "rs1", "rs2" and don't need bypasses. It just means we're stalling stupidly but it works
