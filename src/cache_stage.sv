@@ -40,7 +40,8 @@ module cache_stage #(
     wire is_store = (instruction_type == `INSTR_TYPE_STORE);
     wire is_load  = (instruction_type == `INSTR_TYPE_LOAD);
     
-    assign stall_out = (valid && ((is_store && (sb_full || cache_store_stall)) || (is_load && (!cache_hit || (sb_bypass_needed && !sb_bypass_possible))) || !tlb_hit));
+    wire load_data_available = cache_hit || (sb_bypass_needed && sb_bypass_possible);
+    assign stall_out = (valid && ((is_store && (sb_full || cache_store_stall)) || (is_load && !load_data_available) || !tlb_hit));
 
     assign valid_out = valid && !stall_out;
 
