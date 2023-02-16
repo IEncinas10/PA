@@ -129,10 +129,6 @@ Open them with gtkwave filewave.vcd
 Instruction (Instr. format)
 
 - [X] ADD (R), SUB (R), MUL (R), LDB (I), LDW (I), STB (I), STW (I) , BEQ (B), JUMP(J)  (whatever ISA you decide to use)
-
-## Posibles ampliaciones
-- [Caché muy lista¿?](https://personals.ac.upc.edu/jmanel/papers/ics97.pdf) Revisar si nos vale
-  
   
 
 
